@@ -5,7 +5,6 @@ import android.content.res.Configuration;
 import android.support.annotation.Nullable;
 import android.util.Log;
 import android.view.KeyEvent;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.Animation;
@@ -27,7 +26,7 @@ public class NavigationPage extends Page {
 
     private static final String TAG = NavigationPage.class.getName();
     private final static int DEFAULT_ANIMATE_TIME = 500; //ms
-    private NavigationViewManager2 mNavigationViewManager;
+    private NavigationViewManager mNavigationViewManager;
     private boolean mEnableDebug;
     //    private boolean mUseSwipePageTransitionEffect;
     //View的转场动画结束时的action，用于提前结束View的转场动画时提前做操作
@@ -41,8 +40,8 @@ public class NavigationPage extends Page {
 
     @Override
     protected View initView() {
-        mNavigationViewManager = new NavigationViewManager2(this);
-        NavigationViewManager2.NavigationContainerView view = mNavigationViewManager.createContainerView(mContext);
+        mNavigationViewManager = new NavigationViewManager(this);
+        NavigationViewManager.NavigationContainerView view = mNavigationViewManager.createContainerView(mContext);
         view.enableSwipeToHide();
 
         return view;
@@ -304,7 +303,7 @@ public class NavigationPage extends Page {
                     t1 = Math.abs(DEFAULT_ANIMATE_TIME * (width - left) / width);
 //                    t1 = 10000;
                     resetMargin(fromView);
-                    NavigationViewManager2.animateView(fromView,
+                    NavigationViewManager.animateView(fromView,
                             Animation.ABSOLUTE, left,
                             Animation.RELATIVE_TO_PARENT, 1.0f,
                             t1, null);
@@ -314,7 +313,7 @@ public class NavigationPage extends Page {
                     t2 = Math.abs(DEFAULT_ANIMATE_TIME * left / width * 2);
 //                    t2 = 10000;
                     resetMargin(toView);
-                    NavigationViewManager2.animateView(toView,
+                    NavigationViewManager.animateView(toView,
                             Animation.ABSOLUTE, left,
                             Animation.RELATIVE_TO_PARENT, 0.0f,
                             t2, null);
@@ -375,14 +374,14 @@ public class NavigationPage extends Page {
         if (mPrevView != null) {
             resetMargin(mPrevView);
             int t1 = DEFAULT_ANIMATE_TIME * (width / 2 - Math.abs(mPrevView.getLeft())) / (width / 2);
-            NavigationViewManager2.animateView(mPrevView,
+            NavigationViewManager.animateView(mPrevView,
                     Animation.ABSOLUTE, mPrevView.getLeft(),
                     Animation.RELATIVE_TO_PARENT, -0.5f,
                     t1, null);
         }
         resetMargin(mCurrentView);
         int t2 = DEFAULT_ANIMATE_TIME * Math.abs(mCurrentView.getLeft()) / (width);
-        NavigationViewManager2.animateView(mCurrentView,
+        NavigationViewManager.animateView(mCurrentView,
                 Animation.ABSOLUTE, mCurrentView.getLeft(),
                 Animation.RELATIVE_TO_PARENT, 0,
                 t2, null);

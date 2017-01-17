@@ -42,11 +42,15 @@ public abstract class SwitchPage extends Page {
         if (index < 0 || index >= getChildPageCount() || index == showIndex) {
             throw new IllegalArgumentException("index is Out Of Bound");
         }
+
         ensureEndAnimationExecution();
+        final boolean isAttach = isAttachToActivity();
         final IPage oldPage = getChildPageAt(showIndex);
         final IPage newPage = getChildPageAt(index);
-        newPage.onShow();
-        oldPage.onHide();
+        if (isAttach) {
+            newPage.onShow();
+            oldPage.onHide();
+        }
         newPage.getRootView().setVisibility(View.VISIBLE);
         long time = (provider == null ? 0L : provider.startPageAnimation(currentContiner(), oldPage.getRootView(), newPage.getRootView()));
         if (time != 0L)
@@ -54,7 +58,7 @@ public abstract class SwitchPage extends Page {
         mAnimatedTransitionsFinishAction = new Runnable() {
             @Override
             public void run() {
-                doFinalWorkForSwitchPage(index, newPage, oldPage);
+                doFinalWorkForSwitchPage(isAttach, index, newPage, oldPage);
             }
         };
         mContext.postDelayed(mAnimatedTransitionsFinishAction, time);
@@ -68,10 +72,13 @@ public abstract class SwitchPage extends Page {
         }
     }
 
-    private void doFinalWorkForSwitchPage(int index, IPage newPage, IPage oldPage) {
-        newPage.onShow();
-        oldPage.onHidden();
-        newPage.getRootView().requestFocus();
+    private void doFinalWorkForSwitchPage(boolean isAttach, int index, IPage newPage, IPage oldPage) {
+        if(isAttach){
+            newPage.onShow();
+            oldPage.onHidden();
+            newPage.getRootView().requestFocus();
+        }
+
         showIndex = index;
     }
 
@@ -92,16 +99,16 @@ public abstract class SwitchPage extends Page {
         boolean hasPrePage = removeIndex != 0;
         boolean hasAfterPage = removeIndex != count;
 
-        if(hasAfterPage){
-            switchToPage(removeIndex+1);
+        if (hasAfterPage) {
+            switchToPage(removeIndex + 1);
             showIndex = removeIndex;
-        }else {
-            if(hasPrePage){
+        } else {
+            if (hasPrePage) {
                 targetPage.onHide();
                 targetPage.onHidden();
                 showIndex = -1;
-            }else {
-                switchToPage(removeIndex-1);
+            } else {
+                switchToPage(removeIndex - 1);
             }
         }
         super.removePage(targetPage);
@@ -122,7 +129,9 @@ public abstract class SwitchPage extends Page {
     @Override
     public void onShown() {
 //        pageState = STATE_SHOWN;
-        getChildPageAt(showIndex).onShown();
+        IPage page = getChildPageAt(showIndex);
+        page.onShown();
+        page.getRootView().requestFocus();
     }
 
     @Override
@@ -140,15 +149,11 @@ public abstract class SwitchPage extends Page {
 
     @Override
     public boolean onTouchEvent(MotionEvent event) {
-        if (getChildPageAt(showIndex).onTouchEvent(event))
-            return true;
-        return super.onTouchEvent(event);
+        return getChildPageAt(showIndex).onTouchEvent(event) || super.onTouchEvent(event);
     }
 
     @Override
     public boolean onBackPressed() {
-        if (getChildPageAt(showIndex).onBackPressed())
-            return true;
-        return super.onBackPressed();
+        return getChildPageAt(showIndex).onBackPressed() || super.onBackPressed();
     }
 }
