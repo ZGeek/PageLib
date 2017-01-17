@@ -16,14 +16,15 @@ public class MainActivity extends PageActivity {
 
     @Override
     public IPage initRootPage() {
-        NavigationPage navigationPage =  new NavigationPage(this, new SimplePage(this));
-        navigationPage.pushPage(new SimplePage(this));
-        navigationPage.pushPage(new SimplePage(this));
-        navigationPage.pushPage(new SimplePage(this));
-        navigationPage.pushPage(new SimplePage(this));
-        navigationPage.pushPage(new SimplePage(this));
-        navigationPage.pushPage(new SimplePage(this));
-        return navigationPage;
+//        NavigationPage navigationPage =  new NavigationPage(this, new SimplePage(this));
+//        navigationPage.pushPage(new SimplePage(this));
+//        navigationPage.pushPage(new SimplePage(this));
+//        navigationPage.pushPage(new SimplePage(this));
+//        navigationPage.pushPage(new SimplePage(this));
+//        navigationPage.pushPage(new SimplePage(this));
+//        navigationPage.pushPage(new SimplePage(this));
+        InnerPage innerPage = new InnerPage(this);
+        return innerPage;
 
 //        ViewPagerPage pagerPage = new ViewPagerPage(this);
 //        pagerPage.addPage(new SimplePage(this));

@@ -23,7 +23,8 @@ public abstract class PageActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         handler = new Handler(Looper.getMainLooper());
-        requestWindowFeature(Window.FEATURE_NO_TITLE);
+//        getSupportActionBar().hide();
+
         super.onCreate(savedInstanceState);
 
         rootPage = initRootPage();

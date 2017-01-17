@@ -5,6 +5,7 @@ import android.content.res.Configuration;
 import android.support.annotation.Nullable;
 import android.util.Log;
 import android.view.KeyEvent;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.Animation;
@@ -26,8 +27,7 @@ public class NavigationPage extends Page {
 
     private static final String TAG = NavigationPage.class.getName();
     private final static int DEFAULT_ANIMATE_TIME = 500; //ms
-    //    private View mViewTransparentMask;
-    private NavigationViewManager mNavigationViewManager;
+    private NavigationViewManager2 mNavigationViewManager;
     private boolean mEnableDebug;
     //    private boolean mUseSwipePageTransitionEffect;
     //View的转场动画结束时的action，用于提前结束View的转场动画时提前做操作
@@ -41,9 +41,10 @@ public class NavigationPage extends Page {
 
     @Override
     protected View initView() {
-        mNavigationViewManager = new NavigationViewManager(this);
-        View view = mNavigationViewManager.createContainerView(mContext);
-        mNavigationViewManager.enableSwipeToHide(true);
+        mNavigationViewManager = new NavigationViewManager2(this);
+        NavigationViewManager2.NavigationContainerView view = mNavigationViewManager.createContainerView(mContext);
+        view.enableSwipeToHide();
+
         return view;
     }
 
@@ -89,6 +90,7 @@ public class NavigationPage extends Page {
         };
         mContext.postDelayed(mAnimatedTransitionsFinishAction, time);
     }
+
 
     private synchronized void ensureEndAnimationExecution() {
         if (mAnimatedTransitionsFinishAction != null) {
@@ -263,6 +265,7 @@ public class NavigationPage extends Page {
             }
         }
         if (isAttach) {
+            willShowPage.getRootView().bringToFront();
             willShowPage.getRootView().requestFocus();
             willShowPage.onShown();
         }
@@ -270,6 +273,7 @@ public class NavigationPage extends Page {
             IPage cPage = willRemovePages.get(i);
             cPage.onDestroy();
         }
+//        mViewTransparentMask.bringToFront();
         mAnimatedTransitionsFinishAction = null;
     }
 
@@ -285,8 +289,8 @@ public class NavigationPage extends Page {
         return true;
     }
 
-    public NavigationViewManager.NavigationContainerView currentContiner() {
-        return (NavigationViewManager.NavigationContainerView) rootView;
+    public ViewGroup currentContiner() {
+        return (ViewGroup) rootView;
     }
 
     private PageAnimatorProvider getSwipPopAnimator() {
@@ -300,7 +304,7 @@ public class NavigationPage extends Page {
                     t1 = Math.abs(DEFAULT_ANIMATE_TIME * (width - left) / width);
 //                    t1 = 10000;
                     resetMargin(fromView);
-                    NavigationViewManager.animateView(fromView,
+                    NavigationViewManager2.animateView(fromView,
                             Animation.ABSOLUTE, left,
                             Animation.RELATIVE_TO_PARENT, 1.0f,
                             t1, null);
@@ -310,7 +314,7 @@ public class NavigationPage extends Page {
                     t2 = Math.abs(DEFAULT_ANIMATE_TIME * left / width * 2);
 //                    t2 = 10000;
                     resetMargin(toView);
-                    NavigationViewManager.animateView(toView,
+                    NavigationViewManager2.animateView(toView,
                             Animation.ABSOLUTE, left,
                             Animation.RELATIVE_TO_PARENT, 0.0f,
                             t2, null);
@@ -371,14 +375,14 @@ public class NavigationPage extends Page {
         if (mPrevView != null) {
             resetMargin(mPrevView);
             int t1 = DEFAULT_ANIMATE_TIME * (width / 2 - Math.abs(mPrevView.getLeft())) / (width / 2);
-            NavigationViewManager.animateView(mPrevView,
+            NavigationViewManager2.animateView(mPrevView,
                     Animation.ABSOLUTE, mPrevView.getLeft(),
                     Animation.RELATIVE_TO_PARENT, -0.5f,
                     t1, null);
         }
         resetMargin(mCurrentView);
         int t2 = DEFAULT_ANIMATE_TIME * Math.abs(mCurrentView.getLeft()) / (width);
-        NavigationViewManager.animateView(mCurrentView,
+        NavigationViewManager2.animateView(mCurrentView,
                 Animation.ABSOLUTE, mCurrentView.getLeft(),
                 Animation.RELATIVE_TO_PARENT, 0,
                 t2, null);
@@ -403,6 +407,7 @@ public class NavigationPage extends Page {
         layoutParams.setMargins(0, 0, 0, 0);
         view.setLayoutParams(layoutParams);
         currentContiner().addView(page.getRootView());
+//        mViewTransparentMask.bringToFront();
     }
 
     //Life Cycle

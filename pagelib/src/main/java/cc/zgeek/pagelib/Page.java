@@ -169,6 +169,10 @@ public abstract class Page extends ViewWrapper implements IPage {
 
     @Override
     public boolean onBackPressed() {
+        for (int i = pageList.size() - 1; i >= 0; i--) {
+            if(pageList.get(i).onBackPressed())
+                return true;
+        }
         return false;
     }
 

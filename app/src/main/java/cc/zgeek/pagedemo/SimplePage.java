@@ -41,7 +41,6 @@ public class SimplePage extends Page implements View.OnClickListener {
 
         layout.setBackgroundColor(Color.argb(255, random.nextInt(255), random.nextInt(255), random.nextInt(255) ));
 
-
         layout.addView(textView);
 
         return layout;
@@ -49,7 +48,7 @@ public class SimplePage extends Page implements View.OnClickListener {
 
     @Override
     public void onClick(View v) {
-        ((NavigationPage) mContext.getRootPage()).pushPage(new SimplePage(mContext));
+        ((NavigationPage) getParentPage()).pushPage(new SimplePage(mContext));
     }
 
     @Override
