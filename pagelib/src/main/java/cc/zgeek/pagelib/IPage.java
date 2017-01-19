@@ -24,7 +24,7 @@ public interface IPage {
 
     boolean onKeyUp(int keyCode, KeyEvent event);
 
-    boolean onTouchEvent(MotionEvent event);
+//    boolean onTouchEvent(MotionEvent event);
 
     void onConfigurationChanged(Configuration newConfig);
 
@@ -50,6 +50,8 @@ public interface IPage {
     List<IPage> getSubChildPages(int beginIndex, int count);
 
     int getChildPageCount();
+
+    void onViewInited();
 
     //将要显示时的回调
     void onShow();

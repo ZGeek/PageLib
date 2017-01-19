@@ -85,13 +85,13 @@ public abstract class PageActivity extends AppCompatActivity {
         return super.onKeyUp(keyCode, event);
     }
 
-    @Override
-    public boolean onTouchEvent(MotionEvent event) {
-        if (rootPage.onTouchEvent(event)) {
-            return true;
-        }
-        return super.onTouchEvent(event);
-    }
+//    @Override
+//    public boolean onTouchEvent(MotionEvent event) {
+//        if (rootPage.onTouchEvent(event)) {
+//            return true;
+//        }
+//        return super.onTouchEvent(event);
+//    }
 
     @Override
     public void onConfigurationChanged(Configuration newConfig) {

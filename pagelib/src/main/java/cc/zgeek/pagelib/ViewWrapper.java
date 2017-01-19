@@ -2,7 +2,9 @@ package cc.zgeek.pagelib;
 
 import android.content.res.Resources;
 import android.support.annotation.NonNull;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewAnimationUtils;
 
 import cc.zgeek.pagelib.Utils.AnnotationUtils;
 
@@ -14,21 +16,23 @@ import cc.zgeek.pagelib.Utils.AnnotationUtils;
 
 public abstract class ViewWrapper {
     protected PageActivity mContext;
-    protected View rootView;
+    protected volatile View rootView;
     private static String PACKAGE_NAME = null;
 
     public ViewWrapper(PageActivity pageActivity) {
         mContext = pageActivity;
-        rootView = initView();
-        if(PACKAGE_NAME == null)
+        if (PACKAGE_NAME == null)
             PACKAGE_NAME = pageActivity.getPackageName();
-        AnnotationUtils.injectView(this);
     }
 
     @NonNull
-    protected abstract View initView();
+    public View getRootView() {
+        rootView = AnnotationUtils.injectLayout(this);
+        if (rootView == null) {
+            throw new IllegalStateException("Neigher " + getClass().getName() + " nor it's supper class Annotation with PageLaout or PageLayoutName");
+        }
+        AnnotationUtils.injectView(this);
 
-    public final View getRootView() {
         return rootView;
     }
 
@@ -53,7 +57,13 @@ public abstract class ViewWrapper {
         return mContext.getResources();
     }
 
-    public String getPackageName(){
+    public String getPackageName() {
         return PACKAGE_NAME;
     }
+
+    public LayoutInflater getLayoutInflater() {
+        return mContext.getLayoutInflater();
+    }
+
+
 }

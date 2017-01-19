@@ -2,6 +2,7 @@ package cc.zgeek.pagelib;
 
 import android.content.Intent;
 import android.content.res.Configuration;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.Log;
 import android.view.KeyEvent;
@@ -22,7 +23,7 @@ import cc.zgeek.pagelib.anim.PageAnimatorProvider;
  * <p>
  * 导航Page，采用回退栈机制对page进行管理，至少保留一个Page，每次只显示一个Page
  */
-public class NavigationPage extends Page {
+public class NavigationPage extends SingleActivePage {
 
     private static final String TAG = NavigationPage.class.getName();
     private final static int DEFAULT_ANIMATE_TIME = 500; //ms
@@ -38,13 +39,26 @@ public class NavigationPage extends Page {
         addPage(rootPage);
     }
 
-    @Override
-    protected View initView() {
-        mNavigationViewManager = new NavigationViewManager(this);
-        NavigationViewManager.NavigationContainerView view = mNavigationViewManager.createContainerView(mContext);
-        view.enableSwipeToHide();
 
-        return view;
+    @Override
+    public void onViewInited() {
+        super.onViewInited();
+        ((NavigationViewManager.NavigationContainerView) rootView).enableSwipeToHide();
+    }
+
+    @NonNull
+    @Override
+    public View getRootView() {
+        if (rootView == null) {
+            synchronized (this) {
+                if (rootView == null) {
+                    mNavigationViewManager = new NavigationViewManager(this);
+                    rootView = mNavigationViewManager.createContainerView(mContext);
+                    onViewInited();
+                }
+            }
+        }
+        return rootView;
     }
 
     public void pushPage(final IPage newPage) {
@@ -208,7 +222,7 @@ public class NavigationPage extends Page {
         }
 
         final boolean isAttach = isAttachToActivity();
-        if(getChildPageCount() == 1)
+        if (getChildPageCount() == 1)
             return;
 
         IPage topPage = getChildPageAt(getChildPageCount() - 1);
@@ -288,6 +302,7 @@ public class NavigationPage extends Page {
         return true;
     }
 
+    
     public ViewGroup currentContiner() {
         return (ViewGroup) rootView;
     }
@@ -412,43 +427,32 @@ public class NavigationPage extends Page {
     //Life Cycle
 
     @Override
+    public IPage getActiviePage() {
+        return getTopPage();
+    }
+
+    @Override
     public void onShow() {
-//        pageState = STATE_SHOWING;
         ensureEndAnimationExecution();
-        if (getChildPageCount() > 0) {
-            getChildPageAt(getChildPageCount() - 1).onShow();
-        }
+        super.onShow();
     }
 
     @Override
     public void onShown() {
-//        pageState = STATE_SHOWN;
         ensureEndAnimationExecution();
-        if (getChildPageCount() > 0) {
-            IPage topPage = getChildPageAt(getChildPageCount() - 1);
-            topPage.getRootView().bringToFront();
-            topPage.getRootView().setVisibility(View.VISIBLE);
-            topPage.getRootView().requestFocus();
-            topPage.onShown();
-        }
+        super.onShown();
     }
 
     @Override
     public void onHide() {
-//        pageState = STATE_HIDDING;
         ensureEndAnimationExecution();
-        if (getChildPageCount() > 0) {
-            getChildPageAt(getChildPageCount() - 1).onHide();
-        }
+        super.onHide();
     }
 
     @Override
     public void onHidden() {
-//        pageState = STATE_HIDDEN;
         ensureEndAnimationExecution();
-        if (getChildPageCount() > 0) {
-            getChildPageAt(getChildPageCount() - 1).onHidden();
-        }
+        super.onHidden();
     }
 
     @Override
@@ -457,61 +461,16 @@ public class NavigationPage extends Page {
         super.onDestroy();
     }
 
-    @Override
-    public void onLowMemory() {
-        super.onLowMemory();
-    }
-
-    @Override
-    public boolean onKeyDown(int keyCode, KeyEvent event) {
-        if (getChildPageCount() > 0) {
-            if (getTopPage().onKeyDown(keyCode, event))
-                return true;
-        }
-        return super.onKeyDown(keyCode, event);
-    }
-
-    @Override
-    public boolean onMenuPressed() {
-        if (getChildPageCount() > 0) {
-            if (getTopPage().onMenuPressed())
-                return true;
-        }
-        return super.onMenuPressed();
-    }
-
-    @Override
-    public boolean onKeyUp(int keyCode, KeyEvent event) {
-        if (getChildPageCount() > 0) {
-            if (getTopPage().onKeyUp(keyCode, event))
-                return true;
-        }
-        return super.onKeyUp(keyCode, event);
-    }
-
-    @Override
-    public void onConfigurationChanged(Configuration newConfig) {
-        super.onConfigurationChanged(newConfig);
-    }
 
     @Override
     public boolean onBackPressed() {
-        if (getChildPageCount() > 0) {
-            if (getTopPage().onBackPressed())
-                return true;
+        if (super.onBackPressed()) {
+            return true;
         }
         if (getChildPageCount() > 1) {
             popPage();
             return true;
         }
         return super.onBackPressed();
-    }
-
-    @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        if (getChildPageCount() > 0) {
-            getTopPage().onActivityResult(requestCode, resultCode, data);
-        }
     }
 }

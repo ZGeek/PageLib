@@ -13,7 +13,7 @@ import cc.zgeek.pagelib.anim.PageAnimatorProvider;
  * 2017/1/14 : Create
  */
 
-public abstract class SwitchPage extends Page {
+public abstract class SwitchPage extends SingleActivePage {
 
     int showIndex = 0;
     private Runnable mAnimatedTransitionsFinishAction = null;
@@ -28,7 +28,7 @@ public abstract class SwitchPage extends Page {
     }
 
     public void switchToPage(IPage page, PageAnimatorProvider provider) {
-        int index = findPageIndex(page);
+        int index = getChildPageIndex(page);
         if (index >= 0) {
             switchToPage(index, provider);
         }
@@ -121,39 +121,7 @@ public abstract class SwitchPage extends Page {
     }
 
     @Override
-    public void onShow() {
-//        pageState = STATE_SHOWING;
-        getChildPageAt(showIndex).onShow();
-    }
-
-    @Override
-    public void onShown() {
-//        pageState = STATE_SHOWN;
-        IPage page = getChildPageAt(showIndex);
-        page.onShown();
-        page.getRootView().requestFocus();
-    }
-
-    @Override
-    public void onHide() {
-//        pageState = STATE_HIDDING;
-        getChildPageAt(showIndex).onHide();
-    }
-
-    @Override
-    public void onHidden() {
-//        pageState = STATE_HIDDEN;
-        getChildPageAt(showIndex).onHidden();
-    }
-
-
-    @Override
-    public boolean onTouchEvent(MotionEvent event) {
-        return getChildPageAt(showIndex).onTouchEvent(event) || super.onTouchEvent(event);
-    }
-
-    @Override
-    public boolean onBackPressed() {
-        return getChildPageAt(showIndex).onBackPressed() || super.onBackPressed();
+    public IPage getActiviePage() {
+        return getChildPageAt(showIndex);
     }
 }

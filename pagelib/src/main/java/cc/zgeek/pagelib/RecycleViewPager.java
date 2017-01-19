@@ -15,9 +15,4 @@ public class RecycleViewPager extends Page {
         super(pageActivity);
     }
 
-    @NonNull
-    @Override
-    protected View initView() {
-        return null;
-    }
 }
