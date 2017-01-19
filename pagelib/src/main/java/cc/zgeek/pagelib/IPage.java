@@ -43,7 +43,7 @@ public interface IPage {
 
     void addPage(IPage page);
 
-    void removePage(IPage page);
+    boolean removePage(IPage page);
 
     IPage getChildPageAt(int index);
     int getChildPageIndex(@NonNull IPage page);
@@ -52,6 +52,8 @@ public interface IPage {
     int getChildPageCount();
 
     void onViewInited();
+
+    boolean isViewInited();
 
     //将要显示时的回调
     void onShow();

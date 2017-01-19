@@ -85,14 +85,23 @@ public class ViewPagerPage extends SingleActivePage implements ViewPager.OnPageC
     @Override
     public void onPageSelected(int position) {
         if (isAttachToActivity()) {
-            if (currentShowIndex != position) {
-                IPage oldPage = getChildPageAt(currentShowIndex);
-                oldPage.onHide();
-                oldPage.onHidden();
-            }
+//            if (currentShowIndex != position) {
+//                IPage oldPage = getChildPageAt(currentShowIndex);
+//                oldPage.onHide();
+//                oldPage.onHidden();
+//            }
+//            IPage page = getChildPageAt(position);
+//            page.onShow();
+//            page.onShown();
+
+
+            IPage oldPage = getChildPageAt(currentShowIndex);
             IPage page = getChildPageAt(position);
+
             page.onShow();
+            oldPage.onHide();
             page.onShown();
+            oldPage.onHidden();
         }
         currentShowIndex = position;
         if (mOnPageChangeListeners == null || mOnPageChangeListeners.size() == 0)
@@ -127,16 +136,77 @@ public class ViewPagerPage extends SingleActivePage implements ViewPager.OnPageC
     }
 
     public void addPages(List<IPage> pages) {
-        for (int i=0; i< pages.size(); i ++){
+        int preCount = getChildPageCount();
+        for (int i = 0; i < pages.size(); i++) {
             super.addPage(pages.get(i));
         }
-        adapterWrapper.notifyDataSetChanged();
+        int afterCount = getChildPageCount();
+        if (preCount == 0 && afterCount > 0) {
+            //此时第一个Page将显示，但并不会调用onPageSelected，所以此时需要对第一个page做处理
+            getChildPageAt(0).onShow();
+            adapterWrapper.notifyDataSetChanged();
+            getChildPageAt(0).onShown();
+        } else if (pages.size() > 0) {
+            adapterWrapper.notifyDataSetChanged();
+        }
     }
 
     @Override
-    public void removePage(IPage page) {
-        super.removePage(page);
-        adapterWrapper.notifyDataSetChanged();
+    public boolean removePage(IPage page) {
+        /***
+         * 根据测试结果，VIewPage在页面移除的逻辑是
+         * 1：当移除当前页时优先使用后面的一页，后面没有用前页，前页也没有显示空白
+         * 2：移除非当前页时保持当前页继续显示给用户
+         */
+
+        int targetRemovePageIndex = getChildPageIndex(page);
+        if (targetRemovePageIndex < 0)
+            return false;
+        if (targetRemovePageIndex == currentShowIndex) {
+            IPage willShowPage = getWillShowPageIndexWhenRemove(targetRemovePageIndex);
+            if (willShowPage != null)
+                willShowPage.onShow();
+            page.onHide();
+            super.removePage(page);
+            adapterWrapper.notifyDataSetChanged();
+            if (willShowPage != null)
+                willShowPage.onShown();
+            page.onHidden();
+            if(page.isViewInited()){
+                page.onDestroy();
+            }
+
+        } else if (targetRemovePageIndex < currentShowIndex) {
+            super.removePage(page);
+            if(page.isViewInited()){
+                page.onDestroy();
+            }
+            adapterWrapper.notifyDataSetChanged();
+            currentShowIndex--;
+        } else {
+//            index > currentShowIndex
+            super.removePage(page);
+            adapterWrapper.notifyDataSetChanged();
+            if(page.isViewInited()){
+                page.onDestroy();
+            }
+        }
+
+        return true;
+    }
+
+    public IPage getWillShowPageIndexWhenRemove(int removeIndex) {
+        int childCount = getChildPageCount();
+        boolean hasPre = (removeIndex == 0);
+        boolean hasAfter = (childCount > (removeIndex + 1));
+        if (hasAfter) {
+            return getChildPageAt(removeIndex + 1);
+        } else {
+            if (hasPre)
+                return getChildPageAt(removeIndex - 1);
+            else
+                return null;
+        }
     }
 
     class IPageAdapterWrapper extends PagerAdapter {
@@ -162,15 +232,12 @@ public class ViewPagerPage extends SingleActivePage implements ViewPager.OnPageC
         public void destroyItem(ViewGroup container, int position, Object object) {
             IPage page = (IPage) object;
             container.removeView(page.getRootView());
-            int index = getChildPageIndex(page);
-            if (index < 0)
-                page.onDestroy();
         }
 
         @Override
         public int getItemPosition(Object object) {
             int index = getChildPageIndex((IPage) object);
-            if (index < 0 || index >=getChildPageCount())
+            if (index < 0 || index >= getChildPageCount())
                 return POSITION_NONE;
             return index;
         }

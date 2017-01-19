@@ -92,7 +92,7 @@ public abstract class SwitchPage extends SingleActivePage {
     }
 
     @Override
-    public void removePage(IPage targetPage) {
+    public boolean removePage(IPage targetPage) {
         int removeIndex = getChildPageIndex(targetPage);
         int count = getChildPageCount();
 
@@ -111,9 +111,12 @@ public abstract class SwitchPage extends SingleActivePage {
                 switchToPage(removeIndex - 1);
             }
         }
-        super.removePage(targetPage);
-        currentContiner().removeView(targetPage.getRootView());
-        targetPage.onDestroy();
+        boolean succ = super.removePage(targetPage);
+        if(succ){
+            currentContiner().removeView(targetPage.getRootView());
+            targetPage.onDestroy();
+        }
+        return succ;
     }
 
     public ViewGroup currentContiner() {

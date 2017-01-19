@@ -82,6 +82,6 @@ public class SimplePage extends Page {
     @Override
     public void onDestroy() {
         super.onDestroy();
-        Log.d(SimplePage.class.getSimpleName(), this+"-->onDestroy");
+        Log.d(SimplePage.class.getSimpleName(), index+"-->onDestroy");
     }
 }

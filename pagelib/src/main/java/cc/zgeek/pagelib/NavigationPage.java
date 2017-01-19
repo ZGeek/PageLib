@@ -304,7 +304,7 @@ public class NavigationPage extends SingleActivePage {
 
     
     public ViewGroup currentContiner() {
-        return (ViewGroup) rootView;
+        return (ViewGroup) getRootView();
     }
 
     private PageAnimatorProvider getSwipPopAnimator() {

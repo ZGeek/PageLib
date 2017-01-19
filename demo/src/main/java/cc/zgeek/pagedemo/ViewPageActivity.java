@@ -19,7 +19,7 @@ import cc.zgeek.pagelib.ViewPagerPage;
  * 2017/1/13 : Create
  */
 
-public class MainActivity extends PageActivity {
+public class ViewPageActivity extends PageActivity {
 
     List<IPage> pages = new LinkedList<>();
 
@@ -57,13 +57,10 @@ public class MainActivity extends PageActivity {
         postDelayed(new Runnable() {
             @Override
             public void run() {
-                pagerPage.removePage(pages.get(2));
+                pagerPage.removePage(pages.get(5));
             }
         }, 8000);
         return pagerPage;
-
-
-
 
     }
 
