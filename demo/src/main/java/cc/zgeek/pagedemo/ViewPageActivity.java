@@ -50,14 +50,14 @@ public class ViewPageActivity extends PageActivity {
         postDelayed(new Runnable() {
             @Override
             public void run() {
-               pagerPage.switchToPage(2);
+               pagerPage.switchToPage(10);
             }
         }, 5000);
 
         postDelayed(new Runnable() {
             @Override
             public void run() {
-                pagerPage.removePage(pages.get(5));
+                pagerPage.addPage(new SimplePage(ViewPageActivity.this, 11));
             }
         }, 8000);
         return pagerPage;

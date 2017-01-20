@@ -18,4 +18,11 @@ public class ListUtil {
         }
         return subList;
     }
+    public static <T> List<T> copy(List<T> source){
+        LinkedList<T> tmp = new LinkedList<>();
+        for (T item : source ){
+            tmp.add(item);
+        }
+        return tmp;
+    }
 }

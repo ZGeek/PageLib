@@ -49,6 +49,8 @@ public interface IPage {
     int getChildPageIndex(@NonNull IPage page);
     List<IPage> getSubChildPages(int beginIndex, int count);
 
+    boolean removePage(int index);
+
     int getChildPageCount();
 
     void onViewInited();
@@ -69,4 +71,8 @@ public interface IPage {
     boolean onMenuPressed();
 
     void onLowMemory();
+
+    String getName();
+
+    void setName(String name);
 }

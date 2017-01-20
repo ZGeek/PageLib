@@ -142,13 +142,35 @@ public class ViewPagerPage extends SingleActivePage implements ViewPager.OnPageC
         }
         int afterCount = getChildPageCount();
         if (preCount == 0 && afterCount > 0) {
+            boolean isAttach = isAttachToActivity();
             //此时第一个Page将显示，但并不会调用onPageSelected，所以此时需要对第一个page做处理
-            getChildPageAt(0).onShow();
+            if (isAttach) {
+                getChildPageAt(0).onShow();
+            }
             adapterWrapper.notifyDataSetChanged();
-            getChildPageAt(0).onShown();
+            if (isAttach) {
+                getChildPageAt(0).onShown();
+            }
         } else if (pages.size() > 0) {
             adapterWrapper.notifyDataSetChanged();
         }
+    }
+
+    public void setPageList(List<IPage> pages) {
+        boolean isAttach = isAttachToActivity();
+        IPage cPage  = getActiviePage();
+
+        for (int i = getChildPageCount() - 1; i >= 0; i--) {
+            IPage tmpPage = getChildPageAt(i);
+            if(tmpPage == cPage && isAttach){
+                tmpPage.onHide();
+                tmpPage.onHidden();
+            }
+            if(tmpPage.isViewInited())
+                tmpPage.onDestroy();
+            super.removePage(i);
+        }
+        addPages(pages);
     }
 
     @Override
@@ -172,13 +194,13 @@ public class ViewPagerPage extends SingleActivePage implements ViewPager.OnPageC
             if (willShowPage != null)
                 willShowPage.onShown();
             page.onHidden();
-            if(page.isViewInited()){
+            if (page.isViewInited()) {
                 page.onDestroy();
             }
 
         } else if (targetRemovePageIndex < currentShowIndex) {
             super.removePage(page);
-            if(page.isViewInited()){
+            if (page.isViewInited()) {
                 page.onDestroy();
             }
             adapterWrapper.notifyDataSetChanged();
@@ -187,7 +209,7 @@ public class ViewPagerPage extends SingleActivePage implements ViewPager.OnPageC
 //            index > currentShowIndex
             super.removePage(page);
             adapterWrapper.notifyDataSetChanged();
-            if(page.isViewInited()){
+            if (page.isViewInited()) {
                 page.onDestroy();
             }
         }
@@ -240,6 +262,11 @@ public class ViewPagerPage extends SingleActivePage implements ViewPager.OnPageC
             if (index < 0 || index >= getChildPageCount())
                 return POSITION_NONE;
             return index;
+        }
+
+        @Override
+        public CharSequence getPageTitle(int position) {
+            return getChildPageAt(position).getName();
         }
     }
 

@@ -28,7 +28,7 @@ public abstract class Page extends ViewWrapper implements IPage {
 
     private LinkedList<IPage> pageList = new LinkedList<>();
     private IPage parentPage = null;
-
+    private String name = null;
 
 
     public Page(PageActivity pageActivity) {
@@ -73,9 +73,19 @@ public abstract class Page extends ViewWrapper implements IPage {
         if (page.getParentPage() != this) {
             throw new IllegalStateException("Page Can Not Remove Because It Not Belong Of This");
         }
+        page.setParentPage(null);
         return pageList.remove(page);
     }
 
+    @Override
+    public boolean removePage(int index) {
+//        if (page.getParentPage() != this) {
+//            throw new IllegalStateException("Page Can Not Remove Because It Not Belong Of This");
+//        }
+        IPage page = pageList.remove(index);
+        page.setParentPage(null);
+        return page != null;
+    }
 
     @Override
     public int getChildPageCount() {
@@ -124,7 +134,6 @@ public abstract class Page extends ViewWrapper implements IPage {
     }
 
 
-
     @Override
     public void onShow() {
         for (int i = getChildPageCount() - 1; i >= 0; i--) {
@@ -156,7 +165,9 @@ public abstract class Page extends ViewWrapper implements IPage {
     @Override
     public void onDestroy() {
         for (int i = getChildPageCount() - 1; i >= 0; i--) {
-            getChildPageAt(i).onDestroy();
+            IPage page = getChildPageAt(i);
+            if (page.isViewInited())
+                page.onDestroy();
         }
     }
 
@@ -227,5 +238,13 @@ public abstract class Page extends ViewWrapper implements IPage {
     @Override
     public void setParentPage(IPage parentPage) {
         this.parentPage = parentPage;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 }

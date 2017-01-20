@@ -1,5 +1,6 @@
 package cc.zgeek.pagelib.anim;
 
+import android.animation.ValueAnimator;
 import android.support.annotation.Nullable;
 import android.view.View;
 import android.view.ViewGroup;
@@ -34,9 +35,9 @@ public interface PageAnimatorProvider {
    * 为Page切换提供转场动画
    * @param fromView 将要隐藏的动画
    * @param toView 将要显示的动画
-     * @return View动画的执行时间
-     */
-  long startPageAnimation(ViewGroup container, @Nullable View fromView, View toView);
+   * @return View动画的执行时间
+   */
+  ValueAnimator getPageAnimation(ViewGroup container, @Nullable View fromView, View toView);
 
 
 }

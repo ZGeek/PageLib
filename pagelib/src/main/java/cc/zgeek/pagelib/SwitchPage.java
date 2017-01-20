@@ -1,11 +1,13 @@
 package cc.zgeek.pagelib;
 
-import android.view.MotionEvent;
+import android.animation.Animator;
+import android.animation.ValueAnimator;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
 
 import cc.zgeek.pagelib.anim.PageAnimatorProvider;
+import cc.zgeek.pagelib.anim.SimpleAnimListener;
 
 /**
  * Created by flyop.
@@ -16,7 +18,7 @@ import cc.zgeek.pagelib.anim.PageAnimatorProvider;
 public abstract class SwitchPage extends SingleActivePage {
 
     int showIndex = 0;
-    private Runnable mAnimatedTransitionsFinishAction = null;
+    private ValueAnimator mAnimatedTransitionsFinishAction = null;
 
     public SwitchPage(PageActivity pageActivity) {
         super(pageActivity);
@@ -52,28 +54,39 @@ public abstract class SwitchPage extends SingleActivePage {
             oldPage.onHide();
         }
         newPage.getRootView().setVisibility(View.VISIBLE);
-        long time = (provider == null ? 0L : provider.startPageAnimation(currentContiner(), oldPage.getRootView(), newPage.getRootView()));
-        if (time != 0L)
-            time = Math.max(time + 1, 0);
-        mAnimatedTransitionsFinishAction = new Runnable() {
-            @Override
-            public void run() {
-                doFinalWorkForSwitchPage(isAttach, index, newPage, oldPage);
-            }
-        };
-        mContext.postDelayed(mAnimatedTransitionsFinishAction, time);
+        if (provider != null) {
+            mAnimatedTransitionsFinishAction = provider.getPageAnimation(currentContiner(), oldPage.getRootView(), newPage.getRootView());
+            mAnimatedTransitionsFinishAction.addListener(new SimpleAnimListener(){
+                @Override
+                public void onAnimationEnd(Animator animation) {
+                    doFinalWorkForSwitchPage(isAttach, index, newPage, oldPage);
+                }
+            });
+        } else {
+            doFinalWorkForSwitchPage(isAttach, index, newPage, oldPage);
+        }
+//        long time = (provider == null ? 0L : provider.getPageAnimation(currentContiner(), oldPage.getRootView(), newPage.getRootView()));
+//        if (time != 0L)
+//            time = Math.max(time + 1, 0);
+//        mAnimatedTransitionsFinishAction = new Runnable() {
+//            @Override
+//            public void run() {
+//                doFinalWorkForSwitchPage(isAttach, index, newPage, oldPage);
+//            }
+//        };
+//        mContext.postDelayed(mAnimatedTransitionsFinishAction, time);
+
     }
 
     private void ensureEndAnimationExecution() {
-        if (mAnimatedTransitionsFinishAction != null) {
-            mContext.removeCallbacks(mAnimatedTransitionsFinishAction);
-            mAnimatedTransitionsFinishAction.run();
+        if (mAnimatedTransitionsFinishAction != null && mAnimatedTransitionsFinishAction.isRunning()) {
+            mAnimatedTransitionsFinishAction.end();
             mAnimatedTransitionsFinishAction = null;
         }
     }
 
     private void doFinalWorkForSwitchPage(boolean isAttach, int index, IPage newPage, IPage oldPage) {
-        if(isAttach){
+        if (isAttach) {
             newPage.onShow();
             oldPage.onHidden();
             newPage.getRootView().requestFocus();
@@ -112,7 +125,7 @@ public abstract class SwitchPage extends SingleActivePage {
             }
         }
         boolean succ = super.removePage(targetPage);
-        if(succ){
+        if (succ) {
             currentContiner().removeView(targetPage.getRootView());
             targetPage.onDestroy();
         }

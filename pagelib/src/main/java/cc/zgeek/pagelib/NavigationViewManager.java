@@ -10,6 +10,8 @@ import android.view.animation.DecelerateInterpolator;
 import android.view.animation.TranslateAnimation;
 import android.widget.FrameLayout;
 
+import static android.support.v4.widget.ViewDragHelper.STATE_SETTLING;
+
 /**
  * Created by flyop.
  * Change History:
@@ -51,7 +53,7 @@ public class NavigationViewManager {
 
                 @Override
                 public void onEdgeDragStarted(int edgeFlags, int pointerId) {
-                    if(mNavigationPage.getChildPageCount() > 1){
+                    if (mNavigationPage.getChildPageCount() > 1 && !mNavigationPage.isAnim()) {
                         dragHelper.captureChildView(mNavigationPage.getTopPage().getRootView(), pointerId);
                         View mPreView = mNavigationPage.getChildPageAt(mNavigationPage.getChildPageCount() - 2).getRootView();
                         mPreView.setVisibility(VISIBLE);
@@ -62,45 +64,65 @@ public class NavigationViewManager {
                 }
 
 
-
                 @Override
                 public void onViewReleased(View releasedChild, float xvel, float yvel) {
                     int left = releasedChild.getLeft();
                     int minOffset = (int) (mSwipeToHideThreshold * getMeasuredWidth());
-                    if(left<minOffset){
+                    if (left < minOffset) {
+//                        dragHelper.settleCapturedViewAt(0, 0);
+//                        invalidate();
                         cancelSwipeToHide();
-                    }else {
+                    } else {
                         mNavigationPage.popFromSwip();
                     }
                 }
-                @Override
-                public int clampViewPositionHorizontal(View child, int left, int dx)
-                {
-                    return left;
-                }
 
                 @Override
-                public int clampViewPositionVertical(View child, int top, int dy)
-                {
+                public int clampViewPositionHorizontal(View child, int left, int dx) {
+                    if (left > 0)
+                        return left;
                     return 0;
                 }
 
+
                 @Override
                 public void onViewPositionChanged(View changedView, int left, int top, int dx, int dy) {
-                    Log.d("RRR", changedView+" "+left+" "+top+" "+dx+" "+dy);
                     View currentView = mNavigationPage.getTopPage().getRootView();
                     MarginLayoutParams params = (MarginLayoutParams) currentView.getLayoutParams();
                     params.setMargins(left, 0, -left, 0);
 
                     View mPreView = mNavigationPage.getChildPageAt(mNavigationPage.getChildPageCount() - 2).getRootView();
                     MarginLayoutParams mPreViewLayoutParams = (MarginLayoutParams) mPreView.getLayoutParams();
-                    int childLeft = (left-getMeasuredWidth()) / 2;
+                    int childLeft = (left - getMeasuredWidth()) / 2;
                     mPreViewLayoutParams.setMargins(childLeft, 0, -childLeft, 0);
                     mPreView.setLayoutParams(mPreViewLayoutParams);
                 }
+
+                @Override
+                public int getViewHorizontalDragRange(View child) {
+                    return getMeasuredWidth();
+                }
+
+//                @Override
+//                public void onViewDragStateChanged(int state) {
+//                    if (state == STATE_SETTLING) {
+//                        NavigationContainerView.this.setEnabled(false);
+//                    } else {
+//                        NavigationContainerView.this.setEnabled(true);
+//                    }
+//                }
+
             });
             dragHelper.setEdgeTrackingEnabled(ViewDragHelper.EDGE_LEFT);
         }
+
+        @Override
+        public void computeScroll() {
+            if (dragHelper.continueSettling(true)) {
+                invalidate();
+            }
+        }
+
 
         public void enableSwipeToHide() {
             if (!mSwipeToHide) {
@@ -110,10 +132,7 @@ public class NavigationViewManager {
 
         @Override
         public boolean onInterceptTouchEvent(MotionEvent ev) {
-//            if (mSwipeToHide && mNavigationPage.getChildPageCount() < 2 && mNavigationPage.isTopPageCanSwipeToHide()) {
-                return dragHelper.shouldInterceptTouchEvent(ev);
-//            }
-//            return super.onInterceptTouchEvent(ev);
+            return dragHelper.shouldInterceptTouchEvent(ev);
         }
 
         @Override

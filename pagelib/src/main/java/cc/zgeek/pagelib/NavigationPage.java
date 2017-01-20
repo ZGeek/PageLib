@@ -1,20 +1,22 @@
 package cc.zgeek.pagelib;
 
-import android.content.Intent;
-import android.content.res.Configuration;
+import android.animation.Animator;
+import android.animation.ValueAnimator;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.Log;
-import android.view.KeyEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.AccelerateInterpolator;
 import android.view.animation.Animation;
-import android.view.animation.AnimationUtils;
+import android.view.animation.DecelerateInterpolator;
 import android.widget.FrameLayout;
 
 import java.util.List;
 
+import cc.zgeek.pagelib.Utils.PageLibDebugUtis;
 import cc.zgeek.pagelib.anim.PageAnimatorProvider;
+import cc.zgeek.pagelib.anim.SimpleAnimListener;
 
 /**
  * Created by flyop.
@@ -26,13 +28,12 @@ import cc.zgeek.pagelib.anim.PageAnimatorProvider;
 public class NavigationPage extends SingleActivePage {
 
     private static final String TAG = NavigationPage.class.getName();
-    private final static int DEFAULT_ANIMATE_TIME = 500; //ms
+    private final static int DEFAULT_ANIMATE_TIME = 300; //ms
     private NavigationViewManager mNavigationViewManager;
-    private boolean mEnableDebug;
     //    private boolean mUseSwipePageTransitionEffect;
     //View的转场动画结束时的action，用于提前结束View的转场动画时提前做操作
-    private Runnable mAnimatedTransitionsFinishAction = null;
-
+//    private Runnable mAnimatedTransitionsFinishAction = null;
+    Animator mAnimatedTransitions = null;
 
     public NavigationPage(PageActivity pageActivity, IPage rootPage) {
         super(pageActivity);
@@ -85,31 +86,30 @@ public class NavigationPage extends SingleActivePage {
         }
 
         addPage(newPage);
-        long time = 0;
+
         if (isAttach && provider != null) {
-            time = provider.startPageAnimation(currentContiner(), oldPage == null ? null : oldPage.getRootView(), newPage.getRootView());
+            mAnimatedTransitions = provider.getPageAnimation(currentContiner(), oldPage == null ? null : oldPage.getRootView(), newPage.getRootView());
+            mAnimatedTransitions.addListener(new SimpleAnimListener() {
+                @Override
+                public void onAnimationEnd(Animator animation) {
+                    doFinalWorkForPushPage(oldPage, newPage, isAttach);
+                }
+            });
+            mAnimatedTransitions.start();
+        } else {
+            doFinalWorkForPushPage(oldPage, newPage, isAttach);
         }
 
-        if (mEnableDebug) {
+        if (PageLibDebugUtis.isDebug()) {
             Log.d(TAG, String.format(">>>> pushPage, pageStack=%d, %s", getChildPageCount(), newPage));
         }
-        if (time != 0)
-            time = Math.max(time + 1, 0);
-        mAnimatedTransitionsFinishAction = new Runnable() {
-            @Override
-            public void run() {
-                doFinalWorkForPushPage(oldPage, newPage, isAttach);
-            }
-        };
-        mContext.postDelayed(mAnimatedTransitionsFinishAction, time);
     }
 
 
     private synchronized void ensureEndAnimationExecution() {
-        if (mAnimatedTransitionsFinishAction != null) {
-            mContext.removeCallbacks(mAnimatedTransitionsFinishAction);
-            mAnimatedTransitionsFinishAction.run();
-            mAnimatedTransitionsFinishAction = null;
+        if (mAnimatedTransitions != null) {
+            mAnimatedTransitions.end();
+            mAnimatedTransitions = null;
         }
     }
 
@@ -131,7 +131,7 @@ public class NavigationPage extends SingleActivePage {
         }
 
 
-        mAnimatedTransitionsFinishAction = null;
+        mAnimatedTransitions = null;
     }
 
     public void popPage() {
@@ -224,8 +224,8 @@ public class NavigationPage extends SingleActivePage {
         final boolean isAttach = isAttachToActivity();
         if (getChildPageCount() == 1)
             return;
-
-        IPage topPage = getChildPageAt(getChildPageCount() - 1);
+        getRootView().setEnabled(false);
+        IPage topPage = getTopPage();
         final List<IPage> willRemovePages = getSubChildPages(getChildPageCount() - n, n);
         final IPage willShowPage = getChildPageAt(getChildPageCount() - n - 1);
 
@@ -234,29 +234,26 @@ public class NavigationPage extends SingleActivePage {
             willShowPage.onShow();
         }
         willShowPage.getRootView().setVisibility(View.VISIBLE);
-//        if(!isFromSwip){
-//            currentContiner().addView(willShowPage.getRootView());
-//            topPage.getRootView().bringToFront();
-//        }
-        long time = 0;
+
         if (isAttach) {
             if (isFromSwip) {
-                provider = getSwipPopAnimator();
+                provider = getDefaultPopAnimator();
             }
             if (provider != null) {
-                time = provider.startPageAnimation(currentContiner(), topPage.getRootView(), willShowPage.getRootView());
-            }
-        }
-
-        if (time != 0)
-            time = Math.max(time + 1, 0);
-        mAnimatedTransitionsFinishAction = new Runnable() {
-            @Override
-            public void run() {
+                mAnimatedTransitions = provider.getPageAnimation(currentContiner(), topPage.getRootView(), willShowPage.getRootView());
+                mAnimatedTransitions.addListener(new SimpleAnimListener() {
+                    @Override
+                    public void onAnimationEnd(Animator animation) {
+                        doFinalWorkForPopPage(willRemovePages, willShowPage, isAttach);
+                    }
+                });
+                resetMargin(topPage.getRootView());
+                resetMargin(willShowPage.getRootView());
+                mAnimatedTransitions.start();
+            } else {
                 doFinalWorkForPopPage(willRemovePages, willShowPage, isAttach);
             }
-        };
-        mContext.postDelayed(mAnimatedTransitionsFinishAction, time);
+        }
     }
 
 
@@ -265,6 +262,9 @@ public class NavigationPage extends SingleActivePage {
     }
 
     private void doFinalWorkForPopPage(List<IPage> willRemovePages, IPage willShowPage, boolean isAttach) {
+        if (willShowPage.getRootView().getAnimation() != null) {
+            Log.d("Animation Pop End", "" + willShowPage.getRootView().getAnimation().hasEnded());
+        }
         IPage topPage = willRemovePages.get(willRemovePages.size() - 1);
         for (int i = willRemovePages.size() - 1; i >= 0; i--) {
             IPage cPage = willRemovePages.get(i);
@@ -273,7 +273,7 @@ public class NavigationPage extends SingleActivePage {
                 cPage.onHidden();
             }
             removePage(cPage);
-            if (mEnableDebug) {
+            if (PageLibDebugUtis.isDebug()) {
                 Log.d(TAG, String.format(">>>> popPage, pageStack=%d, %s", getChildPageCount(), cPage));
             }
         }
@@ -284,10 +284,13 @@ public class NavigationPage extends SingleActivePage {
         }
         for (int i = willRemovePages.size() - 1; i >= 0; i--) {
             IPage cPage = willRemovePages.get(i);
-            cPage.onDestroy();
+            if (cPage.isViewInited()) {
+                cPage.onDestroy();
+            }
         }
 //        mViewTransparentMask.bringToFront();
-        mAnimatedTransitionsFinishAction = null;
+        getRootView().setEnabled(true);
+        mAnimatedTransitions = null;
     }
 
 
@@ -302,60 +305,38 @@ public class NavigationPage extends SingleActivePage {
         return true;
     }
 
-    
+
     public ViewGroup currentContiner() {
         return (ViewGroup) getRootView();
-    }
-
-    private PageAnimatorProvider getSwipPopAnimator() {
-        return new PageAnimatorProvider() {
-            @Override
-            public long startPageAnimation(ViewGroup container, @Nullable View fromView, View toView) {
-                int width = container.getWidth();
-                long t1 = 0, t2 = 0;
-                if (fromView != null) {
-                    int left = fromView.getLeft();
-                    t1 = Math.abs(DEFAULT_ANIMATE_TIME * (width - left) / width);
-//                    t1 = 10000;
-                    resetMargin(fromView);
-                    NavigationViewManager.animateView(fromView,
-                            Animation.ABSOLUTE, left,
-                            Animation.RELATIVE_TO_PARENT, 1.0f,
-                            t1, null);
-                }
-                if (toView != null) {
-                    int left = toView.getLeft();
-                    t2 = Math.abs(DEFAULT_ANIMATE_TIME * left / width * 2);
-//                    t2 = 10000;
-                    resetMargin(toView);
-                    NavigationViewManager.animateView(toView,
-                            Animation.ABSOLUTE, left,
-                            Animation.RELATIVE_TO_PARENT, 0.0f,
-                            t2, null);
-                }
-                return Math.max(t1, t2);
-            }
-        };
     }
 
     private PageAnimatorProvider getDefaultPopAnimator() {
         return new PageAnimatorProvider() {
             @Override
-            public long startPageAnimation(ViewGroup container, @Nullable View fromView, View toView) {
-                long t1 = 0, t2 = 0;
-                if (fromView != null) {
-                    Animation fromAnim = AnimationUtils.loadAnimation(mContext, R.anim.pop_hide_anim);
-//                    fromAnim.setDuration(10000);
-                    t1 = fromAnim.getDuration();
-                    fromView.startAnimation(fromAnim);
-                }
-                if (toView != null) {
-                    Animation toAnim = AnimationUtils.loadAnimation(mContext, R.anim.pop_show_anim);
-//                    toAnim.setDuration(10000);
-                    t2 = toAnim.getDuration();
-                    toView.startAnimation(toAnim);
-                }
-                return Math.max(t1, t2);
+            public ValueAnimator getPageAnimation(ViewGroup container, @Nullable final View fromView, final View toView) {
+                final int totleWidth = container.getWidth();
+                int left = fromView.getLeft();
+                int time = Math.abs(DEFAULT_ANIMATE_TIME * (totleWidth - left) / totleWidth);
+
+                ValueAnimator animator = new ValueAnimator();
+                animator.setDuration(time).setIntValues(left, totleWidth);
+                animator.setInterpolator(new AccelerateInterpolator());
+                animator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+                    @Override
+                    public void onAnimationUpdate(ValueAnimator animation) {
+                        fromView.setTranslationX((Integer) animation.getAnimatedValue());
+                        toView.setTranslationX((Integer) animation.getAnimatedValue() / 2 - totleWidth / 2);
+                    }
+                });
+                animator.addListener(new SimpleAnimListener() {
+                    @Override
+                    public void onAnimationEnd(Animator animation) {
+                        fromView.setTranslationX(0f);
+                        toView.setTranslationX(0f);
+                    }
+                });
+                return animator;
+
             }
         };
     }
@@ -363,43 +344,59 @@ public class NavigationPage extends SingleActivePage {
     private PageAnimatorProvider getDefaultPushAnimator() {
         return new PageAnimatorProvider() {
             @Override
-            public long startPageAnimation(ViewGroup container, @Nullable View fromView, View toView) {
-                long t1 = 0, t2 = 0;
-                if (fromView != null) {
-                    Animation fromAnim = AnimationUtils.loadAnimation(mContext, R.anim.push_hide_anim);
-//                    fromAnim.setDuration(10000);
-                    t1 = fromAnim.getDuration();
-                    fromView.startAnimation(fromAnim);
-                }
-                if (toView != null) {
-                    Animation toAnim = AnimationUtils.loadAnimation(mContext, R.anim.push_show_anim);
-//                    toAnim.setDuration(10000);
-                    t2 = toAnim.getDuration();
-                    toView.startAnimation(toAnim);
-                }
-                return Math.max(t1, t2);
+            public ValueAnimator getPageAnimation(ViewGroup container, @Nullable final View fromView, final View toView) {
+                final int totleWidth = container.getWidth();
+
+                int left = toView.getLeft();
+                if (left == 0)
+                    left = totleWidth;
+                int time = Math.abs(DEFAULT_ANIMATE_TIME * left / totleWidth);
+
+
+                ValueAnimator animator = new ValueAnimator();
+                animator.setDuration(time).setIntValues(left, 0);
+//                animator.setDuration(10000);
+                animator.setInterpolator(new DecelerateInterpolator());
+                animator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+                    @Override
+                    public void onAnimationUpdate(ValueAnimator animation) {
+                        int value = (Integer) animation.getAnimatedValue();
+                        fromView.setTranslationX(value / 2 - totleWidth / 2);
+                        toView.setTranslationX(value);
+                    }
+                });
+                animator.addListener(new SimpleAnimListener() {
+                    @Override
+                    public void onAnimationEnd(Animator animation) {
+                        fromView.setTranslationX(0f);
+                        toView.setTranslationX(0f);
+                    }
+                });
+                return animator;
             }
         };
     }
 
     void cancelSwipeToHide() {
-        View mCurrentView = getChildPageAt(getChildPageCount() - 1).getRootView();
-        View mPrevView = getChildPageCount() > 1 ? getChildPageAt(getChildPageCount() - 2).getRootView() : null;
-        int width = currentContiner().getWidth();
-        if (mPrevView != null) {
-            resetMargin(mPrevView);
-            int t1 = DEFAULT_ANIMATE_TIME * (width / 2 - Math.abs(mPrevView.getLeft())) / (width / 2);
-            NavigationViewManager.animateView(mPrevView,
-                    Animation.ABSOLUTE, mPrevView.getLeft(),
-                    Animation.RELATIVE_TO_PARENT, -0.5f,
-                    t1, null);
-        }
-        resetMargin(mCurrentView);
-        int t2 = DEFAULT_ANIMATE_TIME * Math.abs(mCurrentView.getLeft()) / (width);
-        NavigationViewManager.animateView(mCurrentView,
-                Animation.ABSOLUTE, mCurrentView.getLeft(),
-                Animation.RELATIVE_TO_PARENT, 0,
-                t2, null);
+        IPage topPage = getTopPage();
+        final IPage prePage = getChildPageAt(getChildPageCount() - 2);
+        PageAnimatorProvider provider = getDefaultPushAnimator();
+
+        ensureEndAnimationExecution();
+        mAnimatedTransitions = provider.getPageAnimation(currentContiner(), prePage.getRootView(), topPage.getRootView());
+        resetMargin(prePage.getRootView());
+        resetMargin(topPage.getRootView());
+        mAnimatedTransitions.addListener(new SimpleAnimListener() {
+            @Override
+            public void onAnimationEnd(Animator animation) {
+                prePage.getRootView().setVisibility(View.GONE);
+            }
+        });
+
+        mAnimatedTransitions.start();
+
+
+//        mAnimatedTransitions =  getDefaultPushAnimator();
     }
 
     private void resetMargin(View view) {
@@ -409,9 +406,6 @@ public class NavigationPage extends SingleActivePage {
         view.requestLayout();
     }
 
-    public void setmEnableDebug(boolean mEnableDebug) {
-        this.mEnableDebug = mEnableDebug;
-    }
 
     @Override
     public void addPage(IPage page) {
@@ -472,5 +466,9 @@ public class NavigationPage extends SingleActivePage {
             return true;
         }
         return super.onBackPressed();
+    }
+
+    boolean isAnim() {
+        return mAnimatedTransitions != null && mAnimatedTransitions.isRunning();
     }
 }

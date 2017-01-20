@@ -1,5 +1,8 @@
 package cc.zgeek.pagelib.anim;
 
+import android.animation.Animator;
+import android.animation.ObjectAnimator;
+import android.animation.ValueAnimator;
 import android.view.animation.Animation;
 
 /**
@@ -8,19 +11,25 @@ import android.view.animation.Animation;
  * 2017/1/15 : Create
  */
 
-public class SimpleAnimListener implements Animation.AnimationListener {
+public class SimpleAnimListener implements Animator.AnimatorListener {
+
     @Override
-    public void onAnimationStart(Animation animation) {
+    public void onAnimationStart(Animator animation) {
 
     }
 
     @Override
-    public void onAnimationEnd(Animation animation) {
+    public void onAnimationEnd(Animator animation) {
 
     }
 
     @Override
-    public void onAnimationRepeat(Animation animation) {
+    public void onAnimationCancel(Animator animation) {
+
+    }
+
+    @Override
+    public void onAnimationRepeat(Animator animation) {
 
     }
 }
