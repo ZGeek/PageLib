@@ -1,46 +1,46 @@
-# PageLib
- > Ò»¸öÎªÅ×Æú¸´ÔÓµÄFragmentÉúÃüÖÜÆÚºÍ¾Ş´óµÄActivityºè¹µ¶øÉúµÄ¿â
+ï»¿# PageLib
+ > ä¸€ä¸ªä¸ºæŠ›å¼ƒå¤æ‚çš„Fragmentç”Ÿå‘½å‘¨æœŸå’Œå·¨å¤§çš„Activityé¸¿æ²Ÿè€Œç”Ÿçš„åº“
 
- ## ´Ë¿âÎªºÎ¶øÉú
- - FragmentÎª°²×¿¿ª·¢´øÀ´ÁËËéÆ¬»¯½çÃæ¿ª·¢µÄĞÂÌåÑé£¬È»¶øÌåÑé¹ıºóÎÒÃÇ·¢ÏÖ£¬Fragment²¢²»ÍêÃÀ£¬¸´ÔÓµÄÉúÃüÖÜÆÚÈÃFragmentÔÚ¹ÜÀíµÄÊ±ºòÌØ±ğ¼¬ÊÖ£¬ÀıÈçÅĞ¶ÏÒ»¸öFragmentÊÇ·ñ¶ÔÓÃ»§¿É¼û£¬ÓĞĞ©Ê±ºòĞèÒª×ÛºÏÔËÓÃonResume onPause setUserVisiableHint onHiddenChangedµÈÖÚ¶à·½·¨¡£
- - AndroidµÄActivityÓëActivityÖ®¼äÓÖ±»Ïà¸ôµÄÌ«¹ı³¹µ×£¬×÷Îª³ÌĞòÔ±£¬ÄãÃ»·¨¿ØÖÆActivityµÄnewºÍrelease£¬ActivityÖ®¼äµÄÍ¨ĞÅ¸ü¶àµÄÊÇÒÀÀµstartActivityForResult»òµÚÈı·½µÄÏûÏ¢×ÜÏß½øĞĞµ×²ãÊı¾İÍ¨ĞÅ£¬ÕâÊ¹µÃÎÒÔÚ±àĞ´Android³ÌĞòÊ±ÉõÖÁ»³ÒÉ×Ô¼º²»ÊÇÔÚ±àĞ´Ò»¸ö°²×¿³ÌĞò£¬¶øÊÇÔÚ±àĞ´ºÜ¶à³ÌĞò£¬²¢°ÑËûÃÇ×éºÏÆğÀ´£¬ÕâÖÖActivityÖ®¼äµÄºè¹µÊ¹µÃĞèÒª¶ÔActivityÖ±½Ó½øĞĞ²Ù×÷Ê±£¬»òÕß½øĞĞ½»»¥²Ù×÷Ê±ºÜ²»·½±ã
- - Ã¿¸öActivity³ÖÓĞÒ»¸öµ¥Ò»µÄPhoneWindow¶ÔÏñµ¼ÖÂActivityºÍActivityÖ®¼äµÄ½çÃæ¸´ÓÃ½üºõ²»¿ÉÄÜ£¬ÀıÈçÄãÈôÏë°ÑA-AcvitityÖĞµÄÄ³Ò»¸öView£¬ÄÃµ½B-ActivityÖĞÊ¹ÓÃÊÇ¼¸ºõ²»¿ÉÄÜµÄ£¬ÒòÎªÕâÑùµÄ²Ù×÷ºÜÈİÒ×µ¼ÖÂÄÚ´æĞ¹Â¶
- - Í¬Ê±£¬ActivityÊÇÒ»¸ö·Ç³£ÖØµÄ×é¼ş£¬Ã¿Ò»´ÎµÄ³õÊ¼»¯²Ù×÷¶¼»áÏûºÄºÜ¶àcpu×ÊÔ´£¬Õâµ¼ÖÂºÜ¶àµÄAndroid³ÌĞòÖ»Ê¹ÓÃÒ»¸öActivity½øĞĞ¿ª·¢
+ ## æ­¤åº“ä¸ºä½•è€Œç”Ÿ
+ - Fragmentä¸ºå®‰å“å¼€å‘å¸¦æ¥äº†ç¢ç‰‡åŒ–ç•Œé¢å¼€å‘çš„æ–°ä½“éªŒï¼Œç„¶è€Œä½“éªŒè¿‡åæˆ‘ä»¬å‘ç°ï¼ŒFragmentå¹¶ä¸å®Œç¾ï¼Œå¤æ‚çš„ç”Ÿå‘½å‘¨æœŸè®©Fragmentåœ¨ç®¡ç†çš„æ—¶å€™ç‰¹åˆ«æ£˜æ‰‹ï¼Œä¾‹å¦‚åˆ¤æ–­ä¸€ä¸ªFragmentæ˜¯å¦å¯¹ç”¨æˆ·å¯è§ï¼Œæœ‰äº›æ—¶å€™éœ€è¦ç»¼åˆè¿ç”¨onResume onPause setUserVisiableHint onHiddenChangedç­‰ä¼—å¤šæ–¹æ³•ã€‚
+ - Androidçš„Activityä¸Activityä¹‹é—´åˆè¢«ç›¸éš”çš„å¤ªè¿‡å½»åº•ï¼Œä½œä¸ºç¨‹åºå‘˜ï¼Œä½ æ²¡æ³•æ§åˆ¶Activityçš„newå’Œreleaseï¼ŒActivityä¹‹é—´çš„é€šä¿¡æ›´å¤šçš„æ˜¯ä¾èµ–startActivityForResultæˆ–ç¬¬ä¸‰æ–¹çš„æ¶ˆæ¯æ€»çº¿è¿›è¡Œåº•å±‚æ•°æ®é€šä¿¡ï¼Œè¿™ä½¿å¾—æˆ‘åœ¨ç¼–å†™Androidç¨‹åºæ—¶ç”šè‡³æ€€ç–‘è‡ªå·±ä¸æ˜¯åœ¨ç¼–å†™ä¸€ä¸ªå®‰å“ç¨‹åºï¼Œè€Œæ˜¯åœ¨ç¼–å†™å¾ˆå¤šç¨‹åºï¼Œå¹¶æŠŠä»–ä»¬ç»„åˆèµ·æ¥ï¼Œè¿™ç§Activityä¹‹é—´çš„é¸¿æ²Ÿä½¿å¾—éœ€è¦å¯¹Activityç›´æ¥è¿›è¡Œæ“ä½œæ—¶ï¼Œæˆ–è€…è¿›è¡Œäº¤äº’æ“ä½œæ—¶å¾ˆä¸æ–¹ä¾¿
+ - æ¯ä¸ªActivityæŒæœ‰ä¸€ä¸ªå•ä¸€çš„PhoneWindowå¯¹åƒå¯¼è‡´Activityå’ŒActivityä¹‹é—´çš„ç•Œé¢å¤ç”¨è¿‘ä¹ä¸å¯èƒ½ï¼Œä¾‹å¦‚ä½ è‹¥æƒ³æŠŠA-Acvitityä¸­çš„æŸä¸€ä¸ªViewï¼Œæ‹¿åˆ°B-Activityä¸­ä½¿ç”¨æ˜¯å‡ ä¹ä¸å¯èƒ½çš„ï¼Œå› ä¸ºè¿™æ ·çš„æ“ä½œå¾ˆå®¹æ˜“å¯¼è‡´å†…å­˜æ³„éœ²
+ - åŒæ—¶ï¼ŒActivityæ˜¯ä¸€ä¸ªéå¸¸é‡çš„ç»„ä»¶ï¼Œæ¯ä¸€æ¬¡çš„åˆå§‹åŒ–æ“ä½œéƒ½ä¼šæ¶ˆè€—å¾ˆå¤šcpuèµ„æºï¼Œè¿™å¯¼è‡´å¾ˆå¤šçš„Androidç¨‹åºåªä½¿ç”¨ä¸€ä¸ªActivityè¿›è¡Œå¼€å‘
 
- ## ´Ë¿âÏë´ïµ½µÄÄ¿µÄ
- - µ¥Activity»¯
- - ³¹µ×Å×Æú¸´ÔÓµÄFragment
+ ## æ­¤åº“æƒ³è¾¾åˆ°çš„ç›®çš„
+ - å•ActivityåŒ–
+ - å½»åº•æŠ›å¼ƒå¤æ‚çš„Fragment
 
- ## ÈçºÎÊ¹ÓÃ
- ### ÁË½âPage
- Ã¿Ò»¸öPage¶¼ÊÇÆÁÄ»ÖĞ¿ÉÏÔÊ¾ÇøÓòµÄÒ»²¿·Ö£¬ÓĞÈçÏÂµÄÉúÃüÖÜÆÚº¯Êı
+ ## å¦‚ä½•ä½¿ç”¨
+ ### äº†è§£Page
+ æ¯ä¸€ä¸ªPageéƒ½æ˜¯å±å¹•ä¸­å¯æ˜¾ç¤ºåŒºåŸŸçš„ä¸€éƒ¨åˆ†ï¼Œæœ‰å¦‚ä¸‹çš„ç”Ÿå‘½å‘¨æœŸå‡½æ•°
 
-| ·½·¨ | ÒâÒå |
-| -- |--|
-| onViewInited |µ±PageËù³ÖÓĞµÄView³õÊ¼»¯µÄÊ±ºòµ÷ÓÃ£¬Ã¿¸öPage½öµ÷ÓÃÒ»´Î|
-|onShow | µ±Page¼´½«ÏÔÊ¾Ê±µ÷ÓÃ|
-|onShown| µ±PageÒÑ¾­ÏÔÊ¾Ê±µ÷ÓÃ|
-|onHide| µ±Page½«ÒªÒş²ØÊ±µ÷ÓÃ|
-|onHidden| µ±PageÒÑ¾­Òş²ØÊ±µ÷ÓÃ|
-|onDestroy| µ±Page½«ÒªÏú»ÙÊ±µ÷ÓÃ£¬Èç¹ûPageËù³ÖÓĞµÄviewÉĞÎ´³õÊ¼»¯£¬Ôò²»»áµ÷ÓÃ´Ë·½·¨|
-|onLowMemory| µ±ÏµÍ³ÄÚ´æ²»×ãµÄÊ±ºòµ÷ÓÃ|
-|onActivityResult| Í¬ActivityµÄonActivityResult£¬Ö»ÓĞµ±Æô¶¯Íâ²¿ActivityÊ±µ÷ÓÃ|
-|onKeyDown| µ±¼üÅÌ°´¼ü°´ÏÂÊ±µ÷ÓÃ|
-|onKeyUp|µ±¼üÅÌ°´¼üÊÍ·ÅÊ±µ÷ÓÃ|
-|onConfigurationChanged| Í¬ActivityµÄonConfigurationChanged£¬ÓÃÀ´ÏìÓ¦Configuration±ä»¯ÒıÆğµÄÊÓÍ¼±ä»¯£¬²»ÓÃ±£´æÊÓÍ¼×´Ì¬|
-|getParentPage| »ñµÃ´ËPageµÄ¸¸Page£¬Èô´ËPageÎªPageActivityµÄrootPage£¬»òÕß´ËpageÉĞÎ´±»¸½¼Óµ½ÈÎºÎpageÉÏ£¬ÔòÆä¸¸pageÎªnull|
-|getRootView| µÃµ½´ËpageËù³ÖÓĞµÄ¸ùView£¬Èô´ËPageÉĞÎ´³õÊ¼»¯£¬Ôò»á¸ù¾İ@PageLayout»òÕß@PageLayoutNameÖ¸¶¨µÄlayout¶Ô¸ùView½øĞĞ³õÊ¼»¯£¬ÔÚ³õÊ¼»¯ºó»Ø»Øµ÷onViewInited·½·¨|
-|getChildPageAt|¶Ô´ËPage³ÖÓĞµÄ×ÓPage½øĞĞ¹ÜÀí|
-|getChildPageIndex|Í¬ÉÏ|
-|getSubChildPages|Í¬ÉÏ|
-|getChildPageCount|Í¬ÉÏ|
-|setName|ÉèÖÃ´ËpageµÄname£¬ÓÃÓÚµ÷ÊÔºÍÔÚViewPagerPageÖĞÌá¹©Ãû³Æ£¬µ÷ÓÃºó·µ»Ø´Ëpage|
+| æ–¹æ³• | æ„ä¹‰ |
+| --- | ---|
+| onViewInited |å½“Pageæ‰€æŒæœ‰çš„Viewåˆå§‹åŒ–çš„æ—¶å€™è°ƒç”¨ï¼Œæ¯ä¸ªPageä»…è°ƒç”¨ä¸€æ¬¡|
+|onShow | å½“Pageå³å°†æ˜¾ç¤ºæ—¶è°ƒç”¨|
+|onShown| å½“Pageå·²ç»æ˜¾ç¤ºæ—¶è°ƒç”¨|
+|onHide| å½“Pageå°†è¦éšè—æ—¶è°ƒç”¨|
+|onHidden| å½“Pageå·²ç»éšè—æ—¶è°ƒç”¨|
+|onDestroy| å½“Pageå°†è¦é”€æ¯æ—¶è°ƒç”¨ï¼Œå¦‚æœPageæ‰€æŒæœ‰çš„viewå°šæœªåˆå§‹åŒ–ï¼Œåˆ™ä¸ä¼šè°ƒç”¨æ­¤æ–¹æ³•|
+|onLowMemory| å½“ç³»ç»Ÿå†…å­˜ä¸è¶³çš„æ—¶å€™è°ƒç”¨|
+|onActivityResult| åŒActivityçš„onActivityResultï¼Œåªæœ‰å½“å¯åŠ¨å¤–éƒ¨Activityæ—¶è°ƒç”¨|
+|onKeyDown| å½“é”®ç›˜æŒ‰é”®æŒ‰ä¸‹æ—¶è°ƒç”¨|
+|onKeyUp|å½“é”®ç›˜æŒ‰é”®é‡Šæ”¾æ—¶è°ƒç”¨|
+|onConfigurationChanged| åŒActivityçš„onConfigurationChangedï¼Œç”¨æ¥å“åº”Configurationå˜åŒ–å¼•èµ·çš„è§†å›¾å˜åŒ–ï¼Œä¸ç”¨ä¿å­˜è§†å›¾çŠ¶æ€|
+|getParentPage| è·å¾—æ­¤Pageçš„çˆ¶Pageï¼Œè‹¥æ­¤Pageä¸ºPageActivityçš„rootPageï¼Œæˆ–è€…æ­¤pageå°šæœªè¢«é™„åŠ åˆ°ä»»ä½•pageä¸Šï¼Œåˆ™å…¶çˆ¶pageä¸ºnull|
+|getRootView| å¾—åˆ°æ­¤pageæ‰€æŒæœ‰çš„æ ¹Viewï¼Œè‹¥æ­¤Pageå°šæœªåˆå§‹åŒ–ï¼Œåˆ™ä¼šæ ¹æ®@PageLayoutæˆ–è€…@PageLayoutNameæŒ‡å®šçš„layoutå¯¹æ ¹Viewè¿›è¡Œåˆå§‹åŒ–ï¼Œåœ¨åˆå§‹åŒ–åå›å›è°ƒonViewInitedæ–¹æ³•|
+|getChildPageAt|å¯¹æ­¤PageæŒæœ‰çš„å­Pageè¿›è¡Œç®¡ç†|
+|getChildPageIndex|åŒä¸Š|
+|getSubChildPages|åŒä¸Š|
+|getChildPageCount|åŒä¸Š|
+|setName|è®¾ç½®æ­¤pageçš„nameï¼Œç”¨äºè°ƒè¯•å’Œåœ¨ViewPagerPageä¸­æä¾›åç§°ï¼Œè°ƒç”¨åè¿”å›æ­¤page|
 
-### ÒÑÓĞPage½éÉÜ
-|Ãû³Æ|½éÉÜ|
+### å·²æœ‰Pageä»‹ç»
+|åç§°|ä»‹ç»|
 |---|---|
-|SingleActivePage| ³éÏóÀà£¬Ã¿´ÎÖ»ÓĞÒ»¸öPage¼¤»îµÄPage¹ÜÀíÀà£¬ÒÑÖª×ÓÀàÓĞSwitchPage£¬ SubSwitchPage£¬ ViewPagerPage£¬ NavigationPage|
-|NavigationPage|µ¼º½Page£¬ÆäÄÚ²¿Î¬»¤ÁËÒ»¸ö»ØÍËÕ»£¬Í¨¹ıpushPage£¬popPage£¬deletePageµÈ¶Ô»ØÍËÕ»½øĞĞ¹ÜÀí£¬Ê¹ÓÃ·µ»Ø¼ü¿ÉÒÔ½øĞĞpop£¬Èôµ±Ç°ÔÚ¶¥¶ËµÄpage²»ÔÊĞíÊ¹ÓÃ·µ»Ø¼ü½øĞĞ»ØÍË£¬Ôò¿ÉÒÔ¼Ì³ĞCanSwipToHide½Ó¿Ú²¢Ê¹canSwipToHide·µ»Øfalse|
-|ViewPagerPage|ÄÚ²¿Ê¹ÓÃviewpager¶ÔËùÓĞµÄpage½øĞĞ¹ÜÀí£¬Í¨¹ıswitchToPage£¬addPage£¬addPages£¬removePage¶ÔViewPagerPageÄÚ²¿µÄPage½øĞĞ¹ÜÀí
-|SwitchPage|ºÍViewPagerPageÀàËÆ£¬Ã¿´ÎÖ»¼¤»îÒ»¸öpage½øĞĞÏÔÊ¾£¬¶à¸öpageÖ®¼ä¿ÉÒÔÇĞ»»|
-|SubSwitchPage|ºÍSwitchPageÀàËÆ£¬²»Í¬Ö®´¦ÔÚÓÚ£¬SwitchPageµÄËù³ÖÓĞµÄviewµÄÕû¸öÏÔÊ¾ÇøÓò¹©Æä×ÓpageÏÔÊ¾£¬¶øSubSwitchPage¹©Æä×ÓpageÏÔÊ¾µÄÇøÓòÖ»ÊÇÆä³ÖÓĞview¿ÉÏÔÊ¾ÇøÓòµÄÒ»²¿·Ö£¬ËùÒÔ´Ëpage¿ÉÒÔºÍTabLayoutÅäºÏÊ¹ÓÃ£¬ÊµÏÖ¶àTabµÄÇĞ»»|
+|SingleActivePage| æŠ½è±¡ç±»ï¼Œæ¯æ¬¡åªæœ‰ä¸€ä¸ªPageæ¿€æ´»çš„Pageç®¡ç†ç±»ï¼Œå·²çŸ¥å­ç±»æœ‰SwitchPageï¼Œ SubSwitchPageï¼Œ ViewPagerPageï¼Œ NavigationPage|
+|NavigationPage|å¯¼èˆªPageï¼Œå…¶å†…éƒ¨ç»´æŠ¤äº†ä¸€ä¸ªå›é€€æ ˆï¼Œé€šè¿‡pushPageï¼ŒpopPageï¼ŒdeletePageç­‰å¯¹å›é€€æ ˆè¿›è¡Œç®¡ç†ï¼Œä½¿ç”¨è¿”å›é”®å¯ä»¥è¿›è¡Œpopï¼Œè‹¥å½“å‰åœ¨é¡¶ç«¯çš„pageä¸å…è®¸ä½¿ç”¨è¿”å›é”®è¿›è¡Œå›é€€ï¼Œåˆ™å¯ä»¥ç»§æ‰¿CanSwipToHideæ¥å£å¹¶ä½¿canSwipToHideè¿”å›false|
+|ViewPagerPage|å†…éƒ¨ä½¿ç”¨viewpagerå¯¹æ‰€æœ‰çš„pageè¿›è¡Œç®¡ç†ï¼Œé€šè¿‡switchToPageï¼ŒaddPageï¼ŒaddPagesï¼ŒremovePageå¯¹ViewPagerPageå†…éƒ¨çš„Pageè¿›è¡Œç®¡ç†
+|SwitchPage|å’ŒViewPagerPageç±»ä¼¼ï¼Œæ¯æ¬¡åªæ¿€æ´»ä¸€ä¸ªpageè¿›è¡Œæ˜¾ç¤ºï¼Œå¤šä¸ªpageä¹‹é—´å¯ä»¥åˆ‡æ¢|
+|SubSwitchPage|å’ŒSwitchPageç±»ä¼¼ï¼Œä¸åŒä¹‹å¤„åœ¨äºï¼ŒSwitchPageçš„æ‰€æŒæœ‰çš„viewçš„æ•´ä¸ªæ˜¾ç¤ºåŒºåŸŸä¾›å…¶å­pageæ˜¾ç¤ºï¼Œè€ŒSubSwitchPageä¾›å…¶å­pageæ˜¾ç¤ºçš„åŒºåŸŸåªæ˜¯å…¶æŒæœ‰viewå¯æ˜¾ç¤ºåŒºåŸŸçš„ä¸€éƒ¨åˆ†ï¼Œæ‰€ä»¥æ­¤pageå¯ä»¥å’ŒTabLayouté…åˆä½¿ç”¨ï¼Œå®ç°å¤šTabçš„åˆ‡æ¢|
