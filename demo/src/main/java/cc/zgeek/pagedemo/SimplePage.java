@@ -58,30 +58,35 @@ public class SimplePage extends Page {
     @Override
     public void onShow() {
         super.onShow();
-        Log.d(SimplePage.class.getSimpleName(), index+"-->onShow");
+        Log.d(SimplePage.class.getSimpleName(), getName()+"-->onShow");
     }
 
     @Override
     public void onShown() {
         super.onShown();
-        Log.d(SimplePage.class.getSimpleName(), index+"-->onShown");
+        Log.d(SimplePage.class.getSimpleName(), getName()+"-->onShown");
     }
 
     @Override
     public void onHide() {
         super.onHide();
-        Log.d(SimplePage.class.getSimpleName(), index+"-->onHide");
+        Log.d(SimplePage.class.getSimpleName(), getName()+"-->onHide");
     }
 
     @Override
     public void onHidden() {
         super.onHidden();
-        Log.d(SimplePage.class.getSimpleName(), index+"-->onHidden");
+        Log.d(SimplePage.class.getSimpleName(), getName()+"-->onHidden");
     }
 
     @Override
     public void onDestroy() {
         super.onDestroy();
-        Log.d(SimplePage.class.getSimpleName(), index+"-->onDestroy");
+        Log.d(SimplePage.class.getSimpleName(), getName()+"-->onDestroy");
+    }
+
+    @Override
+    public String getName() {
+        return ""+index;
     }
 }

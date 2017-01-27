@@ -8,6 +8,9 @@ import android.os.Looper;
 import android.support.v7.app.AppCompatActivity;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
+import android.view.View;
+import android.view.ViewGroup;
+import android.view.ViewParent;
 import android.view.Window;
 
 /**
@@ -28,7 +31,23 @@ public abstract class PageActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
 
         rootPage = initRootPage();
-        setContentView(rootPage.getRootView());
+        ViewGroup decor = findDecorView();
+        decor.removeAllViews();
+        decor.addView(rootPage.getRootView());
+
+//        setContentView(rootPage.getRootView());
+    }
+    ViewGroup findDecorView(){
+        View view = findViewById(android.R.id.content);
+        ViewParent parent  = view.getParent();
+        do{
+            if(parent == null)
+                return (ViewGroup) view;
+            else {
+                view = (View) parent;
+                parent = parent.getParent();
+            }
+        }while (true);
     }
 
     protected abstract IPage initRootPage();

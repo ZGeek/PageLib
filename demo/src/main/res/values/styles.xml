@@ -1,7 +1,12 @@
 <resources>
 
+    <style name="TextAppearance.PaginizeDemo.Tab" parent="TextAppearance.AppCompat.Small">
+        <item name="android:textSize">10dp</item>
+        <item name="android:textColor">@color/light_gray</item>
+    </style>
+
     <!-- Base application theme. -->
-    <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
+    <style name="AppTheme" parent="Theme.Design.Light.NoActionBar">
         <!-- Customize your theme here. -->
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>

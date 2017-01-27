@@ -84,16 +84,7 @@ public class ViewPagerPage extends SingleActivePage implements ViewPager.OnPageC
 
     @Override
     public void onPageSelected(int position) {
-        if (isAttachToActivity()) {
-//            if (currentShowIndex != position) {
-//                IPage oldPage = getChildPageAt(currentShowIndex);
-//                oldPage.onHide();
-//                oldPage.onHidden();
-//            }
-//            IPage page = getChildPageAt(position);
-//            page.onShow();
-//            page.onShown();
-
+        if (isAttachToActivity() && position != currentShowIndex) {
 
             IPage oldPage = getChildPageAt(currentShowIndex);
             IPage page = getChildPageAt(position);
@@ -135,7 +126,7 @@ public class ViewPagerPage extends SingleActivePage implements ViewPager.OnPageC
         adapterWrapper.notifyDataSetChanged();
     }
 
-    public void addPages(List<IPage> pages) {
+    public void addPages(List<? extends IPage> pages) {
         int preCount = getChildPageCount();
         for (int i = 0; i < pages.size(); i++) {
             super.addPage(pages.get(i));
@@ -158,15 +149,15 @@ public class ViewPagerPage extends SingleActivePage implements ViewPager.OnPageC
 
     public void setPageList(List<IPage> pages) {
         boolean isAttach = isAttachToActivity();
-        IPage cPage  = getActiviePage();
+        IPage cPage = getActiviePage();
 
         for (int i = getChildPageCount() - 1; i >= 0; i--) {
             IPage tmpPage = getChildPageAt(i);
-            if(tmpPage == cPage && isAttach){
+            if (tmpPage == cPage && isAttach) {
                 tmpPage.onHide();
                 tmpPage.onHidden();
             }
-            if(tmpPage.isViewInited())
+            if (tmpPage.isViewInited())
                 tmpPage.onDestroy();
             super.removePage(i);
         }
@@ -176,42 +167,50 @@ public class ViewPagerPage extends SingleActivePage implements ViewPager.OnPageC
     @Override
     public boolean removePage(IPage page) {
         /***
-         * 根据测试结果，VIewPage在页面移除的逻辑是
+         * 根据测试结果，ViewPage在页面移除的逻辑是
          * 1：当移除当前页时优先使用后面的一页，后面没有用前页，前页也没有显示空白
          * 2：移除非当前页时保持当前页继续显示给用户
          */
 
         int targetRemovePageIndex = getChildPageIndex(page);
+        boolean isAttach = isAttachToActivity();
         if (targetRemovePageIndex < 0)
             return false;
         if (targetRemovePageIndex == currentShowIndex) {
             IPage willShowPage = getWillShowPageIndexWhenRemove(targetRemovePageIndex);
-            if (willShowPage != null)
-                willShowPage.onShow();
-            page.onHide();
+            if (isAttach) {
+                if (willShowPage != null)
+                    willShowPage.onShow();
+                page.onHide();
+            }
+
             super.removePage(page);
             adapterWrapper.notifyDataSetChanged();
-            if (willShowPage != null)
-                willShowPage.onShown();
-            page.onHidden();
+            if (isAttach) {
+                if (willShowPage != null)
+                    willShowPage.onShown();
+                page.onHidden();
+            }
+
             if (page.isViewInited()) {
                 page.onDestroy();
             }
 
         } else if (targetRemovePageIndex < currentShowIndex) {
-            super.removePage(page);
+
             if (page.isViewInited()) {
                 page.onDestroy();
             }
+            super.removePage(page);
             adapterWrapper.notifyDataSetChanged();
             currentShowIndex--;
         } else {
 //            index > currentShowIndex
-            super.removePage(page);
-            adapterWrapper.notifyDataSetChanged();
             if (page.isViewInited()) {
                 page.onDestroy();
             }
+            super.removePage(page);
+            adapterWrapper.notifyDataSetChanged();
         }
 
         return true;

@@ -1,3 +1,9 @@
 <resources>
-    <string name="app_name">Page</string>
+    <string name="app_name">PageLibDemo</string>
+
+    <string name="action_about">关于</string>
+    <string name="test_menu">设置菜单</string>
+    <string name="loading">Loading...</string>
+    <string name="loading_failed">Loading failed.</string>
+    <string name="retry">Retry</string>
 </resources>

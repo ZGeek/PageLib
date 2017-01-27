@@ -2,15 +2,9 @@ package cc.zgeek.pagelib;
 
 import android.content.Context;
 import android.support.v4.widget.ViewDragHelper;
-import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
-import android.view.animation.Animation;
-import android.view.animation.DecelerateInterpolator;
-import android.view.animation.TranslateAnimation;
 import android.widget.FrameLayout;
-
-import static android.support.v4.widget.ViewDragHelper.STATE_SETTLING;
 
 /**
  * Created by flyop.
@@ -18,18 +12,18 @@ import static android.support.v4.widget.ViewDragHelper.STATE_SETTLING;
  * 2017/1/17 : Create
  */
 
-public class NavigationViewManager {
+public class NavigationPageHelper {
 
     private NavigationPage mNavigationPage;
-    private NavigationViewManager.NavigationContainerView mNavigationContainerView;
+    private NavigationPageHelper.NavigationContainerView mNavigationContainerView;
 
-    NavigationViewManager(NavigationPage pageManager) {
+    NavigationPageHelper(NavigationPage pageManager) {
         mNavigationPage = pageManager;
     }
 
 
-    NavigationViewManager.NavigationContainerView createContainerView(Context context) {
-        mNavigationContainerView = new NavigationViewManager.NavigationContainerView(context);
+    NavigationPageHelper.NavigationContainerView createContainerView(Context context) {
+        mNavigationContainerView = new NavigationPageHelper.NavigationContainerView(context);
         return mNavigationContainerView;
     }
 
@@ -55,6 +49,7 @@ public class NavigationViewManager {
                 public void onEdgeDragStarted(int edgeFlags, int pointerId) {
                     if (mNavigationPage.getChildPageCount() > 1 && !mNavigationPage.isAnim()) {
                         dragHelper.captureChildView(mNavigationPage.getTopPage().getRootView(), pointerId);
+                        mNavigationPage.prepareForPop(mNavigationPage.getChildPageAt(mNavigationPage.getChildPageCount() - 2), mNavigationPage.getTopPage());
                         View mPreView = mNavigationPage.getChildPageAt(mNavigationPage.getChildPageCount() - 2).getRootView();
                         mPreView.setVisibility(VISIBLE);
                         MarginLayoutParams mPreViewLayoutParams = (MarginLayoutParams) mPreView.getLayoutParams();
@@ -148,21 +143,21 @@ public class NavigationViewManager {
 
     }
 
-    public static void animateView(View view, int fromXType, float fromXValue, int toXType, float toXValue, long time,
-                                   Animation.AnimationListener animationListener) {
-        Animation animation = createAnimation(fromXType, fromXValue, toXType, toXValue, time, animationListener);
-        view.startAnimation(animation);
-    }
-
-    private static Animation createAnimation(
-            int fromXType, float fromXValue,
-            int toXType, float toXValue,
-            long time, Animation.AnimationListener animationListener) {
-        Animation animation = new TranslateAnimation(fromXType, fromXValue, toXType,
-                toXValue, Animation.RELATIVE_TO_SELF, 0, Animation.RELATIVE_TO_SELF, 0);
-        animation.setDuration(time);
-        animation.setInterpolator(new DecelerateInterpolator(2.0f));
-        animation.setAnimationListener(animationListener);
-        return animation;
-    }
+//    public static void animateView(View view, int fromXType, float fromXValue, int toXType, float toXValue, long time,
+//                                   Animation.AnimationListener animationListener) {
+//        Animation animation = createAnimation(fromXType, fromXValue, toXType, toXValue, time, animationListener);
+//        view.startAnimation(animation);
+//    }
+//
+//    private static Animation createAnimation(
+//            int fromXType, float fromXValue,
+//            int toXType, float toXValue,
+//            long time, Animation.AnimationListener animationListener) {
+//        Animation animation = new TranslateAnimation(fromXType, fromXValue, toXType,
+//                toXValue, Animation.RELATIVE_TO_SELF, 0, Animation.RELATIVE_TO_SELF, 0);
+//        animation.setDuration(time);
+//        animation.setInterpolator(new DecelerateInterpolator(2.0f));
+//        animation.setAnimationListener(animationListener);
+//        return animation;
+//    }
 }

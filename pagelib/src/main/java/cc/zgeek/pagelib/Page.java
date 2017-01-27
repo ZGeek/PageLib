@@ -59,8 +59,8 @@ public abstract class Page extends ViewWrapper implements IPage {
         return rootView != null;
     }
 
-    @Override
-    public void addPage(IPage page) {
+
+    protected void addPage(IPage page) {
         if (page.getParentPage() != null) {
             throw new IllegalStateException("Page Can Not Remove Beacase Aready Have A Parent");
         }
@@ -68,8 +68,7 @@ public abstract class Page extends ViewWrapper implements IPage {
         pageList.add(page);
     }
 
-    @Override
-    public boolean removePage(IPage page) {
+    protected boolean removePage(IPage page) {
         if (page.getParentPage() != this) {
             throw new IllegalStateException("Page Can Not Remove Because It Not Belong Of This");
         }
@@ -77,28 +76,28 @@ public abstract class Page extends ViewWrapper implements IPage {
         return pageList.remove(page);
     }
 
-    @Override
-    public boolean removePage(int index) {
+
+    protected IPage removePage(int index) {
 //        if (page.getParentPage() != this) {
 //            throw new IllegalStateException("Page Can Not Remove Because It Not Belong Of This");
 //        }
         IPage page = pageList.remove(index);
         page.setParentPage(null);
-        return page != null;
+        return page;
     }
 
     @Override
-    public int getChildPageCount() {
+    public final int getChildPageCount() {
         return pageList.size();
     }
 
     @Override
-    public List<IPage> getSubChildPages(int beginIndex, int count) {
+    public final List<IPage> getSubChildPages(int beginIndex, int count) {
         return ListUtil.subList(pageList, beginIndex, count);
     }
 
     @Override
-    public int getChildPageIndex(@NonNull IPage page) {
+    public final int getChildPageIndex(@NonNull IPage page) {
         for (int i = 0; i < getChildPageCount(); i++) {
             if (getChildPageAt(i) == page)
                 return i;
@@ -107,7 +106,7 @@ public abstract class Page extends ViewWrapper implements IPage {
     }
 
     @Override
-    public IPage getChildPageAt(int index) {
+    public final IPage getChildPageAt(int index) {
         //进行首位判断，用于加速查找过程，因为LinkedList查找首位比较快
         if (index == getChildPageCount() - 1)
             return pageList.getLast();
@@ -118,7 +117,7 @@ public abstract class Page extends ViewWrapper implements IPage {
     }
 
     @Override
-    public boolean isAttachToActivity() {
+    public final boolean isAttachToActivity() {
         IPage rootPage = mContext.getRootPage();
         if (rootPage == null)
             return false;
@@ -246,5 +245,10 @@ public abstract class Page extends ViewWrapper implements IPage {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    @Override
+    public String toString() {
+        return getClass().getName() + "(" + getName() + ")@" + Integer.toHexString(hashCode());
     }
 }
