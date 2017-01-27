@@ -4,14 +4,11 @@ import android.content.Intent;
 import android.content.res.Configuration;
 import android.support.annotation.NonNull;
 import android.view.KeyEvent;
-import android.view.MotionEvent;
 import android.view.View;
 
 import java.util.LinkedList;
 import java.util.List;
 
-import cc.zgeek.pagelib.Annotation.PageState;
-import cc.zgeek.pagelib.Utils.AnnotationUtils;
 import cc.zgeek.pagelib.Utils.ListUtil;
 
 /**
@@ -47,11 +44,6 @@ public abstract class Page extends ViewWrapper implements IPage {
             }
         }
         return rootView;
-    }
-
-    @Override
-    public void onViewInited() {
-
     }
 
     @Override
@@ -117,20 +109,24 @@ public abstract class Page extends ViewWrapper implements IPage {
     }
 
     @Override
-    public final boolean isAttachToActivity() {
-        IPage rootPage = mContext.getRootPage();
-        if (rootPage == null)
-            return false;
-        if (rootPage == this)
-            return true;
-        IPage parent = this.getParentPage();
-        while (parent != null) {
-            if (parent == rootPage)
-                return true;
-            parent = parent.getParentPage();
-        }
-        return false;
+    public void onViewInited() {
+
     }
+    //    @Override
+//    public final boolean isAttachToActivity() {
+//        IPage rootPage = context.getRootPage();
+//        if (rootPage == null)
+//            return false;
+//        if (rootPage == this)
+//            return true;
+//        IPage parent = this.getParentPage();
+//        while (parent != null) {
+//            if (parent == rootPage)
+//                return true;
+//            parent = parent.getParentPage();
+//        }
+//        return false;
+//    }
 
 
     @Override
@@ -245,6 +241,11 @@ public abstract class Page extends ViewWrapper implements IPage {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    @Override
+    public boolean isChildPageActive(IPage child) {
+        return pageList != null && pageList.indexOf(child) >= 0;
     }
 
     @Override

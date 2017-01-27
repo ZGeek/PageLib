@@ -6,6 +6,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
 
+import cc.zgeek.pagelib.Utils.PageUtil;
 import cc.zgeek.pagelib.anim.PageAnimatorProvider;
 import cc.zgeek.pagelib.anim.SimpleAnimListener;
 
@@ -48,25 +49,25 @@ public abstract class SwitchPage extends SingleActivePage {
             return;
 
         ensureEndAnimationExecution();
-        final boolean isAttach = isAttachToActivity();
+        final boolean active = PageUtil.isPageActive(this);
         final IPage oldPage = getChildPageAt(showIndex);
         final IPage newPage = getChildPageAt(index);
         prepareForSwitch(newPage, oldPage);
-        if (isAttach) {
+        if (active) {
             newPage.onShow();
             oldPage.onHide();
         }
-        if (provider != null && isAttach) {
+        if (provider != null && active) {
             mAnimate = provider.getPageAnimation(currentContiner(), oldPage.getRootView(), newPage.getRootView());
             mAnimate.addListener(new SimpleAnimListener(){
                 @Override
                 public void onAnimationEnd(Animator animation) {
-                    doFinalWorkForSwitchPage(isAttach, index, newPage, oldPage);
+                    doFinalWorkForSwitchPage(active, index, newPage, oldPage);
                 }
             });
             mAnimate.start();
         } else {
-            doFinalWorkForSwitchPage(isAttach, index, newPage, oldPage);
+            doFinalWorkForSwitchPage(active, index, newPage, oldPage);
         }
     }
 
@@ -137,7 +138,7 @@ public abstract class SwitchPage extends SingleActivePage {
                 targetPage.onDestroy();
                 return super.removePage(targetPage);
             }else {
-                if(isAttachToActivity()){
+                if(PageUtil.isPageActive(this)){
                     targetPage.onHide();
                     targetPage.onHidden();
                 }

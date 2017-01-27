@@ -87,4 +87,8 @@ public abstract class SingleActivePage extends Page{
             page.onActivityResult(requestCode, resultCode, data);
     }
 
+    @Override
+    public boolean isChildPageActive(IPage child) {
+        return child != null && getActiviePage() == child;
+    }
 }

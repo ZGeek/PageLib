@@ -50,11 +50,15 @@ public interface IPage {
      */
     void setParentPage(IPage parentPage);
 
-    /***
-     * 是否已经附加到Activity上了
-     * @return
-     */
-    boolean isAttachToActivity();
+//    /***
+//     * 是否已经附加到Activity上了
+//     * @return
+//     */
+//    boolean isAttachToActivity();
+
+
+    PageActivity getContext();
+    boolean isChildPageActive(IPage child);
 
     /***
      * 得到此Page的根视图

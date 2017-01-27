@@ -52,7 +52,7 @@ public class SimplePage extends Page {
 //
 //    @Override
 //    public void onClick(View v) {
-//        ((NavigationPage) getParentPage()).pushPage(new SimplePage(mContext));
+//        ((NavigationPage) getParentPage()).pushPage(new SimplePage(context));
 //    }
 
     @Override

@@ -14,6 +14,7 @@ import android.widget.FrameLayout;
 import java.util.List;
 
 import cc.zgeek.pagelib.Utils.PageLibDebugUtis;
+import cc.zgeek.pagelib.Utils.PageUtil;
 import cc.zgeek.pagelib.anim.PageAnimatorProvider;
 import cc.zgeek.pagelib.anim.SimpleAnimListener;
 
@@ -55,7 +56,7 @@ public class NavigationPage extends SingleActivePage {
             synchronized (this) {
                 if (rootView == null) {
                     mNavigationPageHelper = new NavigationPageHelper(this);
-                    rootView = mNavigationPageHelper.createContainerView(mContext);
+                    rootView = mNavigationPageHelper.createContainerView(context);
                     onViewInited();
                 }
             }
@@ -73,7 +74,7 @@ public class NavigationPage extends SingleActivePage {
 
     public void pushPage(final IPage showPage, PageAnimatorProvider provider) {
 
-        final boolean isAttach = isAttachToActivity();
+        final boolean active = PageUtil.isPageActive(this);
         ensureEndAnimationExecution();
 
         final IPage hidePage = getTopPage();
@@ -81,7 +82,7 @@ public class NavigationPage extends SingleActivePage {
         addPage(showPage);
         currentContiner().addView(showPage.getRootView());
 
-        if (isAttach) {
+        if (active) {
             showPage.onShow();
             if (hidePage != null) {
 //                hidePage.getRootView().bringToFront();
@@ -90,17 +91,17 @@ public class NavigationPage extends SingleActivePage {
         }
 
 
-        if (isAttach && provider != null) {
+        if (active && provider != null) {
             mAnimatedTransitions = provider.getPageAnimation(currentContiner(), hidePage == null ? null : hidePage.getRootView(), showPage.getRootView());
             mAnimatedTransitions.addListener(new SimpleAnimListener() {
                 @Override
                 public void onAnimationEnd(Animator animation) {
-                    doFinalWorkForPushPage(hidePage, showPage, isAttach);
+                    doFinalWorkForPushPage(hidePage, showPage, active);
                 }
             });
             mAnimatedTransitions.start();
         } else {
-            doFinalWorkForPushPage(hidePage, showPage, isAttach);
+            doFinalWorkForPushPage(hidePage, showPage, active);
         }
 
         if (PageLibDebugUtis.isDebug()) {
@@ -224,7 +225,7 @@ public class NavigationPage extends SingleActivePage {
             return;
         }
 
-        final boolean isAttach = isAttachToActivity();
+        final boolean active = PageUtil.isPageActive(this);
         if (getChildPageCount() == 1)
             return;
         getRootView().setEnabled(false);
@@ -234,7 +235,7 @@ public class NavigationPage extends SingleActivePage {
         if (!isFromSwip) {
             prepareForPop(willShowPage, topPage);
         }
-        if (isAttach) {
+        if (active) {
             willShowPage.onShow();
             topPage.onHide();
         }
@@ -243,19 +244,19 @@ public class NavigationPage extends SingleActivePage {
         if (isFromSwip) {
             provider = getDefaultPopAnimator();
         }
-        if (provider != null && isAttach) {
+        if (provider != null && active) {
             mAnimatedTransitions = provider.getPageAnimation(currentContiner(), topPage.getRootView(), willShowPage.getRootView());
             mAnimatedTransitions.addListener(new SimpleAnimListener() {
                 @Override
                 public void onAnimationEnd(Animator animation) {
-                    doFinalWorkForPopPage(willRemovePages, willShowPage, isAttach);
+                    doFinalWorkForPopPage(willRemovePages, willShowPage, active);
                 }
             });
             resetMargin(topPage.getRootView());
             resetMargin(willShowPage.getRootView());
             mAnimatedTransitions.start();
         } else {
-            doFinalWorkForPopPage(willRemovePages, willShowPage, isAttach);
+            doFinalWorkForPopPage(willRemovePages, willShowPage, active);
         }
     }
 

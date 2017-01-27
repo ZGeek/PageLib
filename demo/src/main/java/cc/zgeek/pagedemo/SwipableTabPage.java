@@ -36,17 +36,17 @@ public class SwipableTabPage extends Page {
     @Override
     public void onViewInited() {
         super.onViewInited();
-        pagerPage = new ViewPagerPage(mContext);
-        ViewPagerPage innerPager = new ViewPagerPage(mContext);
+        pagerPage = new ViewPagerPage(context);
+        ViewPagerPage innerPager = new ViewPagerPage(context);
         innerPager.addPages(Arrays.asList(
-                new SimplePage(mContext, 0),
-                new SimplePage(mContext, 1),
-                new SimplePage(mContext, 2)));
+                new SimplePage(context, 0),
+                new SimplePage(context, 1),
+                new SimplePage(context, 2)));
 
         pagerPage.addPages(Arrays.asList(
-                new SimplePage(mContext, 0),
-                new SimplePage(mContext, 1),
-                new SimplePage(mContext, 2),
+                new SimplePage(context, 0),
+                new SimplePage(context, 1),
+                new SimplePage(context, 2),
                 innerPager));
         addPage(pagerPage);
         contenter.addView(pagerPage.getRootView());

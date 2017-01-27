@@ -22,6 +22,7 @@ import android.view.Window;
 public abstract class PageActivity extends AppCompatActivity {
     IPage rootPage;
     Handler handler;
+    boolean isActive = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -70,6 +71,7 @@ public abstract class PageActivity extends AppCompatActivity {
 
     @Override
     protected void onResume() {
+        isActive = true;
         rootPage.onShow();
         super.onResume();
         rootPage.onShown();
@@ -80,6 +82,11 @@ public abstract class PageActivity extends AppCompatActivity {
         rootPage.onHide();
         super.onPause();
         rootPage.onHidden();
+        isActive = false;
+    }
+
+    public boolean isActive() {
+        return isActive;
     }
 
     @Override

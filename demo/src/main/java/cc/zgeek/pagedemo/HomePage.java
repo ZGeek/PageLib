@@ -57,19 +57,19 @@ public class HomePage extends Page implements View.OnClickListener {
                 new Toolbar.OnMenuItemClickListener() {
                     @Override
                     public boolean onMenuItemClick(MenuItem item) {
-                        new AlertDialog.Builder(mContext)
+                        new AlertDialog.Builder(context)
                                 .setTitle("PageLib")
                                 .setMessage("Paginize is a light-weight application framework " +
                                         "for Android.")
                                 .setPositiveButton("OK", new DialogInterface.OnClickListener() {
                                     public void onClick(DialogInterface dialog, int which) {
-                                        Toast.makeText(mContext, "OK clicked",
+                                        Toast.makeText(context, "OK clicked",
                                                 Toast.LENGTH_SHORT).show();
                                     }
                                 })
                                 .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
                                     public void onClick(DialogInterface dialog, int which) {
-                                        Toast.makeText(mContext, "Cancel clicked", Toast.LENGTH_SHORT).show();
+                                        Toast.makeText(context, "Cancel clicked", Toast.LENGTH_SHORT).show();
                                     }
                                 })
                                 .show();
@@ -80,7 +80,7 @@ public class HomePage extends Page implements View.OnClickListener {
 
     private void setupDrawerToggle() {
         ActionBarDrawerToggle mDrawerToggle = new ActionBarDrawerToggle(
-                mContext,
+                context,
                 mDrawerLayout,
                 mTbHeaderBar,
                 R.string.app_name,
@@ -96,7 +96,7 @@ public class HomePage extends Page implements View.OnClickListener {
     public void onClick(View v) {
         switch (v.getId()){
             case R.id.viewPagerBtn:
-                ((NavigationPage)mContext.getRootPage()).pushPage(new SwipableTabPage(mContext));
+                ((NavigationPage) context.getRootPage()).pushPage(new SwipableTabPage(context));
                 break;
         }
     }

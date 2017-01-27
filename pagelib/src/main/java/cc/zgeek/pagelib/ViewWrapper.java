@@ -4,7 +4,6 @@ import android.content.res.Resources;
 import android.support.annotation.NonNull;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewAnimationUtils;
 
 import cc.zgeek.pagelib.Utils.AnnotationUtils;
 
@@ -15,12 +14,12 @@ import cc.zgeek.pagelib.Utils.AnnotationUtils;
  */
 
 public abstract class ViewWrapper {
-    protected PageActivity mContext;
+    protected PageActivity context;
     protected volatile View rootView;
     private static String PACKAGE_NAME = null;
 
     public ViewWrapper(PageActivity pageActivity) {
-        mContext = pageActivity;
+        context = pageActivity;
         if (PACKAGE_NAME == null)
             PACKAGE_NAME = pageActivity.getPackageName();
     }
@@ -46,15 +45,15 @@ public abstract class ViewWrapper {
     }
 
     public String getString(int resId) {
-        return mContext.getString(resId);
+        return context.getString(resId);
     }
 
     public String getString(int resId, Object... args) {
-        return mContext.getString(resId, args);
+        return context.getString(resId, args);
     }
 
     public Resources getResources() {
-        return mContext.getResources();
+        return context.getResources();
     }
 
     public String getPackageName() {
@@ -62,8 +61,10 @@ public abstract class ViewWrapper {
     }
 
     public LayoutInflater getLayoutInflater() {
-        return mContext.getLayoutInflater();
+        return context.getLayoutInflater();
     }
 
-
+    public PageActivity getContext() {
+        return context;
+    }
 }

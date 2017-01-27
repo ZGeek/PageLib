@@ -10,6 +10,8 @@ import android.view.ViewGroup;
 import java.util.ArrayList;
 import java.util.List;
 
+import cc.zgeek.pagelib.Utils.PageUtil;
+
 /**
  * Created by flyop.
  * Change History:
@@ -35,7 +37,7 @@ public class ViewPagerPage extends SingleActivePage implements ViewPager.OnPageC
         if (rootView == null) {
             synchronized (this) {
                 if (rootView == null) {
-                    rootView = new ViewPager(mContext);
+                    rootView = new ViewPager(context);
                     onViewInited();
                 }
             }
@@ -84,7 +86,7 @@ public class ViewPagerPage extends SingleActivePage implements ViewPager.OnPageC
 
     @Override
     public void onPageSelected(int position) {
-        if (isAttachToActivity() && position != currentShowIndex) {
+        if (PageUtil.isPageActive(this) && position != currentShowIndex) {
 
             IPage oldPage = getChildPageAt(currentShowIndex);
             IPage page = getChildPageAt(position);
@@ -133,13 +135,13 @@ public class ViewPagerPage extends SingleActivePage implements ViewPager.OnPageC
         }
         int afterCount = getChildPageCount();
         if (preCount == 0 && afterCount > 0) {
-            boolean isAttach = isAttachToActivity();
+            boolean active = PageUtil.isPageActive(this);
             //此时第一个Page将显示，但并不会调用onPageSelected，所以此时需要对第一个page做处理
-            if (isAttach) {
+            if (active) {
                 getChildPageAt(0).onShow();
             }
             adapterWrapper.notifyDataSetChanged();
-            if (isAttach) {
+            if (active) {
                 getChildPageAt(0).onShown();
             }
         } else if (pages.size() > 0) {
@@ -148,12 +150,12 @@ public class ViewPagerPage extends SingleActivePage implements ViewPager.OnPageC
     }
 
     public void setPageList(List<IPage> pages) {
-        boolean isAttach = isAttachToActivity();
+        boolean active = PageUtil.isPageActive(this);
         IPage cPage = getActiviePage();
 
         for (int i = getChildPageCount() - 1; i >= 0; i--) {
             IPage tmpPage = getChildPageAt(i);
-            if (tmpPage == cPage && isAttach) {
+            if (tmpPage == cPage && active) {
                 tmpPage.onHide();
                 tmpPage.onHidden();
             }
@@ -173,12 +175,12 @@ public class ViewPagerPage extends SingleActivePage implements ViewPager.OnPageC
          */
 
         int targetRemovePageIndex = getChildPageIndex(page);
-        boolean isAttach = isAttachToActivity();
+        boolean active = PageUtil.isPageActive(this);
         if (targetRemovePageIndex < 0)
             return false;
         if (targetRemovePageIndex == currentShowIndex) {
             IPage willShowPage = getWillShowPageIndexWhenRemove(targetRemovePageIndex);
-            if (isAttach) {
+            if (active) {
                 if (willShowPage != null)
                     willShowPage.onShow();
                 page.onHide();
@@ -186,7 +188,7 @@ public class ViewPagerPage extends SingleActivePage implements ViewPager.OnPageC
 
             super.removePage(page);
             adapterWrapper.notifyDataSetChanged();
-            if (isAttach) {
+            if (active) {
                 if (willShowPage != null)
                     willShowPage.onShown();
                 page.onHidden();
