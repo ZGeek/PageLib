@@ -8,6 +8,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import cc.zgeek.pagelib.Utils.PageUtil;
@@ -128,6 +129,9 @@ public class ViewPagerPage extends SingleActivePage implements ViewPager.OnPageC
         adapterWrapper.notifyDataSetChanged();
     }
 
+    public void addPages(IPage... pages){
+        addPages(Arrays.asList(pages));
+    }
     public void addPages(List<? extends IPage> pages) {
         int preCount = getChildPageCount();
         for (int i = 0; i < pages.size(); i++) {

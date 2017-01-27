@@ -239,8 +239,9 @@ public abstract class Page extends ViewWrapper implements IPage {
         return name;
     }
 
-    public void setName(String name) {
+    public IPage setName(String name) {
         this.name = name;
+        return this;
     }
 
     @Override

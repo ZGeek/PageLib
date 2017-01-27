@@ -121,5 +121,5 @@ public interface IPage {
 
     String getName();
 
-    void setName(String name);
+    IPage setName(String name);
 }

@@ -87,6 +87,6 @@ public class SimplePage extends Page {
 
     @Override
     public String getName() {
-        return ""+index;
+        return super.getName()+index;
     }
 }

@@ -265,25 +265,26 @@ public class NavigationPage extends SingleActivePage {
         popTopNPages(1, null, true);
     }
 
-    private void doFinalWorkForPopPage(List<IPage> willRemovePages, IPage willShowPage, boolean isAttach) {
+    private void doFinalWorkForPopPage(List<IPage> willRemovePages, IPage willShowPage, boolean active) {
         if (willShowPage.getRootView().getAnimation() != null) {
             Log.d("Animation Pop End", "" + willShowPage.getRootView().getAnimation().hasEnded());
+        }
+        if (active) {
+            willShowPage.getRootView().bringToFront();
+            willShowPage.getRootView().requestFocus();
+            willShowPage.onShown();
         }
         IPage topPage = willRemovePages.get(willRemovePages.size() - 1);
         for (int i = willRemovePages.size() - 1; i >= 0; i--) {
             IPage cPage = willRemovePages.get(i);
             if (cPage == topPage) {
                 currentContiner().removeView(cPage.getRootView());
-                if (isAttach) {
+                if (active) {
                     cPage.onHidden();
                 }
             }
         }
-        if (isAttach) {
-            willShowPage.getRootView().bringToFront();
-            willShowPage.getRootView().requestFocus();
-            willShowPage.onShown();
-        }
+
         for (int i = willRemovePages.size() - 1; i >= 0; i--) {
             IPage cPage = willRemovePages.get(i);
             if (cPage.isViewInited()) {
