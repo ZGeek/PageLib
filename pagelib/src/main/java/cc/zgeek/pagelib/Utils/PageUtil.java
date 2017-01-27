@@ -10,6 +10,11 @@ import cc.zgeek.pagelib.IPage;
 
 public class PageUtil {
 
+    /***
+     * Page是否是被激活的状态，依赖于isChildPageActive和PageActivity的状态
+     * @param page
+     * @return
+     */
     public static boolean isPageActive(IPage page) {
         if (!page.getContext().isActive()) {
             return false;

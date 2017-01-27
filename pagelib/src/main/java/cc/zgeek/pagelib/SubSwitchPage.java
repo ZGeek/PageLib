@@ -25,6 +25,8 @@ public abstract class SubSwitchPage extends SwitchPage {
 
     @Override
     public FrameLayout currentContiner() {
+        if(rootView == null)
+            getRootView();
         return tabContainerLayout;
     }
 }
