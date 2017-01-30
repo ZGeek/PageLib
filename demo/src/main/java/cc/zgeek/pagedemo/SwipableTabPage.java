@@ -1,25 +1,37 @@
 package cc.zgeek.pagedemo;
 
+import android.content.DialogInterface;
 import android.support.design.widget.TabLayout;
 import android.support.v4.view.ViewPager;
+import android.support.v7.app.AlertDialog;
+import android.support.v7.widget.Toolbar;
+import android.view.MenuItem;
+import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import java.util.Arrays;
 
+import cc.zgeek.pagedemo.util.ToolbarHelper;
 import cc.zgeek.pagelib.Annotation.InjectView;
 import cc.zgeek.pagelib.Annotation.PageLayout;
+import cc.zgeek.pagelib.NavigationPage;
 import cc.zgeek.pagelib.Page;
 import cc.zgeek.pagelib.PageActivity;
 import cc.zgeek.pagelib.ViewPagerPage;
 
 /**
- * Created by flyop.
+ * Created by ZGeek.
  * Change History:
  * 2017/1/23 : Create
  */
 
 @PageLayout(R.layout.swipable_page)
 public class SwipableTabPage extends Page {
+
+
+    @InjectView(R.id.tb_header_bar)
+    Toolbar toolbar;
 
     @InjectView(R.id.tab_layout)
     TabLayout tabLayout;
@@ -36,21 +48,27 @@ public class SwipableTabPage extends Page {
     @Override
     public void onViewInited() {
         super.onViewInited();
-        pagerPage = new ViewPagerPage(context);
-        ViewPagerPage innerPager = new ViewPagerPage(context);
-        innerPager.addPages(Arrays.asList(
-                new SimplePage(context, 0),
-                new SimplePage(context, 1),
-                new SimplePage(context, 2)));
+        setupToolbar();
+        pagerPage = new ViewPagerPage(getContext());
 
         pagerPage.addPages(Arrays.asList(
-                new SimplePage(context, 0),
-                new SimplePage(context, 1),
-                new SimplePage(context, 2),
-                innerPager));
+                new SimplePage(getContext()).setName("外0"),
+                new SimplePage(getContext()).setName("外1"),
+                new SimplePage(getContext()).setName("外2"),
+                new InnerVP(getContext()).setName("内部VP")));
         addPage(pagerPage);
         contenter.addView(pagerPage.getRootView());
         setupTabLayout();
+    }
+    private void setupToolbar() {
+        toolbar.setTitle("PageLib · SwipableTabPage");
+
+        ToolbarHelper.setNavigationIconEnabled(toolbar, true, new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                ((NavigationPage)getContext().getRootPage()).popPage();
+            }
+        });
     }
 
     private void setupTabLayout() {

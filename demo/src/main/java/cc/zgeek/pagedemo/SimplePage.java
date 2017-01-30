@@ -2,6 +2,7 @@ package cc.zgeek.pagedemo;
 
 import android.graphics.Color;
 import android.support.annotation.LayoutRes;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
@@ -11,6 +12,7 @@ import android.widget.TextView;
 
 import java.util.Random;
 
+import cc.zgeek.pagedemo.util.NavHelper;
 import cc.zgeek.pagelib.Annotation.InjectView;
 import cc.zgeek.pagelib.Annotation.PageLayout;
 import cc.zgeek.pagelib.NavigationPage;
@@ -19,41 +21,44 @@ import cc.zgeek.pagelib.PageActivity;
 
 
 /**
- * Created by flyop.
+ * Created by ZGeek.
  * Change History:
  * 2017/1/13 : Create
  */
 
 @PageLayout(R.layout.simple_page)
-public class SimplePage extends Page {
+public class SimplePage extends Page implements View.OnClickListener {
     static Random random = new Random();
-    private final int index;
 
+    final  String index;
     @InjectView(R.id.text)
     TextView textView;
     @InjectView(R.id.content)
     FrameLayout frameLayout;
-    public SimplePage(PageActivity pageActivity, int index) {
+    public SimplePage(PageActivity pageActivity) {
         super(pageActivity);
-        this.index = index;
+        index = random.nextInt()+"";
     }
 
-    public int getIndex() {
-        return index;
-    }
+
 
     @Override
     public void onViewInited() {
 
         textView.setBackgroundColor(Color.argb(255, random.nextInt(255), random.nextInt(255), random.nextInt(255) ));
         frameLayout.setBackgroundColor(Color.argb(255, random.nextInt(255), random.nextInt(255), random.nextInt(255) ));
-        textView.setText(index + "");
+        textView.setText(getName());
+        textView.setOnClickListener(this);
     }
-//
-//    @Override
-//    public void onClick(View v) {
-//        ((NavigationPage) getParentPage()).pushPage(new SimplePage(context));
-//    }
+
+    @Override
+    public void onClick(View v) {
+        NavigationPage page = NavHelper.findFirstNav(this);
+        if(page != null){
+            page.pushPage(new SimplePage(getContext()));
+        }
+//        ((NavigationPage) getContext().getRootPage()).pushPage(new SimplePage(getContext()));
+    }
 
     @Override
     public void onShow() {
@@ -87,6 +92,9 @@ public class SimplePage extends Page {
 
     @Override
     public String getName() {
-        return super.getName()+index;
+        String name =  super.getName();
+        if(TextUtils.isEmpty(name))
+            return index;
+        return name;
     }
 }
