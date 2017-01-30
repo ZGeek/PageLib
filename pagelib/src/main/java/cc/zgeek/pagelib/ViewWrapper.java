@@ -8,13 +8,13 @@ import android.view.View;
 import cc.zgeek.pagelib.Utils.AnnotationUtils;
 
 /**
- * Created by flyop.
+ * Created by ZGeek.
  * Change History:
  * 2017/1/10 : Create
  */
 
 public abstract class ViewWrapper {
-    protected PageActivity context;
+    private PageActivity context;
     protected volatile View rootView;
     private static String PACKAGE_NAME = null;
 

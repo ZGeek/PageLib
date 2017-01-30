@@ -14,7 +14,7 @@ import java.util.List;
 import cc.zgeek.pagelib.Utils.PageUtil;
 
 /**
- * Created by flyop.
+ * Created by ZGeek.
  * Change History:
  * 2017/1/14 : Create
  */
@@ -38,7 +38,7 @@ public class ViewPagerPage extends SingleActivePage implements ViewPager.OnPageC
         if (rootView == null) {
             synchronized (this) {
                 if (rootView == null) {
-                    rootView = new ViewPager(context);
+                    rootView = new ViewPager(getContext());
                     onViewInited();
                 }
             }

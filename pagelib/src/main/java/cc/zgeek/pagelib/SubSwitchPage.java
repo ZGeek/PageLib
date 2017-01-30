@@ -3,7 +3,7 @@ package cc.zgeek.pagelib;
 import android.widget.FrameLayout;
 
 /**
- * Created by flyop.
+ * Created by ZGeek.
  * Change History:
  * 2017/1/14 : Create
  * 一个TabPage，通过setTabContainerLayout可以设置容纳其他Page的ViewGroup,此ViewGroup必须是FrameLayout或者其子类
