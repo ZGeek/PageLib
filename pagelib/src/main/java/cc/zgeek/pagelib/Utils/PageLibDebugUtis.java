@@ -1,13 +1,14 @@
 package cc.zgeek.pagelib.Utils;
 
 /**
- * Created by flyop.
+ * Created by ZGeek.
  * Change History:
  * 2017/1/20 : Create
  */
 
 public class PageLibDebugUtis {
-    static boolean debug = false;
+    private static boolean debug = false;
+    static String TAG = "PAGE_LIB";
 
     public static boolean isDebug() {
         return debug;
