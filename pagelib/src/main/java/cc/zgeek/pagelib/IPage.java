@@ -10,20 +10,20 @@ import android.view.View;
 import java.util.List;
 
 /**
- * Created by flyop.
+ * Created by ZGeek.
  * Change History:
  * 2017/1/10 : Create
  */
 
 public interface IPage {
     /***
-     * 当返回键按下时回调此函数
-     * @return 是否消费此次点及，若消费则不继续往下传递
+     * When the return key press callback
+     * @return Whether consume this  point ，若消费则不继续往下传递
      */
     boolean onBackPressed();
 
     /***
-     *同Activity的onActivityResult
+     * same as Activity#onActivityResult(int, int, Intent)
      * @param requestCode
      * @param resultCode
      * @param data
@@ -39,29 +39,19 @@ public interface IPage {
     void onConfigurationChanged(Configuration newConfig);
 
     /***
-     * 得到当前page的父page，即其附加在其上的page
+     * Get the parent page of  current page
      * @return
      */
     IPage getParentPage();
 
-    /***
-     * 设置当前的page
-     * @param parentPage
-     */
     void setParentPage(IPage parentPage);
-
-//    /***
-//     * 是否已经附加到Activity上了
-//     * @return
-//     */
-//    boolean isAttachToActivity();
 
 
     PageActivity getContext();
     boolean isChildPageActive(IPage child);
 
     /***
-     * 得到此Page的根视图
+     * Get the root view of this Page
      * @return
      */
     @NonNull View getRootView();
@@ -70,11 +60,6 @@ public interface IPage {
 //
 //    void onRestoreInstanceState(Bundle savedInstanceState);
 
-
-
-//    void addPage(IPage page);
-//
-//    boolean removePage(IPage page);
 
     /***
      * getChildPageAt 得到在index位置处的子page

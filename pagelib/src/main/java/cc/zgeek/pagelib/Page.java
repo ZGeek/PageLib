@@ -12,7 +12,7 @@ import java.util.List;
 import cc.zgeek.pagelib.Utils.ListUtil;
 
 /**
- * Created by flyop.
+ * Created by ZGeek.
  * Change History:
  * 2017/1/10 : Create
  */
@@ -54,7 +54,7 @@ public abstract class Page extends ViewWrapper implements IPage {
 
     protected void addPage(IPage page) {
         if (page.getParentPage() != null) {
-            throw new IllegalStateException("Page Can Not Remove Beacase Aready Have A Parent");
+            throw new IllegalStateException("Page Can Not added Beacase Aready Have A Parent");
         }
         page.setParentPage(this);
         pageList.add(page);
