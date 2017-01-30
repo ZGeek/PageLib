@@ -11,14 +11,14 @@ import cc.zgeek.pagelib.anim.PageAnimatorProvider;
 import cc.zgeek.pagelib.anim.SimpleAnimListener;
 
 /**
- * Created by flyop.
+ * Created by ZGeek.
  * Change History:
  * 2017/1/14 : Create
  */
 
 public abstract class SwitchPage extends SingleActivePage {
 
-    int showIndex = 0;
+    int showIndex = -1;
     private ValueAnimator mAnimate = null;
 
     public SwitchPage(PageActivity pageActivity) {
@@ -42,24 +42,30 @@ public abstract class SwitchPage extends SingleActivePage {
     }
 
     public void switchToPage(final int index, PageAnimatorProvider provider) {
-        if (index < 0 || index >= getChildPageCount() || index == showIndex) {
+        if (index < 0 || index >= getChildPageCount()) {
             throw new IllegalArgumentException("index is Out Of Bound");
         }
-        if(showIndex == index)
+        if (showIndex == index)
             return;
 
         ensureEndAnimationExecution();
         final boolean active = PageUtil.isPageActive(this);
-        final IPage oldPage = getChildPageAt(showIndex);
+        IPage tmpOld = null;
+        if (showIndex >= 0) {
+            tmpOld = getChildPageAt(showIndex);
+        }
+        final IPage oldPage = tmpOld;
         final IPage newPage = getChildPageAt(index);
         prepareForSwitch(newPage, oldPage);
         if (active) {
             newPage.onShow();
-            oldPage.onHide();
+            if (oldPage != null) {
+                oldPage.onHide();
+            }
         }
         if (provider != null && active) {
-            mAnimate = provider.getPageAnimation(currentContiner(), oldPage.getRootView(), newPage.getRootView());
-            mAnimate.addListener(new SimpleAnimListener(){
+            mAnimate = provider.getPageAnimation(currentContiner(), oldPage != null ? oldPage.getRootView() : null, newPage.getRootView());
+            mAnimate.addListener(new SimpleAnimListener() {
                 @Override
                 public void onAnimationEnd(Animator animation) {
                     doFinalWorkForSwitchPage(active, index, newPage, oldPage);
@@ -81,10 +87,13 @@ public abstract class SwitchPage extends SingleActivePage {
     private void doFinalWorkForSwitchPage(boolean isAttach, int index, IPage newPage, IPage oldPage) {
         if (isAttach) {
             newPage.onShow();
-            oldPage.onHidden();
+            if (oldPage != null) {
+                oldPage.onHidden();
+            }
         }
-        currentContiner().removeView(oldPage.getRootView());
-        if(isAttach){
+        if (oldPage != null)
+            currentContiner().removeView(oldPage.getRootView());
+        if (isAttach) {
             newPage.getRootView().requestFocus();
         }
 
@@ -99,50 +108,52 @@ public abstract class SwitchPage extends SingleActivePage {
             willShowView.setLayoutParams(layoutParams);
         }
         currentContiner().addView(willShowView);
-        willHidePage.getRootView().bringToFront();
+        if (willHidePage != null)
+            willHidePage.getRootView().bringToFront();
     }
 
     @Override
     public void addPage(IPage page) {
         super.addPage(page);
-        FrameLayout.LayoutParams layout = new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
-        layout.setMargins(0, 0, 0, 0);
-        page.getRootView().setLayoutParams(layout);
-//        currentContiner().addView(page.getRootView());
+//        FrameLayout.LayoutParams layout = new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
+//        layout.setMargins(0, 0, 0, 0);
+//        page.getRootView().setLayoutParams(layout);
+        if (showIndex < 0)
+            switchToPage(0);
     }
 
     @Override
     public boolean removePage(IPage targetPage) {
         int removeIndex = getChildPageIndex(targetPage);
         int count = getChildPageCount();
-        if(removeIndex == -1){
+        if (removeIndex == -1) {
             return false;
         }
-        if(count == 0)
+        if (count == 0)
             return false;
 
-        if(showIndex != removeIndex){//如果要显示的page不是当前要显示的page，则直接移除，并调用移除page的onDestroy方法，随后对方法showIndex进行修正
-            if(targetPage.isViewInited()){
+        if (showIndex != removeIndex) {//如果要显示的page不是当前要显示的page，则直接移除，并调用移除page的onDestroy方法，随后对方法showIndex进行修正
+            if (targetPage.isViewInited()) {
                 targetPage.onDestroy();
             }
             IPage removePage = super.removePage(removeIndex);
-            if(removeIndex < showIndex)
+            if (removeIndex < showIndex)
                 showIndex--;
             return removePage == targetPage;
-        }else {//如果要移除的page就是目前显示的page
+        } else {//如果要移除的page就是目前显示的page
             boolean hasPrePage = removeIndex != 0;
             boolean hasAfterPage = removeIndex != count;
-            int willShowIndex = hasAfterPage ? (showIndex+1) : (hasPrePage ? showIndex-1 : -1);
-            if(willShowIndex >= 0){
+            int willShowIndex = hasAfterPage ? (showIndex + 1) : (hasPrePage ? showIndex - 1 : -1);
+            if (willShowIndex >= 0) {
                 switchToPage(willShowIndex);
                 targetPage.onDestroy();
                 return super.removePage(targetPage);
-            }else {
-                if(PageUtil.isPageActive(this)){
+            } else {
+                if (PageUtil.isPageActive(this)) {
                     targetPage.onHide();
                     targetPage.onHidden();
                 }
-                if(targetPage.isViewInited()){
+                if (targetPage.isViewInited()) {
                     targetPage.onDestroy();
                 }
                 showIndex = -1;
@@ -158,6 +169,10 @@ public abstract class SwitchPage extends SingleActivePage {
 
     @Override
     public IPage getActiviePage() {
+        if (showIndex < 0 || showIndex >= getChildPageCount())
+            return null;
         return getChildPageAt(showIndex);
     }
+
+
 }
