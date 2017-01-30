@@ -1,5 +1,7 @@
 ﻿# PageLib
  > 一个为抛弃复杂的Fragment生命周期和巨大的Activity鸿沟而生的库
+ 
+![demo_video](https://github.com/ZGeek/PageLib/blob/master/art/demo_video.mp4)
 
  ## 此库为何而生
  - Fragment为安卓开发带来了碎片化界面开发的新体验，然而体验过后我们发现，Fragment并不完美，复杂的生命周期让Fragment在管理的时候特别棘手，例如判断一个Fragment是否对用户可见，有些时候需要综合运用onResume onPause setUserVisiableHint onHiddenChanged等众多方法。
