@@ -47,7 +47,7 @@ public class NavigationPageHelper {
 
                 @Override
                 public void onEdgeDragStarted(int edgeFlags, int pointerId) {
-                    if (mNavigationPage.isTopPageCanSwipeToHide() && !mNavigationPage.isAnim()) {
+                    if (mNavigationPage.isTopPageCanSwipeToHide() && mNavigationPage.getChildPageCount() >1 && !mNavigationPage.isAnim()) {
                         dragHelper.captureChildView(mNavigationPage.getTopPage().getRootView(), pointerId);
                         mNavigationPage.prepareForPop(mNavigationPage.getChildPageAt(mNavigationPage.getChildPageCount() - 2), mNavigationPage.getTopPage());
                         View mPreView = mNavigationPage.getChildPageAt(mNavigationPage.getChildPageCount() - 2).getRootView();

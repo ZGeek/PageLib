@@ -6,4 +6,10 @@
     <string name="loading">Loading...</string>
     <string name="loading_failed">Loading failed.</string>
     <string name="retry">Retry</string>
+    <string name="viewpager_page">ViewPager Page</string>
+    <string name="switch_tab_page">Switch Tab Page</string>
+    <string name="list_page">List Page</string>
+    <string name="cus_page">自定义转场动画的Page</string>
+    <string name="sub_nav">子NavigationPage导航</string>
+    <string name="page_demo_about">PageLib 是一个轻量的Android导航和UI完全碎片化开发框架，屏幕中的任意一部分都可以作为一个Page进行管理，通过PageLib可以实现Page的嵌套和导航管理</string>
 </resources>
