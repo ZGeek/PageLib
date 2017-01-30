@@ -6,6 +6,7 @@ import android.support.annotation.IdRes;
 import android.support.annotation.LayoutRes;
 import android.support.v4.util.ArrayMap;
 import android.support.v4.util.LongSparseArray;
+import android.util.Log;
 import android.view.View;
 
 import java.lang.annotation.Annotation;
@@ -23,7 +24,7 @@ import cc.zgeek.pagelib.R;
 import cc.zgeek.pagelib.ViewWrapper;
 
 /**
- * Created by flyop.
+ * Created by ZGeek.
  * Change History:
  * 2017/1/14 : Create
  */
@@ -53,7 +54,11 @@ public class AnnotationUtils {
             for (int i = 0; i < fields.size(); i++) {
                 @IdRes long resId = fields.keyAt(i);
                 try {
-                    fields.valueAt(i).set(wrapper, wrapper.findViewById((int) resId));
+                    View view = wrapper.findViewById((int) resId);
+                    if(view == null && PageLibDebugUtis.isDebug()){
+                        Log.w(PageLibDebugUtis.TAG, wrapper.getClass().getName()+" with property ("+fields.valueAt(i).getName()+") will be NULL");
+                    }
+                    fields.valueAt(i).set(wrapper, view);
                 } catch (IllegalAccessException e) {
                     e.printStackTrace();
                 }
