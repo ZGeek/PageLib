@@ -11,7 +11,7 @@ public @interface PageLayoutName {
   // this is used in Library Projects, because in Library project
   // resource ids(R.id.*) will be non-final, we cannot use the id
   // directly, we have to use string representation of the id, and
-  // Paginize will use res.getIdentifier(value(), "id", packageName)
+  // PageLib will use res.getIdentifier(value(), "id", packageName)
   // to get the id
   String value();
 }
