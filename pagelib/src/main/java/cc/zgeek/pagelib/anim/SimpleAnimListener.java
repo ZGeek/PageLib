@@ -6,7 +6,7 @@ import android.animation.ValueAnimator;
 import android.view.animation.Animation;
 
 /**
- * Created by flyop.
+ * Created by ZGeek.
  * Change History:
  * 2017/1/15 : Create
  */
