@@ -1,5 +1,6 @@
 package cc.zgeek.pagelib;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.os.Bundle;
@@ -14,7 +15,7 @@ import android.view.ViewParent;
 import android.view.Window;
 
 /**
- * Created by flyop.
+ * Created by ZGeek.
  * Change History:
  * 2017/1/10 : Create
  */
@@ -26,29 +27,30 @@ public abstract class PageActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        handler = new Handler(Looper.getMainLooper());
 //        getSupportActionBar().hide();
-
         super.onCreate(savedInstanceState);
+        handler = new Handler(Looper.getMainLooper());
 
         rootPage = initRootPage();
-        ViewGroup decor = findDecorView();
-        decor.removeAllViews();
-        decor.addView(rootPage.getRootView());
+//        ViewGroup decor = (ViewGroup) getWindow().getDecorView();
+//        ViewGroup decor = findDecorView();
+//        decor.removeAllViews();
+//        decor.addView(rootPage.getRootView());
 
-//        setContentView(rootPage.getRootView());
+        setContentView(rootPage.getRootView());
     }
-    ViewGroup findDecorView(){
+
+    ViewGroup findDecorView() {
         View view = findViewById(android.R.id.content);
-        ViewParent parent  = view.getParent();
-        do{
-            if(parent == null)
+        ViewParent parent = view.getParent();
+        do {
+            if (parent == null)
                 return (ViewGroup) view;
             else {
                 view = (View) parent;
                 parent = parent.getParent();
             }
-        }while (true);
+        } while (true);
     }
 
     protected abstract IPage initRootPage();
@@ -145,7 +147,7 @@ public abstract class PageActivity extends AppCompatActivity {
 
 
     public void postDelayed(Runnable runnable, long delayMillis) {
-        if(delayMillis == 0 && Looper.myLooper() == Looper.getMainLooper()){
+        if (delayMillis == 0 && Looper.myLooper() == Looper.getMainLooper()) {
             runnable.run();
             return;
         }
