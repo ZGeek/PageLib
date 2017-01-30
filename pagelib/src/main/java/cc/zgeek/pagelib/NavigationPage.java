@@ -19,26 +19,21 @@ import cc.zgeek.pagelib.anim.PageAnimatorProvider;
 import cc.zgeek.pagelib.anim.SimpleAnimListener;
 
 /**
- * Created by flyop.
+ * Created by ZGeek.
  * Change History:
  * 2017/1/10 : Create
  * <p>
- * 导航Page，采用回退栈机制对page进行管理，至少保留一个Page，每次只显示一个Page
+ * NavigationPage，The back stack mechanism for management page，Keep at least one Page，Can only display a Page at same time
  */
 public class NavigationPage extends SingleActivePage {
 
     private static final String TAG = NavigationPage.class.getName();
     private final static int DEFAULT_ANIMATE_TIME = 300; //ms
     private NavigationPageHelper mNavigationPageHelper;
-    //    private boolean mUseSwipePageTransitionEffect;
-    //View的转场动画结束时的action，用于提前结束View的转场动画时提前做操作
-//    private Runnable mAnimatedTransitionsFinishAction = null;
-    Animator mAnimatedTransitions = null;
+    private ValueAnimator mAnimatedTransitions = null;
 
     public NavigationPage(PageActivity pageActivity, IPage rootPage) {
         super(pageActivity);
-//        addPage(rootPage);
-//        currentContiner().addView(rootPage.getRootView());
         pushPage(rootPage, false);
     }
 
@@ -56,7 +51,7 @@ public class NavigationPage extends SingleActivePage {
             synchronized (this) {
                 if (rootView == null) {
                     mNavigationPageHelper = new NavigationPageHelper(this);
-                    rootView = mNavigationPageHelper.createContainerView(context);
+                    rootView = mNavigationPageHelper.createContainerView(getContext());
                     onViewInited();
                 }
             }
@@ -73,6 +68,9 @@ public class NavigationPage extends SingleActivePage {
     }
 
     public void pushPage(final IPage showPage, PageAnimatorProvider provider) {
+        if(showPage == null){
+            throw new NullPointerException("the showView can not be NULL");
+        }
 
         final boolean active = PageUtil.isPageActive(this);
         ensureEndAnimationExecution();
@@ -133,7 +131,6 @@ public class NavigationPage extends SingleActivePage {
                 oldPage.onHidden();
             }
         }
-
 
         mAnimatedTransitions = null;
     }
@@ -327,7 +324,9 @@ public class NavigationPage extends SingleActivePage {
 
     public boolean isTopPageCanSwipeToHide() {
         IPage page = getTopPage();
-        if (page instanceof CanSwipToHide && !((CanSwipToHide) page).canSwipToHide())
+        if(page == null)
+            return false;
+        if (page instanceof SupportSwipToHide && !((SupportSwipToHide) page).canSwipToHide())
             return false;
         return true;
     }

@@ -7,7 +7,7 @@ import android.view.View;
 import android.widget.FrameLayout;
 
 /**
- * Created by flyop.
+ * Created by ZGeek.
  * Change History:
  * 2017/1/17 : Create
  */
@@ -47,7 +47,7 @@ public class NavigationPageHelper {
 
                 @Override
                 public void onEdgeDragStarted(int edgeFlags, int pointerId) {
-                    if (mNavigationPage.getChildPageCount() > 1 && !mNavigationPage.isAnim()) {
+                    if (mNavigationPage.isTopPageCanSwipeToHide() && !mNavigationPage.isAnim()) {
                         dragHelper.captureChildView(mNavigationPage.getTopPage().getRootView(), pointerId);
                         mNavigationPage.prepareForPop(mNavigationPage.getChildPageAt(mNavigationPage.getChildPageCount() - 2), mNavigationPage.getTopPage());
                         View mPreView = mNavigationPage.getChildPageAt(mNavigationPage.getChildPageCount() - 2).getRootView();
