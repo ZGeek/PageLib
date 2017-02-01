@@ -1,5 +1,6 @@
 package cc.zgeek.pagedemo;
 
+import android.os.Bundle;
 import android.support.design.widget.TabLayout;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
@@ -34,9 +35,9 @@ public class SwitchTabPage extends SubSwitchPage implements TabLayout.OnTabSelec
     }
 
     @Override
-    public void onViewInited() {
-        super.onViewInited();
+    public void onViewInited(boolean isRestore, Bundle ars) {
         setTabContainerLayout(frameLayout);
+        super.onViewInited(isRestore, ars);
         toolbar.setTitle("PageLib · SwitchTabPage");
         ToolbarHelper.setNavigationIconEnabled(toolbar, true, new View.OnClickListener() {
             @Override
@@ -44,17 +45,28 @@ public class SwitchTabPage extends SubSwitchPage implements TabLayout.OnTabSelec
                 ((NavigationPage) getContext().getRootPage()).popPage();
             }
         });
-        addPage(new SimplePage(getContext()).setName("TAB0"));
-        addPage(new SimplePage(getContext()).setName("TAB1"));
-        addPage(new SimplePage(getContext()).setName("TAB2"));
-        addPage(new SimplePage(getContext()).setName("TAB3"));
+        if (!isRestore) {
+            addPage(SimplePage.newInstance(getContext()).setName("TAB0"));
+            addPage(SimplePage.newInstance(getContext()).setName("TAB1"));
+            addPage(SimplePage.newInstance(getContext()).setName("TAB2"));
+            addPage(SimplePage.newInstance(getContext()).setName("TAB3"));
+        }
         for (int i = 0; i < getChildPageCount(); i++) {
             TabLayout.Tab tab =
                     tabLayout.newTab().setIcon(R.mipmap.ic_launcher).setText(getChildPageAt(i).getName()).setTag(getChildPageAt(i));
             tabLayout.addTab(tab);
         }
         tabLayout.addOnTabSelectedListener(this);
+        syncTabIndex();
+
 //        switchToPage(0);
+    }
+
+    protected void syncTabIndex() {
+        int index = getShowIndex();
+        if (index >= 0 && index < getChildPageCount() && tabLayout.getSelectedTabPosition() != index) {
+            tabLayout.getTabAt(index).select();
+        }
     }
 
     @Override

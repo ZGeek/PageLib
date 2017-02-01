@@ -1,8 +1,7 @@
 package cc.zgeek.pagedemo;
 
 
-
-
+import android.os.Bundle;
 import android.os.Looper;
 import android.util.Log;
 import android.util.Printer;
@@ -10,6 +9,7 @@ import android.util.Printer;
 import cc.zgeek.pagelib.IPage;
 import cc.zgeek.pagelib.NavigationPage;
 import cc.zgeek.pagelib.PageActivity;
+import cc.zgeek.pagelib.Utils.PageLibDebugUtis;
 import cc.zgeek.pagelib.ViewPagerPage;
 
 /**
@@ -46,7 +46,11 @@ public class MainActivity extends PageActivity {
 //                pageA.switchToPage(2);
 //            }
 //        }, 5000);
-        return new NavigationPage(this, new HomePage(this));
+        PageLibDebugUtis.setDebug(true);
+        NavigationPage page = new NavigationPage(this);
+        page.pushPage(new HomePage(this));
+        return page;
+//        return new NavigationPage(this, new HomePage(this));
 //        return new NavigationPage(this, new SimplePage(this));
     }
 

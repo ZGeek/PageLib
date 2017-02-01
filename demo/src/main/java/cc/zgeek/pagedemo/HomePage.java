@@ -3,6 +3,7 @@ package cc.zgeek.pagedemo;
 import android.animation.Animator;
 import android.animation.ValueAnimator;
 import android.content.DialogInterface;
+import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.NavigationView;
@@ -59,8 +60,8 @@ public class HomePage extends Page implements View.OnClickListener, NavigationVi
     }
 
     @Override
-    public void onViewInited() {
-        super.onViewInited();
+    public void onViewInited(boolean isRestore, Bundle args) {
+        super.onViewInited(isRestore, args);
         setupToolbar();
         mTvText.setText(R.string.page_demo_about);
         viewPagerBtn.setOnClickListener(this);
@@ -69,6 +70,11 @@ public class HomePage extends Page implements View.OnClickListener, NavigationVi
         cus_btn.setOnClickListener(this);
         sub_nav.setOnClickListener(this);
         mNavigationView.setNavigationItemSelectedListener(this);
+    }
+
+    @Override
+    public Bundle onSaveInstanceState(boolean isViewInited) {
+        return null;
     }
 
     private void setupToolbar() {
@@ -136,7 +142,7 @@ public class HomePage extends Page implements View.OnClickListener, NavigationVi
                 ((NavigationPage) getContext().getRootPage()).pushPage(new ListViewPage(getContext()));
                 break;
             case R.id.btn_cta_page:
-                ((NavigationPage) getContext().getRootPage()).pushPage(new SimplePage(getContext()), new PageAnimatorProvider() {
+                ((NavigationPage) getContext().getRootPage()).pushPage(SimplePage.newInstance(getContext()), new PageAnimatorProvider() {
                     @Override
                     public ValueAnimator getPageAnimation(ViewGroup container, @Nullable View fromView, View toView) {
                         return getAnim(container, fromView, toView);

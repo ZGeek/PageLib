@@ -8,7 +8,7 @@ package cc.zgeek.pagelib.Utils;
 
 public class PageLibDebugUtis {
     private static boolean debug = false;
-    static String TAG = "PAGE_LIB";
+    public static final String TAG = "PAGE_LIB";
 
     public static boolean isDebug() {
         return debug;

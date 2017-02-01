@@ -2,6 +2,7 @@ package cc.zgeek.pagelib;
 
 import android.content.Intent;
 import android.content.res.Configuration;
+import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
@@ -56,9 +57,10 @@ public interface IPage {
      */
     @NonNull View getRootView();
 
-//    void onSaveInstanceState(Bundle outState);
-//
-//    void onRestoreInstanceState(Bundle savedInstanceState);
+    Bundle onSaveInstanceState(boolean isViewInited);
+
+    void setArgs(Bundle args);
+    Bundle getArgs();
 
 
     /***
@@ -72,7 +74,7 @@ public interface IPage {
     /***
      * 当视图被创建后调用，每个page只会被调用一次
      */
-    void onViewInited();
+    void onViewInited(boolean isRestore, Bundle args);
 
     /***
      * 用于判断视图是否被初始化，

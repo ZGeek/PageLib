@@ -14,6 +14,8 @@ import android.view.ViewGroup;
 import android.view.ViewParent;
 import android.view.Window;
 
+import cc.zgeek.pagelib.Utils.PageUtil;
+
 /**
  * Created by ZGeek.
  * Change History:
@@ -31,12 +33,19 @@ public abstract class PageActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         handler = new Handler(Looper.getMainLooper());
 
-        rootPage = initRootPage();
+
+        if (savedInstanceState != null) {
+            String clsName = savedInstanceState.getString("rootPage");
+            Bundle args = savedInstanceState.getBundle("rootData");
+            rootPage = PageUtil.restorePage(this, clsName, args);
+        }
+        if (rootPage == null)
+            rootPage = initRootPage();
 //        ViewGroup decor = (ViewGroup) getWindow().getDecorView();
 //        ViewGroup decor = findDecorView();
 //        decor.removeAllViews();
 //        decor.addView(rootPage.getRootView());
-
+//        if (savedInstanceState != null)
         setContentView(rootPage.getRootView());
     }
 
@@ -133,11 +142,13 @@ public abstract class PageActivity extends AppCompatActivity {
         rootPage.onLowMemory();
     }
 
-    //    @Override
-//    protected void onSaveInstanceState(Bundle outState) {
-//        super.onSaveInstanceState(outState);
-//        rootPage.onSaveInstanceState(outState);
-//    }
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        Bundle bundle = rootPage.onSaveInstanceState(rootPage.isViewInited());
+        outState.putBundle("rootData", bundle);
+        outState.putString("rootPage", rootPage.getClass().getName());
+    }
 
 //    @Override
 //    protected void onRestoreInstanceState(Bundle savedInstanceState) {

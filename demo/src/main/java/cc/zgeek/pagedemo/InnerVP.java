@@ -1,5 +1,6 @@
 package cc.zgeek.pagedemo;
 
+import android.os.Bundle;
 import android.support.design.widget.TabLayout;
 import android.support.v4.view.ViewPager;
 import android.view.ViewGroup;
@@ -32,16 +33,24 @@ public class InnerVP extends Page {
     }
 
     @Override
-    public void onViewInited() {
+    public void onViewInited(boolean isRestore, Bundle args) {
+        super.onViewInited(isRestore, args);
+        if(!isRestore){
+            ViewPagerPage innerPager = new ViewPagerPage(getContext());
+            innerPager.addPages(Arrays.asList(
+                    SimplePage.newInstance(getContext()).setName("内0"),
+                    SimplePage.newInstance(getContext()).setName("内1"),
+                    SimplePage.newInstance(getContext()).setName("内2")));
+            addPage(innerPager);
+        }
 
-        ViewPagerPage innerPager = new ViewPagerPage(getContext());
-        innerPager.addPages(Arrays.asList(
-                new SimplePage(getContext()).setName("内0"),
-                new SimplePage(getContext()).setName("内1"),
-                new SimplePage(getContext()).setName("内2")));
-
-        tabLayout.setupWithViewPager((ViewPager) innerPager.getRootView());
-        viewGroup.addView(innerPager.getRootView());
-        addPage(innerPager);
+        tabLayout.setupWithViewPager((ViewPager) getChildPageAt(0).getRootView());
+        viewGroup.addView(getChildPageAt(0).getRootView());
     }
+
+//    @Override
+//    public Bundle onSaveInstanceState(boolean isViewInited) {
+//        Bundle bundle = super.onSaveInstanceState(isViewInited);
+//
+//    }
 }

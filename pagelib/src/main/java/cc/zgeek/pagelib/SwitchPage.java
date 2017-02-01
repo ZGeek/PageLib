@@ -2,6 +2,7 @@ package cc.zgeek.pagelib;
 
 import android.animation.Animator;
 import android.animation.ValueAnimator;
+import android.os.Bundle;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
@@ -18,7 +19,8 @@ import cc.zgeek.pagelib.anim.SimpleAnimListener;
 
 public abstract class SwitchPage extends SingleActivePage {
 
-    int showIndex = -1;
+    private static final String CURRENT_INDEX = "CURRENT_INDEX";
+    private int showIndex = -1;
     private ValueAnimator mAnimate = null;
 
     public SwitchPage(PageActivity pageActivity) {
@@ -163,6 +165,10 @@ public abstract class SwitchPage extends SingleActivePage {
 
     }
 
+    public int getShowIndex() {
+        return showIndex;
+    }
+
     public ViewGroup currentContiner() {
         return (FrameLayout) rootView;
     }
@@ -174,5 +180,20 @@ public abstract class SwitchPage extends SingleActivePage {
         return getChildPageAt(showIndex);
     }
 
+    @Override
+    public Bundle onSaveInstanceState(boolean isViewInited) {
+        Bundle bundle =  super.onSaveInstanceState(isViewInited);
+        bundle.putInt(CURRENT_INDEX, showIndex);
+        return bundle;
+    }
 
+    @Override
+    public void onViewInited(boolean isRestore, Bundle args) {
+        super.onViewInited(isRestore, args);
+        if(isRestore){
+            int restoreIndex = args.getInt(CURRENT_INDEX);
+            if(restoreIndex >= 0)
+                switchToPage(restoreIndex);
+        }
+    }
 }

@@ -2,6 +2,7 @@ package cc.zgeek.pagedemo;
 
 import android.app.WallpaperManager;
 import android.graphics.drawable.Drawable;
+import android.os.Bundle;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -43,17 +44,18 @@ public class ListViewPage extends Page {
     }
 
     @Override
-    public void onViewInited() {
+    public void onViewInited(boolean isRestore, Bundle args) {
         mTbHeaderBar.setTitle("ListPage");
         ToolbarHelper.setNavigationIconEnabled(
-                mTbHeaderBar, true, new View.OnClickListener () {
+                mTbHeaderBar, true, new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        ((NavigationPage)getContext().getRootPage()).popPage();
+                        ((NavigationPage) getContext().getRootPage()).popPage();
                     }
                 });
         setParallaxImage();
     }
+
 
     @Override
     public void onShown() {
@@ -64,18 +66,20 @@ public class ListViewPage extends Page {
 
     private void setupRecyclerView() {
         mRvMainList.setLayoutManager(new LinearLayoutManager(getContext()));
-        mRvMainList.setAdapter(new MainListItemAdapter(new ArrayList<String>(){{
+        mRvMainList.setAdapter(new MainListItemAdapter(new ArrayList<String>() {{
             for (int i = 0; i < 25; ++i) {
                 add(getContext().getString(R.string.page_demo_about));
             }
         }}));
     }
+
     private void setParallaxImage() {
         Drawable wallpager = WallpaperManager.getInstance(getContext()).getDrawable();
         if (wallpager != null) {
             mIvParallaxImage.setImageDrawable(wallpager);
         }
     }
+
     private class MainListItemAdapter extends RecyclerView.Adapter<MainListItemAdapter.ViewHolder> {
         private List<String> mTextList;
 
@@ -104,7 +108,7 @@ public class ListViewPage extends Page {
             CardView cvContainer;
             TextView tvText;
 
-            public ViewHolder(View itemView){
+            public ViewHolder(View itemView) {
                 super(itemView);
                 cvContainer = (CardView) itemView;
                 tvText = (TextView) itemView.findViewById(R.id.tv_text);

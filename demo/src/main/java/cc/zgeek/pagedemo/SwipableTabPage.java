@@ -1,6 +1,7 @@
 package cc.zgeek.pagedemo;
 
 import android.content.DialogInterface;
+import android.os.Bundle;
 import android.support.design.widget.TabLayout;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AlertDialog;
@@ -46,27 +47,33 @@ public class SwipableTabPage extends Page {
     }
 
     @Override
-    public void onViewInited() {
-        super.onViewInited();
+    public void onViewInited(boolean isRestore, Bundle args) {
+        super.onViewInited(isRestore, args);
         setupToolbar();
-        pagerPage = new ViewPagerPage(getContext());
+        if (!isRestore) {
+            pagerPage = new ViewPagerPage(getContext());
 
-        pagerPage.addPages(Arrays.asList(
-                new SimplePage(getContext()).setName("外0"),
-                new SimplePage(getContext()).setName("外1"),
-                new SimplePage(getContext()).setName("外2"),
-                new InnerVP(getContext()).setName("内部VP")));
-        addPage(pagerPage);
+            pagerPage.addPages(Arrays.asList(
+                    SimplePage.newInstance(getContext()).setName("外0"),
+                    SimplePage.newInstance(getContext()).setName("外1"),
+                    SimplePage.newInstance(getContext()).setName("外2"),
+                    new InnerVP(getContext()).setName("内部VP")));
+            addPage(pagerPage);
+        } else {
+            pagerPage = (ViewPagerPage) getChildPageAt(0);
+        }
+
         contenter.addView(pagerPage.getRootView());
         setupTabLayout();
     }
+
     private void setupToolbar() {
         toolbar.setTitle("PageLib · SwipableTabPage");
 
         ToolbarHelper.setNavigationIconEnabled(toolbar, true, new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                ((NavigationPage)getContext().getRootPage()).popPage();
+                ((NavigationPage) getContext().getRootPage()).popPage();
             }
         });
     }

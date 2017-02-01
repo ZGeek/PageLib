@@ -1,5 +1,6 @@
 package cc.zgeek.pagedemo;
 
+import android.os.Bundle;
 import android.widget.FrameLayout;
 
 import cc.zgeek.pagelib.Annotation.InjectView;
@@ -24,9 +25,18 @@ public class InnerNavPage extends Page {
     }
 
     @Override
-    public void onViewInited() {
-        NavigationPage nav = new NavigationPage(getContext(), new SimplePage(getContext()));
-        frameLayout.addView(nav.getRootView());
-        addPage(nav);
+    public void onViewInited(boolean isRestore, Bundle args) {
+        super.onViewInited(isRestore, args);
+        if(!isRestore){
+            NavigationPage nav = new NavigationPage(getContext());
+            nav.pushPage(SimplePage.newInstance(getContext()));
+            addPage(nav);
+        }
+        frameLayout.addView(getChildPageAt(0).getRootView());
     }
+
+//    @Override
+//    public Bundle onSaveInstanceState(boolean isViewInited) {
+//        return null;
+//    }
 }

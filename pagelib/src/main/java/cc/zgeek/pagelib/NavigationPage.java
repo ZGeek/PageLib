@@ -2,6 +2,7 @@ package cc.zgeek.pagelib;
 
 import android.animation.Animator;
 import android.animation.ValueAnimator;
+import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.Log;
@@ -11,6 +12,7 @@ import android.view.animation.AccelerateInterpolator;
 import android.view.animation.DecelerateInterpolator;
 import android.widget.FrameLayout;
 
+import java.lang.reflect.Constructor;
 import java.util.List;
 
 import cc.zgeek.pagelib.Utils.PageLibDebugUtis;
@@ -32,15 +34,15 @@ public class NavigationPage extends SingleActivePage {
     private NavigationPageHelper mNavigationPageHelper;
     private ValueAnimator mAnimatedTransitions = null;
 
-    public NavigationPage(PageActivity pageActivity, IPage rootPage) {
+    public NavigationPage(PageActivity pageActivity) {
         super(pageActivity);
-        pushPage(rootPage, false);
     }
 
-
     @Override
-    public void onViewInited() {
-        super.onViewInited();
+    public void onViewInited(boolean isRestore, Bundle args) {
+        super.onViewInited(isRestore, args);
+        if (isRestore)
+            addViewToContiner(getActiviePage());
         ((NavigationPageHelper.NavigationContainerView) rootView).enableSwipeToHide();
     }
 
@@ -52,12 +54,13 @@ public class NavigationPage extends SingleActivePage {
                 if (rootView == null) {
                     mNavigationPageHelper = new NavigationPageHelper(this);
                     rootView = mNavigationPageHelper.createContainerView(getContext());
-                    onViewInited();
+                    onViewInited(PageUtil.isBundleFromSaveInstance(getArgs()), getArgs());
                 }
             }
         }
         return rootView;
     }
+
 
     public void pushPage(final IPage newPage) {
         pushPage(newPage, true);
@@ -68,7 +71,7 @@ public class NavigationPage extends SingleActivePage {
     }
 
     public void pushPage(final IPage showPage, PageAnimatorProvider provider) {
-        if(showPage == null){
+        if (showPage == null) {
             throw new NullPointerException("the showView can not be NULL");
         }
 
@@ -78,7 +81,8 @@ public class NavigationPage extends SingleActivePage {
         final IPage hidePage = getTopPage();
 
         addPage(showPage);
-        currentContiner().addView(showPage.getRootView());
+        addViewToContiner(showPage);
+//        currentContiner().addView(showPage.getRootView());
 
         if (active) {
             showPage.onShow();
@@ -103,8 +107,18 @@ public class NavigationPage extends SingleActivePage {
         }
 
         if (PageLibDebugUtis.isDebug()) {
-            Log.d(TAG, String.format(">>>> pushPage, pageStack=%d, %s", getChildPageCount(), showPage));
+            Log.d(PageLibDebugUtis.TAG, String.format(">>>> pushPage, pageStack=%d, %s", getChildPageCount(), showPage));
         }
+    }
+
+    private void addViewToContiner(IPage page) {
+        View view = page.getRootView();
+        if (view.getLayoutParams() == null) {
+            FrameLayout.LayoutParams layoutParams = new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
+            layoutParams.setMargins(0, 0, 0, 0);
+            view.setLayoutParams(layoutParams);
+        }
+        currentContiner().addView(view);
     }
 
 
@@ -289,7 +303,7 @@ public class NavigationPage extends SingleActivePage {
             }
             removePage(cPage);
             if (PageLibDebugUtis.isDebug()) {
-                Log.d(TAG, String.format(">>>> popPage, pageStack=%d, %s", getChildPageCount(), cPage));
+                Log.d(PageLibDebugUtis.TAG, String.format("<<<< popPage, pageStack=%d, %s", getChildPageCount(), cPage));
             }
         }
 //        mViewTransparentMask.bringToFront();
@@ -312,7 +326,7 @@ public class NavigationPage extends SingleActivePage {
             removedPage.onDestroy();
         removePage(removedPage);
         if (PageLibDebugUtis.isDebug()) {
-            Log.d(TAG, String.format(">>>> deletePage(%d), pageStack=%d, %s", index, getChildPageCount(), getTopPage()));
+            Log.d(PageLibDebugUtis.TAG, String.format(">>>> deletePage(%d), pageStack=%d, %s", index, getChildPageCount(), getTopPage()));
         }
         return true;
     }
@@ -324,7 +338,7 @@ public class NavigationPage extends SingleActivePage {
 
     public boolean isTopPageCanSwipeToHide() {
         IPage page = getTopPage();
-        if(page == null)
+        if (page == null)
             return false;
         if (page instanceof SupportSwipToHide && !((SupportSwipToHide) page).canSwipToHide())
             return false;
@@ -441,16 +455,6 @@ public class NavigationPage extends SingleActivePage {
         view.requestLayout();
     }
 
-
-    @Override
-    public void addPage(IPage page) {
-        super.addPage(page);
-        View view = page.getRootView();
-        FrameLayout.LayoutParams layoutParams = new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
-        layoutParams.setMargins(0, 0, 0, 0);
-        view.setLayoutParams(layoutParams);
-//        mViewTransparentMask.bringToFront();
-    }
 
     void prepareForPop(IPage willShowPage, IPage willHidePage) {
         View willShowView = willShowPage.getRootView();

@@ -1,6 +1,7 @@
 package cc.zgeek.pagelib;
 
 
+import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
@@ -22,6 +23,7 @@ import cc.zgeek.pagelib.Utils.PageUtil;
 public class ViewPagerPage extends SingleActivePage implements ViewPager.OnPageChangeListener {
 
 
+    private static final String SHOW_INDEX = "SHOW_INDEX";
     private IPageAdapterWrapper adapterWrapper;
     private int currentShowIndex = 0;
     private ArrayList<ViewPager.OnPageChangeListener> mOnPageChangeListeners;
@@ -39,7 +41,7 @@ public class ViewPagerPage extends SingleActivePage implements ViewPager.OnPageC
             synchronized (this) {
                 if (rootView == null) {
                     rootView = new ViewPager(getContext());
-                    onViewInited();
+                    onViewInited(PageUtil.isBundleFromSaveInstance(getArgs()), getArgs());
                 }
             }
         }
@@ -47,11 +49,21 @@ public class ViewPagerPage extends SingleActivePage implements ViewPager.OnPageC
     }
 
     @Override
-    public void onViewInited() {
-        super.onViewInited();
+    public void onViewInited(boolean isRestore, Bundle args) {
+        super.onViewInited(isRestore, args);
         ViewPager viewPager = (ViewPager) rootView;
         viewPager.addOnPageChangeListener(this);
         viewPager.setAdapter(adapterWrapper);
+        if(isRestore){
+            switchToPage(args.getInt(SHOW_INDEX));
+        }
+    }
+
+    @Override
+    public Bundle onSaveInstanceState(boolean isViewInited) {
+        Bundle bundle =  super.onSaveInstanceState(isViewInited);
+        bundle.putInt(SHOW_INDEX, currentShowIndex);
+        return bundle;
     }
 
     public void addOnPageChangeListener(ViewPager.OnPageChangeListener listener) {
