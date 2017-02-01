@@ -49,6 +49,7 @@ public class MainActivity extends PageActivity {
         PageLibDebugUtis.setDebug(true);
         NavigationPage page = new NavigationPage(this);
         page.pushPage(new HomePage(this));
+        page.setName("Root Page");
         return page;
 //        return new NavigationPage(this, new HomePage(this));
 //        return new NavigationPage(this, new SimplePage(this));

@@ -1,6 +1,6 @@
 ﻿# PageLib
  > 一个为抛弃复杂的Fragment生命周期和巨大的Activity鸿沟而生的库
- 
+
 ![demo_video](https://github.com/ZGeek/PageLib/blob/master/art/demo.gif)
 
  ## 此库为何而生
@@ -46,3 +46,10 @@
 |ViewPagerPage|内部使用viewpager对所有的page进行管理，通过switchToPage，addPage，addPages，removePage对ViewPagerPage内部的Page进行管理
 |SwitchPage|和ViewPagerPage类似，每次只激活一个page进行显示，多个page之间可以切换|
 |SubSwitchPage|和SwitchPage类似，不同之处在于，SwitchPage的所持有的view的整个显示区域供其子page显示，而SubSwitchPage供其子page显示的区域只是其持有view可显示区域的一部分，所以此page可以和TabLayout配合使用，实现多Tab的切换|
+
+# Feature
+1. ~~View懒加载~~
+1. ~~实现ViewPager样式的page切换~~
+2. ~~实现View激活状态精确判断~~
+3. ~~实现activity的状态保存~~
+4. 在onLowMemory时销毁所有不可见View，只保留所有对用户可见的View
