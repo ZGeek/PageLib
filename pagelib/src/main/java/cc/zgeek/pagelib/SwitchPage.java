@@ -21,7 +21,7 @@ public abstract class SwitchPage extends SingleActivePage {
 
     private static final String CURRENT_INDEX = "CURRENT_INDEX";
     private int showIndex = -1;
-    private ValueAnimator mAnimate = null;
+    private Animator mAnimate = null;
 
     public SwitchPage(PageActivity pageActivity) {
         super(pageActivity);

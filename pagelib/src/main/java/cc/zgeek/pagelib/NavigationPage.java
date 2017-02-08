@@ -25,14 +25,14 @@ import cc.zgeek.pagelib.anim.SimpleAnimListener;
  * Change History:
  * 2017/1/10 : Create
  * <p>
- * NavigationPage，The back stack mechanism for management page，Keep at least one Page，Can only display a Page at same time
+ * NavigationPage，The back stack mechanism for management page，Keep at least one Page，Can only display the top Page at same time
  */
 public class NavigationPage extends SingleActivePage {
 
     private static final String TAG = NavigationPage.class.getName();
     private final static int DEFAULT_ANIMATE_TIME = 300; //ms
     private NavigationPageHelper mNavigationPageHelper;
-    private ValueAnimator mAnimatedTransitions = null;
+    private Animator mAnimatedTransitions = null;
 
     public NavigationPage(PageActivity pageActivity) {
         super(pageActivity);
