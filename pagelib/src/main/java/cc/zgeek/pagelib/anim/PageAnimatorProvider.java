@@ -1,5 +1,6 @@
 package cc.zgeek.pagelib.anim;
 
+import android.animation.Animator;
 import android.animation.ValueAnimator;
 import android.support.annotation.Nullable;
 import android.view.View;
@@ -37,7 +38,7 @@ public interface PageAnimatorProvider {
    * @param toView 将要显示的动画
    * @return View动画的执行时间
    */
-  ValueAnimator getPageAnimation(ViewGroup container, @Nullable View fromView, View toView);
+  Animator getPageAnimation(ViewGroup container, @Nullable View fromView, View toView);
 
 
 }
