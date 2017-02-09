@@ -1,13 +1,12 @@
-package cc.zgeek.pagelib.anim;
+package cc.zgeek.pagelib.anim
 
-import android.animation.Animator;
-import android.animation.ValueAnimator;
-import android.support.annotation.Nullable;
-import android.view.View;
-import android.view.ViewGroup;
+import android.animation.Animator
+import android.animation.ValueAnimator
+import android.view.View
+import android.view.ViewGroup
 
 /**
- * Copyright (c) 2015 neevek <i@neevek.net>
+ * Copyright (c) 2015 neevek **@neevek.net>
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
  * in the Software without restriction, including without limitation the rights
@@ -30,15 +29,17 @@ import android.view.ViewGroup;
 /**
  * PageAnimator to animate transition when navigating pages
  */
-public interface PageAnimatorProvider {
+interface PageAnimatorProvider {
 
-  /***
-   * 为Page切换提供转场动画
-   * @param fromView 将要隐藏的动画
-   * @param toView 将要显示的动画
-   * @return View动画的执行时间
-   */
-  Animator getPageAnimation(ViewGroup container, @Nullable View fromView, View toView);
+    /***
+     * 为Page切换提供转场动画
+     * @param fromView 将要隐藏的动画
+     * *
+     * @param toView 将要显示的动画
+     * *
+     * @return View动画的执行时间
+     */
+    fun getPageAnimation(container: ViewGroup, fromView: View?, toView: View): Animator
 
 
 }

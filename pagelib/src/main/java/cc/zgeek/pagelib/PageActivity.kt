@@ -1,0 +1,158 @@
+package cc.zgeek.pagelib
+
+import android.app.Activity
+import android.content.Intent
+import android.content.res.Configuration
+import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
+import android.support.v7.app.AppCompatActivity
+import android.view.KeyEvent
+import android.view.MotionEvent
+import android.view.View
+import android.view.ViewGroup
+import android.view.ViewParent
+import android.view.Window
+
+import cc.zgeek.pagelib.Utils.PageUtil
+
+/**
+ * Created by ZGeek.
+ * Change History:
+ * 2017/1/10 : Create
+ */
+
+abstract class PageActivity : AppCompatActivity() {
+    var rootPage: IPage? = null
+        internal set
+    internal var handler: Handler
+    var isActive = false
+        internal set
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        //        getSupportActionBar().hide();
+        super.onCreate(savedInstanceState)
+        handler = Handler(Looper.getMainLooper())
+
+
+        if (savedInstanceState != null) {
+            val clsName = savedInstanceState.getString("rootPage")
+            val args = savedInstanceState.getBundle("rootData")
+            rootPage = PageUtil.restorePage(this, clsName, args)
+        }
+        if (rootPage == null)
+            rootPage = initRootPage()
+        //        ViewGroup decor = (ViewGroup) getWindow().getDecorView();
+        //        ViewGroup decor = findDecorView();
+        //        decor.removeAllViews();
+        //        decor.addView(rootPage.getRootView());
+        //        if (savedInstanceState != null)
+        setContentView(rootPage!!.rootView)
+    }
+
+    internal fun findDecorView(): ViewGroup {
+        var view = findViewById(android.R.id.content)
+        var parent: ViewParent? = view.parent
+        do {
+            if (parent == null)
+                return view as ViewGroup
+            else {
+                view = parent as View?
+                parent = parent.parent
+            }
+        } while (true)
+    }
+
+    protected abstract fun initRootPage(): IPage
+
+    override fun onBackPressed() {
+        if (!rootPage!!.onBackPressed()) {
+            finish()
+        }
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent) {
+        rootPage!!.onActivityResult(requestCode, resultCode, data)
+    }
+
+    override fun onResume() {
+        isActive = true
+        rootPage!!.onShow()
+        super.onResume()
+        rootPage!!.onShown()
+    }
+
+    override fun onPause() {
+        rootPage!!.onHide()
+        super.onPause()
+        rootPage!!.onHidden()
+        isActive = false
+    }
+
+    override fun onDestroy() {
+        rootPage!!.onDestroy()
+        super.onDestroy()
+    }
+
+    override fun onKeyDown(keyCode: Int, event: KeyEvent): Boolean {
+        if (rootPage!!.onKeyDown(keyCode, event)) {
+            return true
+        }
+        return super.onKeyDown(keyCode, event)
+    }
+
+    override fun onKeyUp(keyCode: Int, event: KeyEvent): Boolean {
+        if (rootPage!!.onKeyUp(keyCode, event)) {
+            return true
+        }
+        return super.onKeyUp(keyCode, event)
+    }
+
+    //    @Override
+    //    public boolean onTouchEvent(MotionEvent event) {
+    //        if (rootPage.onTouchEvent(event)) {
+    //            return true;
+    //        }
+    //        return super.onTouchEvent(event);
+    //    }
+
+    override fun onConfigurationChanged(newConfig: Configuration) {
+        super.onConfigurationChanged(newConfig)
+        rootPage!!.onConfigurationChanged(newConfig)
+    }
+
+    override fun onLowMemory() {
+        super.onLowMemory()
+        rootPage!!.onLowMemory()
+    }
+
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        val bundle = rootPage!!.onSaveInstanceState(rootPage!!.isViewInited)
+        outState.putBundle("rootData", bundle)
+        outState.putString("rootPage", rootPage!!.javaClass.name)
+    }
+
+    //    @Override
+    //    protected void onRestoreInstanceState(Bundle savedInstanceState) {
+    //        super.onRestoreInstanceState(savedInstanceState);
+    //        rootPage.onRestoreInstanceState(savedInstanceState);
+    //    }
+
+
+    fun postDelayed(runnable: Runnable, delayMillis: Long) {
+        if (delayMillis == 0 && Looper.myLooper() == Looper.getMainLooper()) {
+            runnable.run()
+            return
+        }
+        handler.postDelayed(runnable, delayMillis)
+    }
+
+    fun post(runnable: Runnable) {
+        handler.post(runnable)
+    }
+
+    fun removeCallbacks(runnable: Runnable) {
+        handler.removeCallbacks(runnable)
+    }
+}

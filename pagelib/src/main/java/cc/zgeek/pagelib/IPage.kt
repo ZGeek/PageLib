@@ -1,14 +1,11 @@
-package cc.zgeek.pagelib;
+package cc.zgeek.pagelib
 
-import android.content.Intent;
-import android.content.res.Configuration;
-import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.view.KeyEvent;
-import android.view.MotionEvent;
-import android.view.View;
-
-import java.util.List;
+import android.content.Intent
+import android.content.res.Configuration
+import android.os.Bundle
+import android.view.KeyEvent
+import android.view.MotionEvent
+import android.view.View
 
 /**
  * Created by ZGeek.
@@ -16,71 +13,70 @@ import java.util.List;
  * 2017/1/10 : Create
  */
 
-public interface IPage {
+interface IPage {
     /***
      * When the return key press callback
      * @return Whether consume this  point ，若消费则不继续往下传递
      */
-    boolean onBackPressed();
+    fun onBackPressed(): Boolean
 
     /***
      * same as Activity#onActivityResult(int, int, Intent)
      * @param requestCode
+     * *
      * @param resultCode
+     * *
      * @param data
      */
-    void onActivityResult(int requestCode, int resultCode, Intent data);
+    fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent)
 
-    boolean onKeyDown(int keyCode, KeyEvent event);
+    fun onKeyDown(keyCode: Int, event: KeyEvent): Boolean
 
-    boolean onKeyUp(int keyCode, KeyEvent event);
+    fun onKeyUp(keyCode: Int, event: KeyEvent): Boolean
 
-//    boolean onTouchEvent(MotionEvent event);
+    //    boolean onTouchEvent(MotionEvent event);
 
-    void onConfigurationChanged(Configuration newConfig);
+    fun onConfigurationChanged(newConfig: Configuration)
 
     /***
      * Get the parent page of  current page
      * @return
      */
-    IPage getParentPage();
-
-    void setParentPage(IPage parentPage);
+    var parentPage: IPage
 
 
-    PageActivity getContext();
-    boolean isChildPageActive(IPage child);
+    val context: PageActivity
+    fun isChildPageActive(child: IPage): Boolean
 
     /***
      * Get the root view of this Page
      * @return
      */
-    @NonNull View getRootView();
+    val rootView: View
 
-    Bundle onSaveInstanceState(boolean isViewInited);
-
-    void setArgs(Bundle args);
-    Bundle getArgs();
+    fun onSaveInstanceState(isViewInited: Boolean): Bundle
+    var args: Bundle
 
 
     /***
      * getChildPageAt 得到在index位置处的子page
      */
-    IPage getChildPageAt(int index);
-    int getChildPageIndex(@NonNull IPage page);
-    List<IPage> getSubChildPages(int beginIndex, int count);
-    int getChildPageCount();
+    fun getChildPageAt(index: Int): IPage
+
+    fun getChildPageIndex(page: IPage): Int
+    fun getSubChildPages(beginIndex: Int, count: Int): List<IPage>
+    val childPageCount: Int
 
     /***
      * 当视图被创建后调用，每个page只会被调用一次
      */
-    void onViewInited(boolean isRestore, Bundle args);
+    fun onViewInited(isRestore: Boolean, args: Bundle)
 
     /***
      * 用于判断视图是否被初始化，
      * @return
      */
-    boolean isViewInited();
+    val isViewInited: Boolean
 
 
     /***
@@ -91,22 +87,26 @@ public interface IPage {
      * willShowPage.onShow()->willHidePage.onHide()->willShowPage.onShown()->willHidePage.onHidden()-> willHidePage.onDestroy()
      * 其中willHidePage.onDestroy()的调用取决于page的view是否初始化，并且page是否真正的从childPageList中移除，而非简单的隐藏
      */
-    void onShow();
-    //view已经显示时的回调
-    void onShown();
-    //将要隐藏时的回调
-    void onHide();
-    //已经隐藏时的回调
-    void onHidden();
-    //page将被销毁时调用，如果此page的isViewInited返回false，则不会调用onDestroy,在调用onDestroy时，根据getParent不一定能找到其父Page
-    void onDestroy();
+    fun onShow()
 
-    boolean onMenuPressed();
+    //view已经显示时的回调
+    fun onShown()
+
+    //将要隐藏时的回调
+    fun onHide()
+
+    //已经隐藏时的回调
+    fun onHidden()
+
+    //page将被销毁时调用，如果此page的isViewInited返回false，则不会调用onDestroy,在调用onDestroy时，根据getParent不一定能找到其父Page
+    fun onDestroy()
+
+    fun onMenuPressed(): Boolean
 
     //收到系统的内存警告时调用
-    void onLowMemory();
+    fun onLowMemory()
 
-    String getName();
+    val name: String
 
-    IPage setName(String name);
+    fun setName(name: String): IPage
 }
