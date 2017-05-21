@@ -42,11 +42,11 @@ interface IPage {
      * Get the parent page of  current page
      * @return
      */
-    var parentPage: IPage
+    var parentPage: IPage?
 
 
     val context: PageActivity
-    fun isChildPageActive(child: IPage): Boolean
+    fun isChildPageActive(child: IPage?): Boolean
 
     /***
      * Get the root view of this Page
@@ -65,6 +65,7 @@ interface IPage {
 
     fun getChildPageIndex(page: IPage): Int
     fun getSubChildPages(beginIndex: Int, count: Int): List<IPage>
+    fun getChildPages(): List<IPage>
     val childPageCount: Int
 
     /***
@@ -106,7 +107,7 @@ interface IPage {
     //收到系统的内存警告时调用
     fun onLowMemory()
 
-    val name: String
+    val name: String?
 
-    fun setName(name: String): IPage
+    fun setPageName(name: String): IPage
 }

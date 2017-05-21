@@ -2,12 +2,10 @@ package cc.zgeek.pagelib
 
 import android.content.Intent
 import android.content.res.Configuration
-import android.graphics.pdf.PdfDocument
 import android.os.Bundle
 import android.text.TextUtils
 import android.util.Log
 import android.view.KeyEvent
-import android.view.View
 
 import java.util.LinkedList
 
@@ -17,42 +15,39 @@ import cc.zgeek.pagelib.Utils.PageUtil
 
 /**
  * Created by ZGeek.
- * Change History:
+ * Change History:SAVED_PAGE_BUNDLE
  * 2017/1/10 : Create
  */
 
 abstract class Page(pageActivity: PageActivity) : ViewWrapper(pageActivity), IPage {
+
     private val SAVED_PAGE_LIST_DATA = "LD_"
     private val SAVED_PAGE_LIST_CLASS = "CS_"
     private val PAGE_NAME = "NAME_g4#r%d+7"
 
-    //    private static final String SAVED_PAGE_BUNDLE = "SAVED_PAGE_BUNDLE";
-    //    private static final String SAVED_SUB_PAGE = "SAVED_SUB_PAGE";
-
 
     private val pageList = LinkedList<IPage>()
     override var parentPage: IPage? = null
-    override //        if(!isViewInited() && PageUtil.isBundleFromSaveInstance(getArgs())){
-            //            return getArgs().getString(PAGE_NAME);
-            //        }
-    var name: String? = null
-        private set
-    private var args: Bundle? = null
 
-    override fun getRootView(): View {
-        if (rootView == null) {
-            synchronized(this) {
-                if (rootView == null) {
-                    super.getRootView()
-                    this.onViewInited(PageUtil.isBundleFromSaveInstance(getArgs()), args)
-                }
+    override var name: String? = null
+
+    private var _args: Bundle? = null
+    override var args: Bundle
+        set(value) {
+            val tmpName = value.getString(PAGE_NAME)
+            if (!TextUtils.isEmpty(tmpName)) {
+                this.name = tmpName
             }
+            _args = value
         }
-        return rootView
-    }
+        get() {
+            if (_args == null)
+                _args = Bundle()
+            return _args!!
+        }
 
-    override val isViewInited: Boolean
-        get() = rootView != null
+    final override val isViewInited: Boolean
+        get() = _rootView != null
 
 
     protected open fun addPage(page: IPage) {
@@ -73,9 +68,6 @@ abstract class Page(pageActivity: PageActivity) : ViewWrapper(pageActivity), IPa
 
 
     protected fun removePage(index: Int): IPage {
-        //        if (page.getParentPage() != this) {
-        //            throw new IllegalStateException("Page Can Not Remove Because It Not Belong Of This");
-        //        }
         val page = pageList.removeAt(index)
         page.parentPage = null
         return page
@@ -86,6 +78,9 @@ abstract class Page(pageActivity: PageActivity) : ViewWrapper(pageActivity), IPa
 
     override fun getSubChildPages(beginIndex: Int, count: Int): List<IPage> {
         return ListUtil.subList(pageList, beginIndex, count)
+    }
+    override fun getChildPages(): List<IPage> {
+        return ListUtil.subList(pageList, 0, pageList.size)
     }
 
     override fun getChildPageIndex(page: IPage): Int {
@@ -108,7 +103,7 @@ abstract class Page(pageActivity: PageActivity) : ViewWrapper(pageActivity), IPa
 
     override fun onSaveInstanceState(isViewInited: Boolean): Bundle {
         var outState: Bundle? = null
-        if (isViewInited) {
+        if (this.isViewInited) {
             outState = Bundle()
             val clsArray = arrayOfNulls<String>(childPageCount)
             for (i in 0..childPageCount - 1) {
@@ -125,7 +120,7 @@ abstract class Page(pageActivity: PageActivity) : ViewWrapper(pageActivity), IPa
             outState.putString(PAGE_NAME, name)
             PageUtil.setSaveInsanceFlag(outState)
         } else {
-            outState = getArgs()
+            outState =this.args
             outState.putString(PAGE_NAME, name)
         }
 
@@ -154,23 +149,6 @@ abstract class Page(pageActivity: PageActivity) : ViewWrapper(pageActivity), IPa
             }
         }
 
-    }
-
-    override fun setArgs(args: Bundle) {
-        this.args = args
-        if (this.args != null) {
-            val tmpName = args.getString(PAGE_NAME)
-            if (!TextUtils.isEmpty(tmpName)) {
-                name = tmpName
-            }
-        }
-    }
-
-    override fun getArgs(): Bundle {
-        if (args == null) {
-            args = Bundle()
-        }
-        return args
     }
 
 
@@ -261,16 +239,16 @@ abstract class Page(pageActivity: PageActivity) : ViewWrapper(pageActivity), IPa
         }
     }
 
-    override fun setName(name: String): IPage {
-        this.name = name
-        return this
-    }
-
-    override fun isChildPageActive(child: IPage): Boolean {
-        return pageList != null && pageList.indexOf(child) >= 0
+    override fun isChildPageActive(child: IPage?): Boolean {
+        return child != null && pageList.indexOf(child) >= 0
     }
 
     override fun toString(): String {
         return javaClass.simpleName + "(" + name + ")@" + Integer.toHexString(hashCode())
+    }
+
+    override fun setPageName(name: String): IPage {
+        this.name = name
+        return this
     }
 }

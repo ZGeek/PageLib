@@ -36,7 +36,7 @@
 |getChildPageIndex|同上|
 |getSubChildPages|同上|
 |getChildPageCount|同上|
-|setName|设置此page的name，用于调试和在ViewPagerPage中提供名称，调用后返回此page|
+|setPageName|设置此page的name，用于调试和在ViewPagerPage中提供名称，调用后返回此page|
 
 ### 已有Page介绍
 |名称|介绍|

@@ -4,6 +4,7 @@ import android.content.Context
 import android.support.v4.widget.ViewDragHelper
 import android.view.MotionEvent
 import android.view.View
+import android.view.ViewGroup
 import android.widget.FrameLayout
 
 /**
@@ -17,8 +18,8 @@ class NavigationPageHelper internal constructor(private val mNavigationPage: Nav
 
 
     internal fun createContainerView(context: Context): NavigationPageHelper.NavigationContainerView {
-        mNavigationContainerView = NavigationPageHelper.NavigationContainerView(context)
-        return mNavigationContainerView
+        mNavigationContainerView = this.NavigationContainerView(context)
+        return mNavigationContainerView ?: throw RuntimeException("changed by other thread")
     }
 
 
@@ -39,8 +40,10 @@ class NavigationPageHelper internal constructor(private val mNavigationPage: Nav
 
                 override fun onEdgeDragStarted(edgeFlags: Int, pointerId: Int) {
                     if (mNavigationPage.isTopPageCanSwipeToHide && mNavigationPage.childPageCount > 1 && !mNavigationPage.isAnim) {
-                        dragHelper.captureChildView(mNavigationPage.topPage!!.rootView, pointerId)
-                        mNavigationPage.prepareForPop(mNavigationPage.getChildPageAt(mNavigationPage.childPageCount - 2), mNavigationPage.topPage)
+//                        dragHelper.captureChildView(mNavigationPage.topPage.rootView, pointerId)
+                        this@NavigationContainerView.captureChildView(mNavigationPage.topPage!!.rootView, pointerId)
+                        val topCopy = mNavigationPage.topPage ?: throw RuntimeException("topPage can not be null")
+                        mNavigationPage.prepareForPop(mNavigationPage.getChildPageAt(mNavigationPage.childPageCount - 2), topCopy)
                         val mPreView = mNavigationPage.getChildPageAt(mNavigationPage.childPageCount - 2).rootView
                         mPreView.visibility = View.VISIBLE
                         val mPreViewLayoutParams = mPreView.layoutParams as ViewGroup.MarginLayoutParams
@@ -58,7 +61,7 @@ class NavigationPageHelper internal constructor(private val mNavigationPage: Nav
                         //                        invalidate();
                         cancelSwipeToHide()
                     } else {
-                        mNavigationPage.popFromSwip()
+                        mNavigationPage.popFromSwipe()
                     }
                 }
 
@@ -96,6 +99,9 @@ class NavigationPageHelper internal constructor(private val mNavigationPage: Nav
 
             })
             dragHelper.setEdgeTrackingEnabled(ViewDragHelper.EDGE_LEFT)
+        }
+        fun captureChildView(childView:View, activePointerId:Int){
+            return dragHelper.captureChildView(childView, activePointerId)
         }
 
         override fun computeScroll() {

@@ -79,12 +79,12 @@ object AnnotationUtils {
                 for (j in annotations.indices) {
                     val anno = annotations[j]
                     if (InjectView::class.java.isAssignableFrom(anno.javaClass)) {
-                        val resId = (anno as InjectView).value()
+                        val resId = (anno as InjectView).value
                         field.isAccessible = true
                         fieldLongSparseArray.put(resId.toLong(), field)
                         break
                     } else if (InjectViewByName::class.java.isAssignableFrom(anno.javaClass)) {
-                        val resId = res.getIdentifier((anno as InjectViewByName).value(), "id", packageName)
+                        val resId = res.getIdentifier((anno as InjectViewByName).value, "id", packageName)
                         field.isAccessible = true
                         fieldLongSparseArray.put(resId.toLong(), field)
                         break
@@ -126,9 +126,9 @@ object AnnotationUtils {
         var layoutId = -1
 
         if (clazz.getAnnotation(PageLayout::class.java) != null)
-            layoutId = clazz.getAnnotation(PageLayout::class.java).value()
+            layoutId = clazz.getAnnotation(PageLayout::class.java).value
         if (clazz.getAnnotation(PageLayoutName::class.java) != null) {
-            val id = res.getIdentifier(clazz.getAnnotation(PageLayoutName::class.java).value(), "id", packageName)
+            val id = res.getIdentifier(clazz.getAnnotation(PageLayoutName::class.java).value, "id", packageName)
             if (id > 0)
                 layoutId = id
         }

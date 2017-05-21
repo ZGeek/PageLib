@@ -7,6 +7,8 @@ package cc.zgeek.pagelib.Utils
  */
 
 object PageLibDebugUtis {
+
     var isDebug = false
+
     val TAG = "PAGE_LIB"
 }

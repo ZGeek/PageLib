@@ -13,36 +13,25 @@ import cc.zgeek.pagelib.Utils.AnnotationUtils
  */
 
 abstract class ViewWrapper(val context: PageActivity) {
-    @Volatile protected var rootView: View? = null
-        get() {
-            if (this.rootView == null) {
-                synchronized(this) {
-                    if (this.rootView == null) {
-                        rootView = AnnotationUtils.injectLayout(this)
-                        if (rootView == null) {
-                            throw IllegalStateException("Neigher " + javaClass.name + " nor it's supper class Annotation with PageLaout or PageLayoutName")
-                        }
-                        AnnotationUtils.injectView(this)
-                    }
-                }
+
+    @Volatile protected var _rootView: View? = null
+
+    open val rootView: View by lazy {
+        if (this._rootView == null) {
+            _rootView = AnnotationUtils.injectLayout(this)
+            if (_rootView == null) {
+                throw IllegalStateException("Neigher " + javaClass.name + " nor it's supper class Annotation with PageLaout or PageLayoutName")
             }
-            return this.rootView;
+            AnnotationUtils.injectView(this)
         }
+        return@lazy _rootView!!
+    }
 
     init {
         if (PACKAGE_NAME == null)
             PACKAGE_NAME = context.packageName
     }
 
-//    open fun getRootView(): View {
-//        rootView = AnnotationUtils.injectLayout(this)
-//        if (rootView == null) {
-//            throw IllegalStateException("Neigher " + javaClass.name + " nor it's supper class Annotation with PageLaout or PageLayoutName")
-//        }
-//        AnnotationUtils.injectView(this)
-//
-//        return rootView
-//    }
 
     fun findViewById(id: Int): View {
         return rootView!!.findViewById(id)

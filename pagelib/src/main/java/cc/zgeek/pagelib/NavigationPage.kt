@@ -10,8 +10,6 @@ import android.view.animation.AccelerateInterpolator
 import android.view.animation.DecelerateInterpolator
 import android.widget.FrameLayout
 
-import java.lang.reflect.Constructor
-
 import cc.zgeek.pagelib.Utils.PageLibDebugUtis
 import cc.zgeek.pagelib.Utils.PageUtil
 import cc.zgeek.pagelib.anim.PageAnimatorProvider
@@ -39,17 +37,12 @@ class NavigationPage(pageActivity: PageActivity) : SingleActivePage(pageActivity
         (rootView as NavigationPageHelper.NavigationContainerView).enableSwipeToHide()
     }
 
-    override fun getRootView(): View {
-        if (rootView == null) {
-            synchronized(this) {
-                if (rootView == null) {
-                    mNavigationPageHelper = NavigationPageHelper(this)
-                    rootView = mNavigationPageHelper!!.createContainerView(context)
-                    onViewInited(PageUtil.isBundleFromSaveInstance(args), args)
-                }
-            }
-        }
-        return rootView
+    override val rootView: View by lazy {
+        val myNav = NavigationPageHelper(this)
+        this.mNavigationPageHelper = myNav
+        this._rootView = myNav.createContainerView(context)
+        onViewInited(PageUtil.isBundleFromSaveInstance(args), args)
+        _rootView ?: throw IllegalAccessError("_rootView changed by other thread")
     }
 
     @JvmOverloads fun pushPage(newPage: IPage, anim: Boolean = true) {
@@ -77,13 +70,14 @@ class NavigationPage(pageActivity: PageActivity) : SingleActivePage(pageActivity
 
 
         if (active && provider != null) {
-            mAnimatedTransitions = provider.getPageAnimation(currentContiner(), hidePage?.rootView, showPage.rootView)
-            mAnimatedTransitions!!.addListener(object : SimpleAnimListener() {
+            val tran = provider.getPageAnimation(currentContiner(), hidePage?.rootView, showPage.rootView)
+            tran.addListener(object : SimpleAnimListener() {
                 override fun onAnimationEnd(animation: Animator) {
                     doFinalWorkForPushPage(hidePage, showPage, active)
                 }
             })
-            mAnimatedTransitions!!.start()
+            mAnimatedTransitions = tran
+            tran.start()
         } else {
             doFinalWorkForPushPage(hidePage, showPage, active)
         }
@@ -105,10 +99,8 @@ class NavigationPage(pageActivity: PageActivity) : SingleActivePage(pageActivity
 
 
     @Synchronized private fun ensureEndAnimationExecution() {
-        if (mAnimatedTransitions != null) {
-            mAnimatedTransitions!!.end()
+            mAnimatedTransitions?.end()
             mAnimatedTransitions = null
-        }
     }
 
 
@@ -146,11 +138,7 @@ class NavigationPage(pageActivity: PageActivity) : SingleActivePage(pageActivity
 
     fun popToTargetPage(page: IPage, provider: PageAnimatorProvider?) {
 
-        var currentIndex = -1
-        for (i in childPageCount - 1 downTo 0) {
-            if (getChildPageAt(i) === page)
-                currentIndex = i
-        }
+        val currentIndex = (childPageCount - 1 downTo 0).lastOrNull { getChildPageAt(it) === page } ?: -1
         if (currentIndex <= 0)
             return
         val N = childPageCount - currentIndex - 1
@@ -189,8 +177,8 @@ class NavigationPage(pageActivity: PageActivity) : SingleActivePage(pageActivity
         popTopNPages(n, provider, false)
     }
 
-    private fun popTopNPages(n: Int, provider: PageAnimatorProvider?, isFromSwip: Boolean) {
-        var provider = provider
+    private fun popTopNPages(n: Int, provider: PageAnimatorProvider?, isFromSwipe: Boolean) {
+//        var provider = provider
         ensureEndAnimationExecution()
         if (n <= 0 || n > childPageCount - 1 || childPageCount <= 1)
         //数据不合法
@@ -203,39 +191,40 @@ class NavigationPage(pageActivity: PageActivity) : SingleActivePage(pageActivity
         val active = PageUtil.isPageActive(this)
         if (childPageCount == 1)
             return
-        getRootView().isEnabled = false
-        val topPage = topPage
+        this.rootView.isEnabled = false
         val willRemovePages = getSubChildPages(childPageCount - n, n)
         val willShowPage = getChildPageAt(childPageCount - n - 1)
-        if (!isFromSwip) {
-            prepareForPop(willShowPage, topPage)
+        val topPageCopy = topPage ?: throw RuntimeException()
+        if (!isFromSwipe) {
+            prepareForPop(willShowPage, topPageCopy)
         }
         if (active) {
             willShowPage.onShow()
-            topPage!!.onHide()
+            topPageCopy.onHide()
         }
 
-
-        if (isFromSwip) {
-            provider = defaultPopAnimator
+        var providerCopy = provider
+        if (isFromSwipe) {
+            providerCopy = this.defaultPopAnimator
         }
-        if (provider != null && active) {
-            mAnimatedTransitions = provider.getPageAnimation(currentContiner(), topPage!!.rootView, willShowPage.rootView)
-            mAnimatedTransitions!!.addListener(object : SimpleAnimListener() {
+        if (providerCopy != null && active) {
+            val mAnimatedTransitions = providerCopy.getPageAnimation(currentContiner(), topPageCopy.rootView, willShowPage.rootView)
+            mAnimatedTransitions.addListener(object : SimpleAnimListener() {
                 override fun onAnimationEnd(animation: Animator) {
                     doFinalWorkForPopPage(willRemovePages, willShowPage, active)
                 }
             })
-            resetMargin(topPage.rootView)
+            resetMargin(topPageCopy.rootView)
             resetMargin(willShowPage.rootView)
-            mAnimatedTransitions!!.start()
+            this.mAnimatedTransitions = mAnimatedTransitions;
+            mAnimatedTransitions.start()
         } else {
             doFinalWorkForPopPage(willRemovePages, willShowPage, active)
         }
     }
 
 
-    internal fun popFromSwip() {
+    internal fun popFromSwipe() {
         popTopNPages(1, null, true)
     }
 
@@ -270,7 +259,7 @@ class NavigationPage(pageActivity: PageActivity) : SingleActivePage(pageActivity
             }
         }
         //        mViewTransparentMask.bringToFront();
-        getRootView().isEnabled = true
+        this.rootView.isEnabled = true
         mAnimatedTransitions = null
     }
 
@@ -308,57 +297,67 @@ class NavigationPage(pageActivity: PageActivity) : SingleActivePage(pageActivity
 
 
     fun currentContiner(): ViewGroup {
-        return getRootView() as ViewGroup
+        return this.rootView as ViewGroup
     }
 
     private val defaultPopAnimator: PageAnimatorProvider
-        get() = PageAnimatorProvider { container, fromView, toView ->
-            val totleWidth = container.width
-            val left = fromView!!.left
-            val time = Math.abs(DEFAULT_ANIMATE_TIME * (totleWidth - left) / totleWidth)
-
-            val animator = ValueAnimator()
-            animator.setDuration(time.toLong()).setIntValues(left, totleWidth)
-            animator.interpolator = AccelerateInterpolator()
-            animator.addUpdateListener { animation ->
-                fromView.translationX = (animation.animatedValue as Int).toFloat()
-                toView.translationX = (animation.animatedValue as Int / 2 - totleWidth / 2).toFloat()
-            }
-            animator.addListener(object : SimpleAnimListener() {
-                override fun onAnimationEnd(animation: Animator) {
-                    fromView.translationX = 0f
-                    toView.translationX = 0f
+        get() = object : PageAnimatorProvider {
+            override fun getPageAnimation(container: ViewGroup, fromView: View?, toView: View): Animator {
+                if(fromView == null){
+                    throw IllegalArgumentException("fromView is null")
                 }
-            })
-            animator
+                val totleWidth = container.width
+                val left = fromView.left
+                val time = Math.abs(DEFAULT_ANIMATE_TIME * (totleWidth - left) / totleWidth)
+
+                val animator = ValueAnimator()
+                animator.setDuration(time.toLong()).setIntValues(left, totleWidth)
+                animator.interpolator = AccelerateInterpolator()
+                animator.addUpdateListener { animation ->
+                    fromView.translationX = (animation.animatedValue as Int).toFloat()
+                    toView.translationX = (animation.animatedValue as Int / 2 - totleWidth / 2).toFloat()
+                }
+                animator.addListener(object : SimpleAnimListener() {
+                    override fun onAnimationEnd(animation: Animator) {
+                        fromView.translationX = 0f
+                        toView.translationX = 0f
+                    }
+                })
+                return animator
+            }
         }
 
-    private //                animator.setDuration(10000);
-    val defaultPushAnimator: PageAnimatorProvider
-        get() = PageAnimatorProvider { container, fromView, toView ->
-            val totleWidth = container.width
 
-            var left = toView.left
-            if (left == 0)
-                left = totleWidth
-            val time = Math.abs(DEFAULT_ANIMATE_TIME * left / totleWidth)
-
-
-            val animator = ValueAnimator()
-            animator.setDuration(time.toLong()).setIntValues(left, 0)
-            animator.interpolator = DecelerateInterpolator()
-            animator.addUpdateListener { animation ->
-                val value = animation.animatedValue as Int
-                fromView!!.translationX = (value / 2 - totleWidth / 2).toFloat()
-                toView.translationX = value.toFloat()
-            }
-            animator.addListener(object : SimpleAnimListener() {
-                override fun onAnimationEnd(animation: Animator) {
-                    fromView!!.translationX = 0f
-                    toView.translationX = 0f
+    private val defaultPushAnimator: PageAnimatorProvider
+        get() = object : PageAnimatorProvider {
+            override fun getPageAnimation(container: ViewGroup, fromView: View?, toView: View): Animator {
+                if(fromView == null){
+                    throw IllegalArgumentException("fromView is null")
                 }
-            })
-            animator
+                val totleWidth = container.width
+
+                var left = toView.left
+                if (left == 0)
+                    left = totleWidth
+                val time = Math.abs(DEFAULT_ANIMATE_TIME * left / totleWidth)
+
+
+                val animator = ValueAnimator()
+                animator.setDuration(time.toLong()).setIntValues(left, 0)
+                animator.interpolator = DecelerateInterpolator()
+                animator.addUpdateListener { animation ->
+                    val value = animation.animatedValue as Int
+                    fromView.translationX = (value / 2 - totleWidth / 2).toFloat()
+                    toView.translationX = value.toFloat()
+                }
+                animator.addListener(object : SimpleAnimListener() {
+                    override fun onAnimationEnd(animation: Animator) {
+                        fromView.translationX = 0f
+                        toView.translationX = 0f
+                    }
+                })
+                return animator
+            }
         }
 
     internal fun cancelSwipeToHide() {
@@ -366,28 +365,29 @@ class NavigationPage(pageActivity: PageActivity) : SingleActivePage(pageActivity
         val prePage = getChildPageAt(childPageCount - 2)
         val provider = defaultPushAnimator
 
+        if(topPage == null){
+            throw IllegalStateException("topPage can not be null")
+        }
+
         ensureEndAnimationExecution()
-        if (topPage!!.rootView.left > 0) {
-            mAnimatedTransitions = provider.getPageAnimation(currentContiner(), prePage.rootView, topPage.rootView)
+        if (topPage.rootView.left > 0) {
+            val mAnimatedTransitions = provider.getPageAnimation(currentContiner(), prePage.rootView, topPage.rootView)
             resetMargin(prePage.rootView)
             resetMargin(topPage.rootView)
-            mAnimatedTransitions!!.addListener(object : SimpleAnimListener() {
+            mAnimatedTransitions.addListener(object : SimpleAnimListener() {
                 override fun onAnimationEnd(animation: Animator) {
                     currentContiner().removeView(prePage.rootView)
-                    mAnimatedTransitions = null
+                    this@NavigationPage.mAnimatedTransitions = null
 
                 }
             })
-
-            mAnimatedTransitions!!.start()
+            this@NavigationPage.mAnimatedTransitions = mAnimatedTransitions;
+            mAnimatedTransitions.start()
         } else {
             resetMargin(prePage.rootView)
             resetMargin(topPage.rootView)
             currentContiner().removeView(prePage.rootView)
         }
-
-
-        //        mAnimatedTransitions =  getDefaultPushAnimator();
     }
 
     private fun resetMargin(view: View) {
@@ -453,7 +453,7 @@ class NavigationPage(pageActivity: PageActivity) : SingleActivePage(pageActivity
     }
 
     internal val isAnim: Boolean
-        get() = mAnimatedTransitions != null && mAnimatedTransitions!!.isRunning
+        get() = mAnimatedTransitions?.isRunning ?: false
 
     companion object {
 

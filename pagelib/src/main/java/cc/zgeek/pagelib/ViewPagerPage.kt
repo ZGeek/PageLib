@@ -28,16 +28,10 @@ class ViewPagerPage(pageActivity: PageActivity) : SingleActivePage(pageActivity)
     }
 
 
-    override fun getRootView(): View {
-        if (rootView == null) {
-            synchronized(this) {
-                if (rootView == null) {
-                    rootView = ViewPager(context)
-                    onViewInited(PageUtil.isBundleFromSaveInstance(args), args)
-                }
-            }
-        }
-        return rootView
+    override val rootView: View by lazy {
+        super.rootView
+        onViewInited(PageUtil.isBundleFromSaveInstance(args), args)
+        return@lazy super.rootView
     }
 
     override fun onViewInited(isRestore: Boolean, args: Bundle) {
@@ -58,7 +52,7 @@ class ViewPagerPage(pageActivity: PageActivity) : SingleActivePage(pageActivity)
 
     fun addOnPageChangeListener(listener: ViewPager.OnPageChangeListener) {
         if (mOnPageChangeListeners == null) {
-            mOnPageChangeListeners = ArrayList<OnPageChangeListener>()
+            mOnPageChangeListeners = ArrayList<ViewPager.OnPageChangeListener>()
         }
         mOnPageChangeListeners!!.add(listener)
     }
@@ -115,7 +109,7 @@ class ViewPagerPage(pageActivity: PageActivity) : SingleActivePage(pageActivity)
     }
 
     @JvmOverloads fun switchToPage(index: Int, smoothScroll: Boolean = false) {
-        (getRootView() as ViewPager).setCurrentItem(index, smoothScroll)
+        (this.rootView as ViewPager).setCurrentItem(index, smoothScroll)
     }
 
     public override fun addPage(page: IPage) {
@@ -257,7 +251,7 @@ class ViewPagerPage(pageActivity: PageActivity) : SingleActivePage(pageActivity)
         }
 
         override fun getPageTitle(position: Int): CharSequence {
-            return getChildPageAt(position).name
+            return getChildPageAt(position).name ?: ""
         }
     }
 

@@ -25,14 +25,15 @@ import cc.zgeek.pagelib.Utils.PageUtil
 abstract class PageActivity : AppCompatActivity() {
     var rootPage: IPage? = null
         internal set
-    internal var handler: Handler
+
+    internal var handler: Handler = Handler(Looper.getMainLooper())
+
     var isActive = false
         internal set
 
     override fun onCreate(savedInstanceState: Bundle?) {
         //        getSupportActionBar().hide();
         super.onCreate(savedInstanceState)
-        handler = Handler(Looper.getMainLooper())
 
 
         if (savedInstanceState != null) {
@@ -42,25 +43,7 @@ abstract class PageActivity : AppCompatActivity() {
         }
         if (rootPage == null)
             rootPage = initRootPage()
-        //        ViewGroup decor = (ViewGroup) getWindow().getDecorView();
-        //        ViewGroup decor = findDecorView();
-        //        decor.removeAllViews();
-        //        decor.addView(rootPage.getRootView());
-        //        if (savedInstanceState != null)
         setContentView(rootPage!!.rootView)
-    }
-
-    internal fun findDecorView(): ViewGroup {
-        var view = findViewById(android.R.id.content)
-        var parent: ViewParent? = view.parent
-        do {
-            if (parent == null)
-                return view as ViewGroup
-            else {
-                view = parent as View?
-                parent = parent.parent
-            }
-        } while (true)
     }
 
     protected abstract fun initRootPage(): IPage
@@ -141,7 +124,7 @@ abstract class PageActivity : AppCompatActivity() {
 
 
     fun postDelayed(runnable: Runnable, delayMillis: Long) {
-        if (delayMillis == 0 && Looper.myLooper() == Looper.getMainLooper()) {
+        if (delayMillis == 0L && Looper.myLooper() == Looper.getMainLooper()) {
             runnable.run()
             return
         }

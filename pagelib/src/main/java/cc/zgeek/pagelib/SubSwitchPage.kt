@@ -20,8 +20,8 @@ abstract class SubSwitchPage(pageActivity: PageActivity) : SwitchPage(pageActivi
     }
 
     override fun currentContiner(): FrameLayout {
-        if (rootView == null)
-            getRootView()
-        return tabContainerLayout
+        if (_rootView == null)
+            super.rootView
+        return tabContainerLayout ?: throw RuntimeException("tabContainerLayout is null")
     }
 }

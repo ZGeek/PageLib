@@ -73,8 +73,8 @@ object PageUtil {
 
     }
 
-    fun setSaveInsanceFlag(bundle: Bundle?): Bundle {
-        bundle?.putBoolean("sava_instance_flag", true)
+    fun setSaveInsanceFlag(bundle: Bundle): Bundle {
+        bundle.putBoolean("sava_instance_flag", true)
         return bundle
     }
 
