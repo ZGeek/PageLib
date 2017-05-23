@@ -15,7 +15,7 @@ import cc.zgeek.pagelib.Utils.myLazy
 
 abstract class ViewWrapper(val context: PageActivity) {
 
-    open val isViewInitialized: Boolean
+    open val isRootViewInitialized: Boolean
         get() = lazy_rootView.isInitialized()
 
     private val lazy_rootView = myLazy({

@@ -1,6 +1,5 @@
 package cc.zgeek.pagelib
 
-import android.app.Activity
 import android.content.Intent
 import android.content.res.Configuration
 import android.os.Bundle
@@ -8,11 +7,6 @@ import android.os.Handler
 import android.os.Looper
 import android.support.v7.app.AppCompatActivity
 import android.view.KeyEvent
-import android.view.MotionEvent
-import android.view.View
-import android.view.ViewGroup
-import android.view.ViewParent
-import android.view.Window
 
 import cc.zgeek.pagelib.Utils.PageUtil
 
@@ -114,7 +108,7 @@ abstract class PageActivity : AppCompatActivity() {
 
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
-        val bundle = rootPage!!.onSaveInstanceState(rootPage!!.isViewInitialized)
+        val bundle = rootPage!!.onSaveInstanceState(rootPage!!.isRootViewInitialized)
         outState.putBundle("rootData", bundle)
         outState.putString("rootPage", rootPage!!.javaClass.name)
     }

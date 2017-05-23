@@ -20,8 +20,8 @@ class InnerNavPage(pageActivity: PageActivity) : Page(pageActivity) {
     @InjectView(R.id.content)
     internal var frameLayout: FrameLayout? = null
 
-    override fun onViewInited(isRestore: Boolean, args: Bundle) {
-        super.onViewInited(isRestore, args)
+    override fun onViewInitialized(isRestore: Boolean, args: Bundle) {
+        super.onViewInitialized(isRestore, args)
         if (!isRestore) {
             val nav = NavigationPage(context)
             nav.pushPage(SimplePage.newInstance(context))

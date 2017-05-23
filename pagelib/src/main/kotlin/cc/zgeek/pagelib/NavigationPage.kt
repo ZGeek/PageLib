@@ -28,8 +28,9 @@ class NavigationPage(pageActivity: PageActivity) : SingleActivePage(pageActivity
     private var mNavigationPageHelper: NavigationPageHelper? = null
     private var mAnimatedTransitions: Animator? = null
 
-    override fun onViewInited(isRestore: Boolean, args: Bundle) {
-        super.onViewInited(isRestore, args)
+
+    override fun onViewInitialized(isRestore: Boolean, args: Bundle) {
+        super.onViewInitialized(isRestore, args)
         if (isRestore) {
             val tmp = activiePage
             if (tmp != null)
@@ -41,15 +42,14 @@ class NavigationPage(pageActivity: PageActivity) : SingleActivePage(pageActivity
     private val lazy_rootView = myLazy({
         val myNav = NavigationPageHelper(this)
         this.mNavigationPageHelper = myNav
-        val _rootView = myNav.createContainerView(context)
-        _rootView
+        myNav.createContainerView(context)
     },{
-        onViewInited(PageUtil.isBundleFromSaveInstance(args), args)
+        onViewInitialized(PageUtil.isBundleFromSaveInstance(args), args)
     })
 
     override val rootView: View by this@NavigationPage.lazy_rootView
 
-    override val isViewInitialized: Boolean
+    override val isRootViewInitialized: Boolean
         get() = lazy_rootView.isInitialized()
 
     @JvmOverloads fun pushPage(newPage: IPage, anim: Boolean = true) {
@@ -257,7 +257,7 @@ class NavigationPage(pageActivity: PageActivity) : SingleActivePage(pageActivity
 
         for (i in willRemovePages.indices.reversed()) {
             val cPage = willRemovePages[i]
-            if (cPage.isViewInitialized) {
+            if (cPage.isRootViewInitialized) {
                 cPage.onDestroy()
             }
             removePage(cPage)
@@ -281,7 +281,7 @@ class NavigationPage(pageActivity: PageActivity) : SingleActivePage(pageActivity
         }
         val removedPage = getChildPageAt(index)
 
-        if (removedPage.isViewInitialized)
+        if (removedPage.isRootViewInitialized)
             removedPage.onDestroy()
         removePage(removedPage)
         if (PageLibDebugUtils.isDebug) {

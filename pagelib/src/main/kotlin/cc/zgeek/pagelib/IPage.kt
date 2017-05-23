@@ -71,13 +71,13 @@ interface IPage {
     /***
      * 当视图被创建后调用，每个page只会被调用一次
      */
-    fun onViewInited(isRestore: Boolean, args: Bundle)
+    fun onViewInitialized(isRestore: Boolean, args: Bundle)
 
     /***
      * 用于判断视图是否被初始化，
      * @return
      */
-    val isViewInitialized: Boolean
+    val isRootViewInitialized: Boolean
 
 
     /***

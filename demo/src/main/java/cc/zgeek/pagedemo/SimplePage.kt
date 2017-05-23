@@ -2,13 +2,9 @@ package cc.zgeek.pagedemo
 
 import android.graphics.Color
 import android.os.Bundle
-import android.support.annotation.LayoutRes
 import android.text.TextUtils
 import android.util.Log
-import android.view.Gravity
 import android.view.View
-import android.view.ViewGroup
-import android.widget.Button
 import android.widget.FrameLayout
 import android.widget.TextView
 
@@ -17,7 +13,6 @@ import java.util.Random
 import cc.zgeek.pagedemo.util.NavHelper
 import cc.zgeek.pagelib.Annotation.InjectView
 import cc.zgeek.pagelib.Annotation.PageLayout
-import cc.zgeek.pagelib.NavigationPage
 import cc.zgeek.pagelib.Page
 import cc.zgeek.pagelib.PageActivity
 
@@ -44,8 +39,8 @@ class SimplePage private constructor(pageActivity: PageActivity) : Page(pageActi
     }
 
 
-    override fun onViewInited(isRestore: Boolean, args: Bundle) {
-        super.onViewInited(isRestore, args)
+    override fun onViewInitialized(isRestore: Boolean, args: Bundle) {
+        super.onViewInitialized(isRestore, args)
         //        if (isRestore) {
         ////            setPageName(args.getString("name"));
         tvBg = args.getInt("tvBg")

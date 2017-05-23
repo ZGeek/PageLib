@@ -1,9 +1,7 @@
 package cc.zgeek.pagelib
 
 import android.animation.Animator
-import android.animation.ValueAnimator
 import android.os.Bundle
-import android.view.View
 import android.view.ViewGroup
 import android.widget.FrameLayout
 
@@ -114,7 +112,7 @@ abstract class SwitchPage(pageActivity: PageActivity) : SingleActivePage(pageAct
             return false
 
         if (showIndex != removeIndex) {//如果要显示的page不是当前要显示的page，则直接移除，并调用移除page的onDestroy方法，随后对方法showIndex进行修正
-            if (targetPage.isViewInitialized) {
+            if (targetPage.isRootViewInitialized) {
                 targetPage.onDestroy()
             }
             val removePage = super.removePage(removeIndex)
@@ -134,7 +132,7 @@ abstract class SwitchPage(pageActivity: PageActivity) : SingleActivePage(pageAct
                     targetPage.onHide()
                     targetPage.onHidden()
                 }
-                if (targetPage.isViewInitialized) {
+                if (targetPage.isRootViewInitialized) {
                     targetPage.onDestroy()
                 }
                 showIndex = -1
@@ -161,8 +159,8 @@ abstract class SwitchPage(pageActivity: PageActivity) : SingleActivePage(pageAct
         return bundle
     }
 
-    override fun onViewInited(isRestore: Boolean, args: Bundle) {
-        super.onViewInited(isRestore, args)
+    override fun onViewInitialized(isRestore: Boolean, args: Bundle) {
+        super.onViewInitialized(isRestore, args)
         if (isRestore) {
             val restoreIndex = args.getInt(CURRENT_INDEX)
             if (restoreIndex >= 0)

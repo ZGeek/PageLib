@@ -2,7 +2,7 @@ package cc.zgeek.pagedemo
 
 import android.animation.Animator
 import android.animation.ValueAnimator
-import android.content.DialogInterface
+import android.app.WallpaperManager
 import android.os.Bundle
 import android.support.design.widget.NavigationView
 import android.support.v4.widget.DrawerLayout
@@ -53,8 +53,8 @@ class HomePage(pageActivity: PageActivity) : Page(pageActivity), View.OnClickLis
     @InjectView(R.id.btn_sub_nav_page)
     private val sub_nav: Button? = null
 
-    override fun onViewInited(isRestore: Boolean, args: Bundle) {
-        super.onViewInited(isRestore, args)
+    override fun onViewInitialized(isRestore: Boolean, args: Bundle) {
+        super.onViewInitialized(isRestore, args)
         setupToolbar()
         mTvText!!.setText(R.string.page_demo_about)
         viewPagerBtn!!.setOnClickListener(this)
@@ -63,6 +63,8 @@ class HomePage(pageActivity: PageActivity) : Page(pageActivity), View.OnClickLis
         cus_btn!!.setOnClickListener(this)
         sub_nav!!.setOnClickListener(this)
         mNavigationView!!.setNavigationItemSelectedListener(this)
+        rootView.setBackgroundDrawable(WallpaperManager.getInstance(context).drawable)
+//        rootView.background =
     }
 
     override fun onSaveInstanceState(isViewInited: Boolean): Bundle {

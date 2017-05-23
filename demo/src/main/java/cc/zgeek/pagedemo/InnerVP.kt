@@ -27,8 +27,8 @@ class InnerVP(pageActivity: PageActivity) : Page(pageActivity) {
     @InjectView(R.id.vp_container)
     internal var viewGroup: ViewGroup? = null
 
-    override fun onViewInited(isRestore: Boolean, args: Bundle) {
-        super.onViewInited(isRestore, args)
+    override fun onViewInitialized(isRestore: Boolean, args: Bundle) {
+        super.onViewInitialized(isRestore, args)
         if (!isRestore) {
             val innerPager = ViewPagerPage(context)
             innerPager.addPages(Arrays.asList(

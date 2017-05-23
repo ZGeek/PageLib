@@ -22,6 +22,9 @@ import cc.zgeek.pagelib.NavigationPage
 import cc.zgeek.pagelib.Page
 import cc.zgeek.pagelib.PageActivity
 
+import kotlinx.android.synthetic.main.page_list.*
+
+
 /**
  * Created by flyop.
  * Change History:
@@ -38,8 +41,9 @@ class ListViewPage(pageActivity: PageActivity) : Page(pageActivity) {
     @InjectView(R.id.rv_main_list)
     private val mRvMainList: RecyclerView? = null
 
-    override fun onViewInited(isRestore: Boolean, args: Bundle) {
+    override fun onViewInitialized(isRestore: Boolean, args: Bundle) {
         mTbHeaderBar!!.title = "ListPage"
+
         ToolbarHelper.setNavigationIconEnabled(
                 mTbHeaderBar, true, View.OnClickListener { (context.rootPage as NavigationPage).popPage() })
         setParallaxImage()
