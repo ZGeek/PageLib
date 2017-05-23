@@ -6,7 +6,7 @@ package cc.zgeek.pagelib.Utils
  * 2017/1/20 : Create
  */
 
-object PageLibDebugUtis {
+object PageLibDebugUtils {
 
     var isDebug = false
 

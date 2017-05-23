@@ -114,7 +114,7 @@ abstract class SwitchPage(pageActivity: PageActivity) : SingleActivePage(pageAct
             return false
 
         if (showIndex != removeIndex) {//如果要显示的page不是当前要显示的page，则直接移除，并调用移除page的onDestroy方法，随后对方法showIndex进行修正
-            if (targetPage.isViewInited) {
+            if (targetPage.isViewInitialized) {
                 targetPage.onDestroy()
             }
             val removePage = super.removePage(removeIndex)
@@ -134,7 +134,7 @@ abstract class SwitchPage(pageActivity: PageActivity) : SingleActivePage(pageAct
                     targetPage.onHide()
                     targetPage.onHidden()
                 }
-                if (targetPage.isViewInited) {
+                if (targetPage.isViewInitialized) {
                     targetPage.onDestroy()
                 }
                 showIndex = -1

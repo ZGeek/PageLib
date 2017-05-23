@@ -4,7 +4,7 @@ package cc.zgeek.pagedemo
 import cc.zgeek.pagelib.IPage
 import cc.zgeek.pagelib.NavigationPage
 import cc.zgeek.pagelib.PageActivity
-import cc.zgeek.pagelib.Utils.PageLibDebugUtis
+import cc.zgeek.pagelib.Utils.PageLibDebugUtils
 
 /**
  * Created by ZGeek.
@@ -39,7 +39,7 @@ class MainActivity : PageActivity() {
         //                pageA.switchToPage(2);
         //            }
         //        }, 5000);
-        PageLibDebugUtis.isDebug = true
+        PageLibDebugUtils.isDebug = true
         val page = NavigationPage(this)
         page.pushPage(HomePage(this))
         page.name = "Root Page"

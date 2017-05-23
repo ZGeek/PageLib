@@ -9,15 +9,12 @@ import android.support.v4.util.LongSparseArray
 import android.util.Log
 import android.view.View
 import java.lang.reflect.Field
-import java.util.HashMap
-import java.util.LinkedList
 
 import cc.zgeek.pagelib.Annotation.DisableInjectView
 import cc.zgeek.pagelib.Annotation.InjectView
 import cc.zgeek.pagelib.Annotation.InjectViewByName
 import cc.zgeek.pagelib.Annotation.PageLayout
 import cc.zgeek.pagelib.Annotation.PageLayoutName
-import cc.zgeek.pagelib.R
 import cc.zgeek.pagelib.ViewWrapper
 
 /**
@@ -36,9 +33,6 @@ object AnnotationUtils {
         if (wrapper == null) {
             throw IllegalArgumentException("ViewWrapper can not be NULL")
         }
-        if (wrapper.rootView == null) {
-            throw IllegalArgumentException("getRootView() can not be NULL")
-        }
         var clazz: Class<*> = wrapper.javaClass
 
         while (clazz != ViewWrapper::class.java) {
@@ -52,8 +46,8 @@ object AnnotationUtils {
                 @IdRes val resId = fields.keyAt(i)
                 try {
                     val view = wrapper.findViewById(resId.toInt())
-                    if (view == null && PageLibDebugUtis.isDebug) {
-                        Log.w(PageLibDebugUtis.TAG, wrapper.javaClass.name + " with property (" + fields.valueAt(i).name + ") will be NULL")
+                    if (view == null && PageLibDebugUtils.isDebug) {
+                        Log.w(PageLibDebugUtils.TAG, wrapper.javaClass.name + " with property (" + fields.valueAt(i).name + ") will be NULL")
                     }
                     fields.valueAt(i).set(wrapper, view)
                 } catch (e: IllegalAccessException) {
@@ -99,10 +93,7 @@ object AnnotationUtils {
         }
     }
 
-    fun injectLayout(wrapper: ViewWrapper?): View? {
-        if (wrapper == null) {
-            throw IllegalArgumentException("ViewWrapper can not be NULL")
-        }
+    fun injectLayout(wrapper: ViewWrapper): View? {
         var clazz: Class<*> = wrapper.javaClass
         while (clazz != ViewWrapper::class.java) {
             val id = findLayoutId(clazz, wrapper.resources, wrapper.packageName)

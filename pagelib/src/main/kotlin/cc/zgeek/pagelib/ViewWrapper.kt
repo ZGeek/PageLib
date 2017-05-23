@@ -5,6 +5,7 @@ import android.view.LayoutInflater
 import android.view.View
 
 import cc.zgeek.pagelib.Utils.AnnotationUtils
+import cc.zgeek.pagelib.Utils.myLazy
 
 /**
  * Created by ZGeek.
@@ -14,18 +15,18 @@ import cc.zgeek.pagelib.Utils.AnnotationUtils
 
 abstract class ViewWrapper(val context: PageActivity) {
 
-    @Volatile protected var _rootView: View? = null
+    open val isViewInitialized: Boolean
+        get() = lazy_rootView.isInitialized()
 
-    open val rootView: View by lazy {
-        if (this._rootView == null) {
-            _rootView = AnnotationUtils.injectLayout(this)
-            if (_rootView == null) {
-                throw IllegalStateException("Neigher " + javaClass.name + " nor it's supper class Annotation with PageLaout or PageLayoutName")
-            }
-            AnnotationUtils.injectView(this)
-        }
-        return@lazy _rootView!!
-    }
+    private val lazy_rootView = myLazy({
+        val tmpView = AnnotationUtils.injectLayout(this@ViewWrapper) ?: throw IllegalStateException("Neither " + javaClass.name + " nor it's supper class Annotation with PageLaout or PageLayoutName")
+
+        return@myLazy tmpView
+    }, {
+        AnnotationUtils.injectView(this@ViewWrapper)
+    })
+
+    open val rootView: View by this@ViewWrapper.lazy_rootView
 
     init {
         if (PACKAGE_NAME == null)
@@ -34,12 +35,12 @@ abstract class ViewWrapper(val context: PageActivity) {
 
 
     fun findViewById(id: Int): View {
-        return rootView!!.findViewById(id)
+        return rootView.findViewById(id)
     }
 
     fun findViewByName(name: String): View {
         val id = resources.getIdentifier(name, "id", PACKAGE_NAME)
-        return rootView!!.findViewById(id)
+        return rootView.findViewById(id)
     }
 
     fun getString(resId: Int): String {
@@ -54,7 +55,7 @@ abstract class ViewWrapper(val context: PageActivity) {
         get() = context.resources
 
     val packageName: String
-        get() = PACKAGE_NAME!!
+        get() = checkNotNull(PACKAGE_NAME)
 
     val layoutInflater: LayoutInflater
         get() = context.layoutInflater

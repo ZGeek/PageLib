@@ -41,9 +41,9 @@ class NavigationPageHelper internal constructor(private val mNavigationPage: Nav
                 override fun onEdgeDragStarted(edgeFlags: Int, pointerId: Int) {
                     if (mNavigationPage.isTopPageCanSwipeToHide && mNavigationPage.childPageCount > 1 && !mNavigationPage.isAnim) {
 //                        dragHelper.captureChildView(mNavigationPage.topPage.rootView, pointerId)
-                        this@NavigationContainerView.captureChildView(mNavigationPage.topPage!!.rootView, pointerId)
-                        val topCopy = mNavigationPage.topPage ?: throw RuntimeException("topPage can not be null")
-                        mNavigationPage.prepareForPop(mNavigationPage.getChildPageAt(mNavigationPage.childPageCount - 2), topCopy)
+                        val topPage_ = checkNotNull(mNavigationPage.topPage)
+                        this@NavigationContainerView.captureChildView(topPage_.rootView, pointerId)
+                        mNavigationPage.prepareForPop(mNavigationPage.getChildPageAt(mNavigationPage.childPageCount - 2), topPage_)
                         val mPreView = mNavigationPage.getChildPageAt(mNavigationPage.childPageCount - 2).rootView
                         mPreView.visibility = View.VISIBLE
                         val mPreViewLayoutParams = mPreView.layoutParams as ViewGroup.MarginLayoutParams
@@ -54,11 +54,10 @@ class NavigationPageHelper internal constructor(private val mNavigationPage: Nav
 
 
                 override fun onViewReleased(releasedChild: View?, xvel: Float, yvel: Float) {
-                    val left = releasedChild!!.left
+                    val releasedChild_ = checkNotNull(releasedChild)
+                    val left = releasedChild_.left
                     val minOffset = (mSwipeToHideThreshold * measuredWidth).toInt()
                     if (left < minOffset) {
-                        //                        dragHelper.settleCapturedViewAt(0, 0);
-                        //                        invalidate();
                         cancelSwipeToHide()
                     } else {
                         mNavigationPage.popFromSwipe()
@@ -73,7 +72,7 @@ class NavigationPageHelper internal constructor(private val mNavigationPage: Nav
 
 
                 override fun onViewPositionChanged(changedView: View?, left: Int, top: Int, dx: Int, dy: Int) {
-                    val currentView = mNavigationPage.topPage!!.rootView
+                    val currentView = checkNotNull(mNavigationPage.topPage).rootView
                     val params = currentView.layoutParams as ViewGroup.MarginLayoutParams
                     params.setMargins(left, 0, -left, 0)
 

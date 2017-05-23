@@ -152,7 +152,7 @@ class ViewPagerPage(pageActivity: PageActivity) : SingleActivePage(pageActivity)
                 tmpPage.onHide()
                 tmpPage.onHidden()
             }
-            if (tmpPage.isViewInited)
+            if (tmpPage.isViewInitialized)
                 tmpPage.onDestroy()
             super.removePage(i)
         }
@@ -184,13 +184,13 @@ class ViewPagerPage(pageActivity: PageActivity) : SingleActivePage(pageActivity)
                 page.onHidden()
             }
 
-            if (page.isViewInited) {
+            if (page.isViewInitialized) {
                 page.onDestroy()
             }
 
         } else if (targetRemovePageIndex < currentShowIndex) {
 
-            if (page.isViewInited) {
+            if (page.isViewInitialized) {
                 page.onDestroy()
             }
             super.removePage(page)
@@ -198,7 +198,7 @@ class ViewPagerPage(pageActivity: PageActivity) : SingleActivePage(pageActivity)
             currentShowIndex--
         } else {
             //            index > currentShowIndex
-            if (page.isViewInited) {
+            if (page.isViewInitialized) {
                 page.onDestroy()
             }
             super.removePage(page)

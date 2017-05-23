@@ -10,8 +10,9 @@ import android.view.animation.AccelerateInterpolator
 import android.view.animation.DecelerateInterpolator
 import android.widget.FrameLayout
 
-import cc.zgeek.pagelib.Utils.PageLibDebugUtis
+import cc.zgeek.pagelib.Utils.PageLibDebugUtils
 import cc.zgeek.pagelib.Utils.PageUtil
+import cc.zgeek.pagelib.Utils.myLazy
 import cc.zgeek.pagelib.anim.PageAnimatorProvider
 import cc.zgeek.pagelib.anim.SimpleAnimListener
 
@@ -37,13 +38,19 @@ class NavigationPage(pageActivity: PageActivity) : SingleActivePage(pageActivity
         (rootView as NavigationPageHelper.NavigationContainerView).enableSwipeToHide()
     }
 
-    override val rootView: View by lazy {
+    private val lazy_rootView = myLazy({
         val myNav = NavigationPageHelper(this)
         this.mNavigationPageHelper = myNav
-        this._rootView = myNav.createContainerView(context)
+        val _rootView = myNav.createContainerView(context)
+        _rootView
+    },{
         onViewInited(PageUtil.isBundleFromSaveInstance(args), args)
-        _rootView ?: throw IllegalAccessError("_rootView changed by other thread")
-    }
+    })
+
+    override val rootView: View by this@NavigationPage.lazy_rootView
+
+    override val isViewInitialized: Boolean
+        get() = lazy_rootView.isInitialized()
 
     @JvmOverloads fun pushPage(newPage: IPage, anim: Boolean = true) {
         pushPage(newPage, if (anim) defaultPushAnimator else null)
@@ -61,7 +68,7 @@ class NavigationPage(pageActivity: PageActivity) : SingleActivePage(pageActivity
 
         addPage(showPage)
         addViewToContiner(showPage)
-        //        currentContiner().addView(showPage.getRootView());
+        //        currentContainer().addView(showPage.getRootView());
 
         if (active) {
             showPage.onShow()
@@ -70,7 +77,7 @@ class NavigationPage(pageActivity: PageActivity) : SingleActivePage(pageActivity
 
 
         if (active && provider != null) {
-            val tran = provider.getPageAnimation(currentContiner(), hidePage?.rootView, showPage.rootView)
+            val tran = provider.getPageAnimation(currentContainer(), hidePage?.rootView, showPage.rootView)
             tran.addListener(object : SimpleAnimListener() {
                 override fun onAnimationEnd(animation: Animator) {
                     doFinalWorkForPushPage(hidePage, showPage, active)
@@ -82,8 +89,8 @@ class NavigationPage(pageActivity: PageActivity) : SingleActivePage(pageActivity
             doFinalWorkForPushPage(hidePage, showPage, active)
         }
 
-        if (PageLibDebugUtis.isDebug) {
-            Log.d(PageLibDebugUtis.TAG, String.format(">>>> pushPage, pageStack=%d, %s", childPageCount, showPage))
+        if (PageLibDebugUtils.isDebug) {
+            Log.d(PageLibDebugUtils.TAG, String.format(">>>> pushPage, pageStack=%d, %s", childPageCount, showPage))
         }
     }
 
@@ -94,7 +101,7 @@ class NavigationPage(pageActivity: PageActivity) : SingleActivePage(pageActivity
             layoutParams.setMargins(0, 0, 0, 0)
             view.layoutParams = layoutParams
         }
-        currentContiner().addView(view)
+        currentContainer().addView(view)
     }
 
 
@@ -114,7 +121,7 @@ class NavigationPage(pageActivity: PageActivity) : SingleActivePage(pageActivity
         }
 
         if (oldPage != null) {
-            currentContiner().removeView(oldPage.rootView)
+            currentContainer().removeView(oldPage.rootView)
             if (isAttach) {
                 oldPage.onHidden()
             }
@@ -136,7 +143,7 @@ class NavigationPage(pageActivity: PageActivity) : SingleActivePage(pageActivity
         popToTargetPage(page, if (anim) defaultPopAnimator else null)
     }
 
-    fun popToTargetPage(page: IPage, provider: PageAnimatorProvider?) {
+    @JvmOverloads fun popToTargetPage(page: IPage, provider: PageAnimatorProvider?) {
 
         val currentIndex = (childPageCount - 1 downTo 0).lastOrNull { getChildPageAt(it) === page } ?: -1
         if (currentIndex <= 0)
@@ -149,7 +156,7 @@ class NavigationPage(pageActivity: PageActivity) : SingleActivePage(pageActivity
         popToTargetPage(clazz, if (anim) defaultPopAnimator else null)
     }
 
-    fun popToTargetPage(clazz: Class<out IPage>, provider: PageAnimatorProvider?) {
+    @JvmOverloads fun popToTargetPage(clazz: Class<out IPage>, provider: PageAnimatorProvider?) {
         var currentIndex = -1
         for (i in childPageCount - 1 downTo 0) {
             if (getChildPageAt(i).javaClass == clazz)
@@ -208,7 +215,7 @@ class NavigationPage(pageActivity: PageActivity) : SingleActivePage(pageActivity
             providerCopy = this.defaultPopAnimator
         }
         if (providerCopy != null && active) {
-            val mAnimatedTransitions = providerCopy.getPageAnimation(currentContiner(), topPageCopy.rootView, willShowPage.rootView)
+            val mAnimatedTransitions = providerCopy.getPageAnimation(currentContainer(), topPageCopy.rootView, willShowPage.rootView)
             mAnimatedTransitions.addListener(object : SimpleAnimListener() {
                 override fun onAnimationEnd(animation: Animator) {
                     doFinalWorkForPopPage(willRemovePages, willShowPage, active)
@@ -241,7 +248,7 @@ class NavigationPage(pageActivity: PageActivity) : SingleActivePage(pageActivity
         for (i in willRemovePages.indices.reversed()) {
             val cPage = willRemovePages[i]
             if (cPage === topPage) {
-                currentContiner().removeView(cPage.rootView)
+                currentContainer().removeView(cPage.rootView)
                 if (active) {
                     cPage.onHidden()
                 }
@@ -250,12 +257,12 @@ class NavigationPage(pageActivity: PageActivity) : SingleActivePage(pageActivity
 
         for (i in willRemovePages.indices.reversed()) {
             val cPage = willRemovePages[i]
-            if (cPage.isViewInited) {
+            if (cPage.isViewInitialized) {
                 cPage.onDestroy()
             }
             removePage(cPage)
-            if (PageLibDebugUtis.isDebug) {
-                Log.d(PageLibDebugUtis.TAG, String.format("<<<< popPage, pageStack=%d, %s", childPageCount, cPage))
+            if (PageLibDebugUtils.isDebug) {
+                Log.d(PageLibDebugUtils.TAG, String.format("<<<< popPage, pageStack=%d, %s", childPageCount, cPage))
             }
         }
         //        mViewTransparentMask.bringToFront();
@@ -274,11 +281,11 @@ class NavigationPage(pageActivity: PageActivity) : SingleActivePage(pageActivity
         }
         val removedPage = getChildPageAt(index)
 
-        if (removedPage.isViewInited)
+        if (removedPage.isViewInitialized)
             removedPage.onDestroy()
         removePage(removedPage)
-        if (PageLibDebugUtis.isDebug) {
-            Log.d(PageLibDebugUtis.TAG, String.format(">>>> deletePage(%d), pageStack=%d, %s", index, childPageCount, topPage))
+        if (PageLibDebugUtils.isDebug) {
+            Log.d(PageLibDebugUtils.TAG, String.format(">>>> deletePage(%d), pageStack=%d, %s", index, childPageCount, topPage))
         }
         return true
     }
@@ -296,7 +303,7 @@ class NavigationPage(pageActivity: PageActivity) : SingleActivePage(pageActivity
         }
 
 
-    fun currentContiner(): ViewGroup {
+    fun currentContainer(): ViewGroup {
         return this.rootView as ViewGroup
     }
 
@@ -371,12 +378,12 @@ class NavigationPage(pageActivity: PageActivity) : SingleActivePage(pageActivity
 
         ensureEndAnimationExecution()
         if (topPage.rootView.left > 0) {
-            val mAnimatedTransitions = provider.getPageAnimation(currentContiner(), prePage.rootView, topPage.rootView)
+            val mAnimatedTransitions = provider.getPageAnimation(currentContainer(), prePage.rootView, topPage.rootView)
             resetMargin(prePage.rootView)
             resetMargin(topPage.rootView)
             mAnimatedTransitions.addListener(object : SimpleAnimListener() {
                 override fun onAnimationEnd(animation: Animator) {
-                    currentContiner().removeView(prePage.rootView)
+                    currentContainer().removeView(prePage.rootView)
                     this@NavigationPage.mAnimatedTransitions = null
 
                 }
@@ -386,7 +393,7 @@ class NavigationPage(pageActivity: PageActivity) : SingleActivePage(pageActivity
         } else {
             resetMargin(prePage.rootView)
             resetMargin(topPage.rootView)
-            currentContiner().removeView(prePage.rootView)
+            currentContainer().removeView(prePage.rootView)
         }
     }
 
@@ -406,7 +413,7 @@ class NavigationPage(pageActivity: PageActivity) : SingleActivePage(pageActivity
             layoutParams.setMargins(0, 0, 0, 0)
             willShowView.layoutParams = layoutParams
         }
-        currentContiner().addView(willShowView)
+        currentContainer().addView(willShowView)
         willHidePage.rootView.bringToFront()
     }
 

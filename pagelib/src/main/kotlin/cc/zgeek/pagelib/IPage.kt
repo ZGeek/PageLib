@@ -77,7 +77,7 @@ interface IPage {
      * 用于判断视图是否被初始化，
      * @return
      */
-    val isViewInited: Boolean
+    val isViewInitialized: Boolean
 
 
     /***

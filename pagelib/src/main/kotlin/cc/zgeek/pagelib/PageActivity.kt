@@ -32,24 +32,27 @@ abstract class PageActivity : AppCompatActivity() {
         internal set
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        //        getSupportActionBar().hide();
         super.onCreate(savedInstanceState)
+
+        var rootPageCopy:IPage?  = null
 
 
         if (savedInstanceState != null) {
             val clsName = savedInstanceState.getString("rootPage")
             val args = savedInstanceState.getBundle("rootData")
-            rootPage = PageUtil.restorePage(this, clsName, args)
+            rootPageCopy = PageUtil.restorePage(this, clsName, args)
         }
-        if (rootPage == null)
-            rootPage = initRootPage()
-        setContentView(rootPage!!.rootView)
+        if (rootPageCopy == null){
+            rootPageCopy = initRootPage()
+        }
+        rootPage = rootPageCopy
+        setContentView(rootPageCopy.rootView)
     }
 
     protected abstract fun initRootPage(): IPage
 
     override fun onBackPressed() {
-        if (!rootPage!!.onBackPressed()) {
+        if (!checkNotNull(rootPage).onBackPressed()) {
             finish()
         }
     }
@@ -111,7 +114,7 @@ abstract class PageActivity : AppCompatActivity() {
 
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
-        val bundle = rootPage!!.onSaveInstanceState(rootPage!!.isViewInited)
+        val bundle = rootPage!!.onSaveInstanceState(rootPage!!.isViewInitialized)
         outState.putBundle("rootData", bundle)
         outState.putString("rootPage", rootPage!!.javaClass.name)
     }

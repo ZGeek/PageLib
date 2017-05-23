@@ -6,11 +6,12 @@ import android.os.Bundle
 import android.text.TextUtils
 import android.util.Log
 import android.view.KeyEvent
+import android.view.View
 
 import java.util.LinkedList
 
 import cc.zgeek.pagelib.Utils.ListUtil
-import cc.zgeek.pagelib.Utils.PageLibDebugUtis
+import cc.zgeek.pagelib.Utils.PageLibDebugUtils
 import cc.zgeek.pagelib.Utils.PageUtil
 
 /**
@@ -43,12 +44,15 @@ abstract class Page(pageActivity: PageActivity) : ViewWrapper(pageActivity), IPa
         get() {
             if (_args == null)
                 _args = Bundle()
-            return _args!!
+            return checkNotNull(_args)
         }
 
-    final override val isViewInited: Boolean
-        get() = _rootView != null
-
+    override val rootView: View
+       get() {
+           val _view = super.rootView
+           onViewInited(false, this.args)
+           return _view
+       }
 
     protected open fun addPage(page: IPage) {
         if (page.parentPage != null) {
@@ -103,12 +107,12 @@ abstract class Page(pageActivity: PageActivity) : ViewWrapper(pageActivity), IPa
 
     override fun onSaveInstanceState(isViewInited: Boolean): Bundle {
         var outState: Bundle? = null
-        if (this.isViewInited) {
+        if (this.isViewInitialized) {
             outState = Bundle()
             val clsArray = arrayOfNulls<String>(childPageCount)
             for (i in 0..childPageCount - 1) {
                 val p = getChildPageAt(i)
-                val pBundle = p.onSaveInstanceState(p.isViewInited)
+                val pBundle = p.onSaveInstanceState(p.isViewInitialized)
 
                 val clsName = p.javaClass.name
                 clsArray[i] = clsName
@@ -143,8 +147,8 @@ abstract class Page(pageActivity: PageActivity) : ViewWrapper(pageActivity), IPa
                 //            pageList.add(p);
                 p.parentPage = this
                 pageList.add(p)
-                if (PageLibDebugUtis.isDebug) {
-                    Log.d(PageLibDebugUtis.TAG, "restore child page " + p.toString() + " of " + this.toString())
+                if (PageLibDebugUtils.isDebug) {
+                    Log.d(PageLibDebugUtils.TAG, "restore child page " + p.toString() + " of " + this.toString())
                 }
             }
         }
@@ -177,11 +181,10 @@ abstract class Page(pageActivity: PageActivity) : ViewWrapper(pageActivity), IPa
     }
 
     override fun onDestroy() {
-        for (i in childPageCount - 1 downTo 0) {
-            val page = getChildPageAt(i)
-            if (page.isViewInited)
-                page.onDestroy()
-        }
+        (childPageCount - 1 downTo 0)
+                .map { getChildPageAt(it) }
+                .filter { it.isViewInitialized }
+                .forEach { it.onDestroy() }
     }
 
     override fun onKeyDown(keyCode: Int, event: KeyEvent): Boolean {
