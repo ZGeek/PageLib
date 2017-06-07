@@ -23,9 +23,9 @@ import cc.zgeek.pagelib.ViewPagerPage
 class InnerVP(pageActivity: PageActivity) : Page(pageActivity) {
 
     @InjectView(R.id.layout_tab_container)
-    internal var tabLayout: TabLayout? = null
+    internal lateinit var tabLayout: TabLayout
     @InjectView(R.id.vp_container)
-    internal var viewGroup: ViewGroup? = null
+    internal lateinit var viewGroup: ViewGroup
 
     override fun onViewInitialized(isRestore: Boolean, args: Bundle) {
         super.onViewInitialized(isRestore, args)
@@ -40,8 +40,8 @@ class InnerVP(pageActivity: PageActivity) : Page(pageActivity) {
             addPage(innerPager)
         }
 
-        tabLayout!!.setupWithViewPager(getChildPageAt(0).rootView as ViewPager)
-        viewGroup!!.addView(getChildPageAt(0).rootView)
+        tabLayout.setupWithViewPager(getChildPageAt(0).rootView as ViewPager)
+        viewGroup.addView(getChildPageAt(0).rootView)
     }
 
     //    @Override

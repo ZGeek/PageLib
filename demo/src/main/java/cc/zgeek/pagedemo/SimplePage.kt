@@ -28,9 +28,9 @@ class SimplePage private constructor(pageActivity: PageActivity) : Page(pageActi
 
     internal val index: String
     @InjectView(R.id.text)
-    internal var textView: TextView? = null
+    internal lateinit var textView: TextView
     @InjectView(R.id.content)
-    internal var frameLayout: FrameLayout? = null
+    internal lateinit var frameLayout: FrameLayout
     private var tvBg: Int = 0
     private var frBg: Int = 0
 
@@ -53,10 +53,10 @@ class SimplePage private constructor(pageActivity: PageActivity) : Page(pageActi
         //            tvBg = Color.argb(255, random.nextInt(255), random.nextInt(255), random.nextInt(255));
         //            frBg = Color.argb(255, random.nextInt(255), random.nextInt(255), random.nextInt(255));
         //        }
-        textView!!.setBackgroundColor(tvBg)
-        frameLayout!!.setBackgroundColor(frBg)
-        textView!!.text = name
-        textView!!.setOnClickListener(this)
+        textView.setBackgroundColor(tvBg)
+        frameLayout.setBackgroundColor(frBg)
+        textView.text = name
+        textView.setOnClickListener(this)
     }
 
     override fun onSaveInstanceState(isViewInited: Boolean): Bundle {
@@ -76,22 +76,22 @@ class SimplePage private constructor(pageActivity: PageActivity) : Page(pageActi
 
     override fun onShow() {
         super.onShow()
-        Log.d(SimplePage::class.java.simpleName, name!! + "-->onShow")
+        Log.d(SimplePage::class.java.simpleName, name + "-->onShow")
     }
 
     override fun onShown() {
         super.onShown()
-        Log.d(SimplePage::class.java.simpleName, name!! + "-->onShown")
+        Log.d(SimplePage::class.java.simpleName, name + "-->onShown")
     }
 
     override fun onHide() {
         super.onHide()
-        Log.d(SimplePage::class.java.simpleName, name!! + "-->onHide")
+        Log.d(SimplePage::class.java.simpleName, name + "-->onHide")
     }
 
     override fun onHidden() {
         super.onHidden()
-        Log.d(SimplePage::class.java.simpleName, name!! + "-->onHidden")
+        Log.d(SimplePage::class.java.simpleName, name + "-->onHidden")
     }
 
     override fun onDestroy() {
@@ -99,7 +99,7 @@ class SimplePage private constructor(pageActivity: PageActivity) : Page(pageActi
         Log.d(SimplePage::class.java.simpleName, name + "-->onDestroy")
     }
 
-    override var name: String? = null
+    override var name: String = ""
         get() {
             val name = super.name
             if (TextUtils.isEmpty(name))

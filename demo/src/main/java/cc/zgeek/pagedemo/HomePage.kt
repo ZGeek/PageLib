@@ -2,7 +2,7 @@ package cc.zgeek.pagedemo
 
 import android.animation.Animator
 import android.animation.ValueAnimator
-import android.app.WallpaperManager
+import android.content.DialogInterface
 import android.os.Bundle
 import android.support.design.widget.NavigationView
 import android.support.v4.widget.DrawerLayout
@@ -35,36 +35,34 @@ import cc.zgeek.pagelib.anim.SimpleAnimListener
 class HomePage(pageActivity: PageActivity) : Page(pageActivity), View.OnClickListener, NavigationView.OnNavigationItemSelectedListener {
 
     @InjectView(R.id.drawer_layout)
-    private val mDrawerLayout: DrawerLayout? = null
+    private lateinit  var mDrawerLayout: DrawerLayout
     @InjectView(R.id.tb_header_bar)
-    private val mTbHeaderBar: Toolbar? = null
+    private lateinit var mTbHeaderBar: Toolbar
     @InjectView(R.id.navigation_view)
-    private val mNavigationView: NavigationView? = null
+    private lateinit var mNavigationView: NavigationView
     @InjectView(R.id.tv_text)
-    private val mTvText: TextView? = null
+    private lateinit var mTvText: TextView
     @InjectView(R.id.viewPagerBtn)
-    private val viewPagerBtn: Button? = null
+    private lateinit var viewPagerBtn: Button
     @InjectView(R.id.btn_simple_tab_page)
-    private val switchPage: Button? = null
+    private lateinit var switchPage: Button
     @InjectView(R.id.list_page)
-    private val listPage: Button? = null
+    private lateinit var listPage: Button
     @InjectView(R.id.btn_cta_page)
-    private val cus_btn: Button? = null
+    private lateinit var cus_btn: Button
     @InjectView(R.id.btn_sub_nav_page)
-    private val sub_nav: Button? = null
+    private lateinit var sub_nav: Button
 
-    override fun onViewInitialized(isRestore: Boolean, args: Bundle) {
-        super.onViewInitialized(isRestore, args)
+    override fun onViewInited(isRestore: Boolean, args: Bundle) {
+        super.onViewInited(isRestore, args)
         setupToolbar()
-        mTvText!!.setText(R.string.page_demo_about)
-        viewPagerBtn!!.setOnClickListener(this)
-        switchPage!!.setOnClickListener(this)
-        listPage!!.setOnClickListener(this)
-        cus_btn!!.setOnClickListener(this)
-        sub_nav!!.setOnClickListener(this)
-        mNavigationView!!.setNavigationItemSelectedListener(this)
-        rootView.setBackgroundDrawable(WallpaperManager.getInstance(context).drawable)
-//        rootView.background =
+        mTvText.setText(R.string.page_demo_about)
+        viewPagerBtn.setOnClickListener(this)
+        switchPage.setOnClickListener(this)
+        listPage.setOnClickListener(this)
+        cus_btn.setOnClickListener(this)
+        sub_nav.setOnClickListener(this)
+        mNavigationView.setNavigationItemSelectedListener(this)
     }
 
     override fun onSaveInstanceState(isViewInited: Boolean): Bundle {
@@ -72,7 +70,7 @@ class HomePage(pageActivity: PageActivity) : Page(pageActivity), View.OnClickLis
     }
 
     private fun setupToolbar() {
-        mTbHeaderBar!!.title = "PageLib · MainPage"
+        mTbHeaderBar.title = "PageLib · MainPage"
         setupDrawerToggle()
         ToolbarHelper.setupMenu(mTbHeaderBar, R.menu.menu_main,
                 Toolbar.OnMenuItemClickListener {
@@ -99,7 +97,7 @@ class HomePage(pageActivity: PageActivity) : Page(pageActivity), View.OnClickLis
         )
 
         mDrawerToggle.isDrawerIndicatorEnabled = true
-        mDrawerLayout!!.addDrawerListener(mDrawerToggle)
+        mDrawerLayout.addDrawerListener(mDrawerToggle)
         mDrawerToggle.syncState()
     }
 
@@ -108,7 +106,7 @@ class HomePage(pageActivity: PageActivity) : Page(pageActivity), View.OnClickLis
     }
 
     override fun onNavigationItemSelected(item: MenuItem): Boolean {
-        mDrawerLayout!!.closeDrawers()
+        mDrawerLayout.closeDrawers()
         actionWithId(item.itemId)
         return true
     }

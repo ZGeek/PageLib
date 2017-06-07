@@ -1,5 +1,6 @@
 package cc.zgeek.pagelib
 
+import android.app.Activity
 import android.content.Intent
 import android.content.res.Configuration
 import android.os.Bundle
@@ -7,6 +8,11 @@ import android.os.Handler
 import android.os.Looper
 import android.support.v7.app.AppCompatActivity
 import android.view.KeyEvent
+import android.view.MotionEvent
+import android.view.View
+import android.view.ViewGroup
+import android.view.ViewParent
+import android.view.Window
 
 import cc.zgeek.pagelib.Utils.PageUtil
 
@@ -17,7 +23,7 @@ import cc.zgeek.pagelib.Utils.PageUtil
  */
 
 abstract class PageActivity : AppCompatActivity() {
-    var rootPage: IPage? = null
+    lateinit var rootPage: IPage
         internal set
 
     internal var handler: Handler = Handler(Looper.getMainLooper())
@@ -52,37 +58,37 @@ abstract class PageActivity : AppCompatActivity() {
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent) {
-        rootPage!!.onActivityResult(requestCode, resultCode, data)
+        rootPage.onActivityResult(requestCode, resultCode, data)
     }
 
     override fun onResume() {
         isActive = true
-        rootPage!!.onShow()
+        rootPage.onShow()
         super.onResume()
-        rootPage!!.onShown()
+        rootPage.onShown()
     }
 
     override fun onPause() {
-        rootPage!!.onHide()
+        rootPage.onHide()
         super.onPause()
-        rootPage!!.onHidden()
+        rootPage.onHidden()
         isActive = false
     }
 
     override fun onDestroy() {
-        rootPage!!.onDestroy()
+        rootPage.onDestroy()
         super.onDestroy()
     }
 
     override fun onKeyDown(keyCode: Int, event: KeyEvent): Boolean {
-        if (rootPage!!.onKeyDown(keyCode, event)) {
+        if (rootPage.onKeyDown(keyCode, event)) {
             return true
         }
         return super.onKeyDown(keyCode, event)
     }
 
     override fun onKeyUp(keyCode: Int, event: KeyEvent): Boolean {
-        if (rootPage!!.onKeyUp(keyCode, event)) {
+        if (rootPage.onKeyUp(keyCode, event)) {
             return true
         }
         return super.onKeyUp(keyCode, event)
@@ -98,19 +104,19 @@ abstract class PageActivity : AppCompatActivity() {
 
     override fun onConfigurationChanged(newConfig: Configuration) {
         super.onConfigurationChanged(newConfig)
-        rootPage!!.onConfigurationChanged(newConfig)
+        rootPage.onConfigurationChanged(newConfig)
     }
 
     override fun onLowMemory() {
         super.onLowMemory()
-        rootPage!!.onLowMemory()
+        rootPage.onLowMemory()
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
-        val bundle = rootPage!!.onSaveInstanceState(rootPage!!.isRootViewInitialized)
+        val bundle = rootPage.onSaveInstanceState(rootPage.isViewInitialized)
         outState.putBundle("rootData", bundle)
-        outState.putString("rootPage", rootPage!!.javaClass.name)
+        outState.putString("rootPage", rootPage.javaClass.name)
     }
 
     //    @Override

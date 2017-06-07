@@ -17,8 +17,9 @@ import cc.zgeek.pagelib.PageActivity
 
 @PageLayout(R.layout.combin_page)
 class InnerNavPage(pageActivity: PageActivity) : Page(pageActivity) {
+
     @InjectView(R.id.content)
-    internal var frameLayout: FrameLayout? = null
+    internal lateinit var frameLayout: FrameLayout
 
     override fun onViewInitialized(isRestore: Boolean, args: Bundle) {
         super.onViewInitialized(isRestore, args)
@@ -27,7 +28,7 @@ class InnerNavPage(pageActivity: PageActivity) : Page(pageActivity) {
             nav.pushPage(SimplePage.newInstance(context))
             addPage(nav)
         }
-        frameLayout!!.addView(getChildPageAt(0).rootView)
+        frameLayout.addView(getChildPageAt(0).rootView)
     }
 
     //    @Override

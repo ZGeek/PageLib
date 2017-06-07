@@ -48,22 +48,26 @@ abstract class SwitchPage(pageActivity: PageActivity) : SingleActivePage(pageAct
             oldPage?.onHide()
         }
         if (provider != null && active) {
-            mAnimate = provider.getPageAnimation(currentContiner(), oldPage?.rootView, newPage.rootView)
-            mAnimate!!.addListener(object : SimpleAnimListener() {
+            val mAnimate_ = provider.getPageAnimation(currentContiner(), oldPage?.rootView, newPage.rootView)
+            mAnimate_.addListener(object : SimpleAnimListener() {
                 override fun onAnimationEnd(animation: Animator) {
                     doFinalWorkForSwitchPage(active, index, newPage, oldPage)
                 }
             })
-            mAnimate!!.start()
+            mAnimate_.start()
+            this.mAnimate = mAnimate_
         } else {
             doFinalWorkForSwitchPage(active, index, newPage, oldPage)
         }
     }
 
     private fun ensureEndAnimationExecution() {
-        if (mAnimate != null && mAnimate!!.isRunning) {
-            mAnimate!!.end()
-            mAnimate = null
+        if (this.mAnimate != null) {
+            val mAnimate_ =  checkNotNull(this.mAnimate)
+            if(mAnimate_.isRunning){
+                mAnimate_.end()
+            }
+            this.mAnimate = null
         }
     }
 

@@ -25,14 +25,14 @@ class SwipeableTabPage(pageActivity: PageActivity) : Page(pageActivity) {
 
 
     @InjectView(R.id.tb_header_bar)
-    internal var toolbar: Toolbar? = null
+    internal lateinit var toolbar: Toolbar
 
     @InjectView(R.id.tab_layout)
-    internal var tabLayout: TabLayout? = null
+    internal lateinit var tabLayout: TabLayout
 
     @InjectView(R.id.contenter)
-    internal var contenter: ViewGroup? = null
-    private var pagerPage: ViewPagerPage? = null
+    internal lateinit var contenter: ViewGroup
+    private lateinit var pagerPage: ViewPagerPage
 
     override fun onViewInitialized(isRestore: Boolean, args: Bundle) {
         super.onViewInitialized(isRestore, args)
@@ -60,24 +60,24 @@ class SwipeableTabPage(pageActivity: PageActivity) : Page(pageActivity) {
             pagerPage = getChildPageAt(0) as ViewPagerPage
         }
 
-        contenter!!.addView(pagerPage!!.rootView)
+        contenter.addView(pagerPage.rootView)
         setupTabLayout()
     }
 
     private fun setupToolbar() {
-        toolbar!!.title = "PageLib · SwipeableTabPage"
+        toolbar.title = "PageLib · SwipeableTabPage"
 
-        ToolbarHelper.setNavigationIconEnabled(toolbar!!, true, View.OnClickListener { (context.rootPage as NavigationPage).popPage() })
+        ToolbarHelper.setNavigationIconEnabled(toolbar, true, View.OnClickListener { (context.rootPage as NavigationPage).popPage() })
     }
 
     private fun setupTabLayout() {
-        tabLayout!!.setupWithViewPager(pagerPage!!.rootView as ViewPager)
-        tabLayout!!.tabMode = TabLayout.MODE_FIXED
+        tabLayout.setupWithViewPager(pagerPage.rootView as ViewPager)
+        tabLayout.tabMode = TabLayout.MODE_FIXED
 
-        tabLayout!!.getTabAt(0)!!.setIcon(R.mipmap.ic_launcher)
-        tabLayout!!.getTabAt(1)!!.setIcon(R.mipmap.ic_launcher)
-        tabLayout!!.getTabAt(2)!!.setIcon(R.mipmap.ic_launcher)
-        tabLayout!!.getTabAt(3)!!.setIcon(R.mipmap.ic_launcher)
+        tabLayout.getTabAt(0)?.setIcon(R.mipmap.ic_launcher)
+        tabLayout.getTabAt(1)?.setIcon(R.mipmap.ic_launcher)
+        tabLayout.getTabAt(2)?.setIcon(R.mipmap.ic_launcher)
+        tabLayout.getTabAt(3)?.setIcon(R.mipmap.ic_launcher)
         rootView.requestLayout()
     }
 

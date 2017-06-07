@@ -65,7 +65,7 @@ private class MySynchronizedLazyImpl<out T>(initializer: () -> T, whenInitialize
                 if (_v2 !== UNINITIALIZED_VALUE) {
                     @Suppress("UNCHECKED_CAST") (_v2 as T)
                 } else {
-                    val typedValue = initializer!!()
+                    val typedValue = checkNotNull(initializer)()
                     _value = typedValue
                     initializer = null
                     whenInitialized?.invoke()

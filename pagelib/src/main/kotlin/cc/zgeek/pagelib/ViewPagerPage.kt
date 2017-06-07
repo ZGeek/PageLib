@@ -22,7 +22,9 @@ import cc.zgeek.pagelib.Utils.myLazy
 class ViewPagerPage(pageActivity: PageActivity) : SingleActivePage(pageActivity), ViewPager.OnPageChangeListener {
     private val adapterWrapper: IPageAdapterWrapper
     private var currentShowIndex = 0
-    private var mOnPageChangeListeners: ArrayList<ViewPager.OnPageChangeListener>? = null
+    private val mOnPageChangeListeners: ArrayList<ViewPager.OnPageChangeListener> by lazy {
+        ArrayList<ViewPager.OnPageChangeListener>()
+    }
 
     init {
         adapterWrapper = IPageAdapterWrapper()
@@ -52,16 +54,11 @@ class ViewPagerPage(pageActivity: PageActivity) : SingleActivePage(pageActivity)
     }
 
     fun addOnPageChangeListener(listener: ViewPager.OnPageChangeListener) {
-        if (mOnPageChangeListeners == null) {
-            mOnPageChangeListeners = ArrayList<ViewPager.OnPageChangeListener>()
-        }
-        mOnPageChangeListeners!!.add(listener)
+        mOnPageChangeListeners.add(listener)
     }
 
     fun removeOnPageChangeListener(listener: ViewPager.OnPageChangeListener) {
-        if (mOnPageChangeListeners != null) {
-            mOnPageChangeListeners!!.remove(listener)
-        }
+            mOnPageChangeListeners.remove(listener)
     }
 
 
@@ -74,10 +71,10 @@ class ViewPagerPage(pageActivity: PageActivity) : SingleActivePage(pageActivity)
 
 
     override fun onPageScrolled(position: Int, positionOffset: Float, positionOffsetPixels: Int) {
-        if (mOnPageChangeListeners == null || mOnPageChangeListeners!!.size == 0)
+        if (mOnPageChangeListeners.size == 0)
             return
-        for (i in mOnPageChangeListeners!!.indices) {
-            mOnPageChangeListeners!![i].onPageScrolled(position, positionOffset, positionOffsetPixels)
+        for (i in mOnPageChangeListeners.indices) {
+            mOnPageChangeListeners[i].onPageScrolled(position, positionOffset, positionOffsetPixels)
         }
     }
 
@@ -93,18 +90,18 @@ class ViewPagerPage(pageActivity: PageActivity) : SingleActivePage(pageActivity)
             oldPage.onHidden()
         }
         currentShowIndex = position
-        if (mOnPageChangeListeners == null || mOnPageChangeListeners!!.size == 0)
+        if (mOnPageChangeListeners.size == 0)
             return
-        for (i in mOnPageChangeListeners!!.indices) {
-            mOnPageChangeListeners!![i].onPageSelected(position)
+        for (i in mOnPageChangeListeners.indices) {
+            mOnPageChangeListeners[i].onPageSelected(position)
         }
     }
 
     override fun onPageScrollStateChanged(state: Int) {
-        if (mOnPageChangeListeners == null || mOnPageChangeListeners!!.size == 0)
+        if (mOnPageChangeListeners.size == 0)
             return
-        for (i in mOnPageChangeListeners!!.indices) {
-            mOnPageChangeListeners!![i].onPageScrollStateChanged(state)
+        for (i in mOnPageChangeListeners.indices) {
+            mOnPageChangeListeners[i].onPageScrollStateChanged(state)
         }
 
     }
@@ -138,7 +135,7 @@ class ViewPagerPage(pageActivity: PageActivity) : SingleActivePage(pageActivity)
             if (active) {
                 getChildPageAt(0).onShown()
             }
-        } else if (pages.size > 0) {
+        } else if (pages.isNotEmpty()) {
             adapterWrapper.notifyDataSetChanged()
         }
     }
@@ -245,14 +242,14 @@ class ViewPagerPage(pageActivity: PageActivity) : SingleActivePage(pageActivity)
         }
 
         override fun getItemPosition(`object`: Any?): Int {
-            val index = getChildPageIndex((`object` as IPage?)!!)
+            val index = getChildPageIndex(`object` as IPage)
             if (index < 0 || index >= childPageCount)
                 return PagerAdapter.POSITION_NONE
             return index
         }
 
         override fun getPageTitle(position: Int): CharSequence {
-            return getChildPageAt(position).name ?: ""
+            return getChildPageAt(position).name
         }
     }
 

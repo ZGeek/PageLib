@@ -30,7 +30,7 @@ abstract class Page(pageActivity: PageActivity) : ViewWrapper(pageActivity), IPa
     private val pageList = LinkedList<IPage>()
     override var parentPage: IPage? = null
 
-    override var name: String? = null
+    override var name: String = ""
 
     private var _args: Bundle? = null
     override var args: Bundle

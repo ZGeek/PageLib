@@ -22,9 +22,6 @@ import cc.zgeek.pagelib.NavigationPage
 import cc.zgeek.pagelib.Page
 import cc.zgeek.pagelib.PageActivity
 
-import kotlinx.android.synthetic.main.page_list.*
-
-
 /**
  * Created by flyop.
  * Change History:
@@ -35,15 +32,14 @@ import kotlinx.android.synthetic.main.page_list.*
 class ListViewPage(pageActivity: PageActivity) : Page(pageActivity) {
 
     @InjectView(R.id.tb_header_bar)
-    private val mTbHeaderBar: Toolbar? = null
+    private lateinit var mTbHeaderBar: Toolbar
     @InjectView(R.id.iv_parallax_image)
-    private val mIvParallaxImage: ImageView? = null
+    private lateinit var mIvParallaxImage: ImageView
     @InjectView(R.id.rv_main_list)
-    private val mRvMainList: RecyclerView? = null
+    private lateinit var mRvMainList: RecyclerView
 
-    override fun onViewInitialized(isRestore: Boolean, args: Bundle) {
-        mTbHeaderBar!!.title = "ListPage"
-
+    override fun onViewInited(isRestore: Boolean, args: Bundle) {
+        mTbHeaderBar.title = "ListPage"
         ToolbarHelper.setNavigationIconEnabled(
                 mTbHeaderBar, true, View.OnClickListener { (context.rootPage as NavigationPage).popPage() })
         setParallaxImage()
@@ -57,7 +53,7 @@ class ListViewPage(pageActivity: PageActivity) : Page(pageActivity) {
     }
 
     private fun setupRecyclerView() {
-        mRvMainList!!.layoutManager = LinearLayoutManager(context)
+        mRvMainList.layoutManager = LinearLayoutManager(context)
         mRvMainList.adapter = MainListItemAdapter(object : ArrayList<String>() {
             init {
                 for (i in 0..24) {
@@ -70,7 +66,7 @@ class ListViewPage(pageActivity: PageActivity) : Page(pageActivity) {
     private fun setParallaxImage() {
         val wallpager = WallpaperManager.getInstance(context).drawable
         if (wallpager != null) {
-            mIvParallaxImage!!.setImageDrawable(wallpager)
+            mIvParallaxImage.setImageDrawable(wallpager)
         }
     }
 
@@ -83,7 +79,7 @@ class ListViewPage(pageActivity: PageActivity) : Page(pageActivity) {
         }
 
         override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-            holder.tvText.text = mTextList!![position]
+            holder.tvText.text = checkNotNull(mTextList)[position]
         }
 
         override fun getItemCount(): Int {
@@ -91,13 +87,8 @@ class ListViewPage(pageActivity: PageActivity) : Page(pageActivity) {
         }
 
         internal inner class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-            var cvContainer: CardView
-            var tvText: TextView
-
-            init {
-                cvContainer = itemView as CardView
-                tvText = itemView.findViewById(R.id.tv_text) as TextView
-            }
+            var cvContainer: CardView = itemView as CardView
+            var tvText: TextView = itemView.findViewById(R.id.tv_text) as TextView
 
         }
     }

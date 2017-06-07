@@ -24,17 +24,17 @@ import cc.zgeek.pagelib.SubSwitchPage
 class SwitchTabPage(pageActivity: PageActivity) : SubSwitchPage(pageActivity), TabLayout.OnTabSelectedListener {
 
     @InjectView(R.id.tb_header_bar)
-    internal var toolbar: Toolbar? = null
+    internal lateinit var toolbar: Toolbar
     @InjectView(R.id.tab_layout)
-    internal var tabLayout: TabLayout? = null
+    internal lateinit var tabLayout: TabLayout
     @InjectView(R.id.contenter)
-    internal var frameLayout: FrameLayout? = null
+    internal lateinit var frameLayout: FrameLayout
 
-    override fun onViewInitialized(isRestore: Boolean, ars: Bundle) {
-        setTabContainerLayout(frameLayout!!)
-        super.onViewInitialized(isRestore, ars)
-        toolbar!!.title = "PageLib · SwitchTabPage"
-        ToolbarHelper.setNavigationIconEnabled(toolbar!!, true, View.OnClickListener{ (context.rootPage as NavigationPage).popPage() })
+    override fun onViewInited(isRestore: Boolean, ars: Bundle) {
+        setTabContainerLayout(frameLayout)
+        super.onViewInited(isRestore, ars)
+        toolbar.title = "PageLib · SwitchTabPage"
+        ToolbarHelper.setNavigationIconEnabled(toolbar, true, View.OnClickListener{ (context.rootPage as NavigationPage).popPage() })
         if (!isRestore) {
             addPage(SimplePage.newInstance(context).setPageName("TAB0"))
             addPage(SimplePage.newInstance(context).setPageName("TAB1"))
@@ -42,24 +42,23 @@ class SwitchTabPage(pageActivity: PageActivity) : SubSwitchPage(pageActivity), T
             addPage(SimplePage.newInstance(context).setPageName("TAB3"))
         }
         for (i in 0..childPageCount - 1) {
-            val tab = tabLayout!!.newTab().setIcon(R.mipmap.ic_launcher).setText(getChildPageAt(i).name).setTag(getChildPageAt(i))
-            tabLayout!!.addTab(tab)
+            val tab = tabLayout.newTab().setIcon(R.mipmap.ic_launcher).setText(getChildPageAt(i).name).setTag(getChildPageAt(i))
+            tabLayout.addTab(tab)
         }
-        tabLayout!!.addOnTabSelectedListener(this)
+        tabLayout.addOnTabSelectedListener(this)
         syncTabIndex()
 
-        //        switchToPage(0);
     }
 
     protected fun syncTabIndex() {
         val index = showIndex
-        if (index >= 0 && index < childPageCount && tabLayout!!.selectedTabPosition != index) {
-            tabLayout!!.getTabAt(index)!!.select()
+        if (index in 0..(childPageCount - 1) && tabLayout.selectedTabPosition != index) {
+            tabLayout.getTabAt(index)?.select()
         }
     }
 
     override fun onTabSelected(tab: TabLayout.Tab) {
-        switchToPage((tab.tag as IPage?)!!)
+        switchToPage((tab.tag as IPage))
     }
 
     override fun onTabUnselected(tab: TabLayout.Tab) {

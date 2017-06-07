@@ -107,7 +107,7 @@ interface IPage {
     //收到系统的内存警告时调用
     fun onLowMemory()
 
-    val name: String?
+    var name: String
 
     fun setPageName(name: String): IPage
 }
