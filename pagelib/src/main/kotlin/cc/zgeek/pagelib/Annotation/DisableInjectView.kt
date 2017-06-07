@@ -9,6 +9,6 @@ import java.lang.annotation.RetentionPolicy
  * 2017/1/15 : Create
  */
 
-@Retention(RetentionPolicy.RUNTIME)
+@kotlin.annotation.Retention(AnnotationRetention.RUNTIME)
 @Target(AnnotationTarget.CLASS, AnnotationTarget.FILE)
 annotation class DisableInjectView

@@ -7,6 +7,7 @@ import android.view.KeyEvent
 import android.view.MotionEvent
 import android.view.View
 
+
 /**
  * Created by ZGeek.
  * Change History:
@@ -110,4 +111,26 @@ interface IPage {
     var name: String
 
     fun setPageName(name: String): IPage
+
+    fun isPageActive():Boolean{
+        if (!this.context.isActive) {
+            return false
+        }
+        val root = this.context.rootPage
+        var child = this
+        if (child === root)
+            return true
+        var parent: IPage? = this.parentPage
+
+        while (parent != null) {
+            val isActive = parent.isChildPageActive(child)
+            if (!isActive)
+                return false
+            if (parent === root)
+                return true
+            child = parent
+            parent = parent.parentPage
+        }
+        return false
+    }
 }

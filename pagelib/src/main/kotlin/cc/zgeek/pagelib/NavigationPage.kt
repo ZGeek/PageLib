@@ -59,7 +59,7 @@ class NavigationPage(pageActivity: PageActivity) : SingleActivePage(pageActivity
             throw NullPointerException("the showView can not be NULL")
         }
 
-        val active = PageUtil.isPageActive(this)
+        val active = this.isPageActive()
         ensureEndAnimationExecution()
 
         val hidePage = topPage
@@ -141,7 +141,7 @@ class NavigationPage(pageActivity: PageActivity) : SingleActivePage(pageActivity
         popToTargetPage(page, if (anim) defaultPopAnimator else null)
     }
 
-    @JvmOverloads fun popToTargetPage(page: IPage, provider: PageAnimatorProvider?) {
+    fun popToTargetPage(page: IPage, provider: PageAnimatorProvider?) {
 
         val currentIndex = (childPageCount - 1 downTo 0).lastOrNull { getChildPageAt(it) === page } ?: -1
         if (currentIndex <= 0)
@@ -171,7 +171,7 @@ class NavigationPage(pageActivity: PageActivity) : SingleActivePage(pageActivity
     }
 
     fun popToRootPage(provider: PageAnimatorProvider?) {
-        popTopNPages(childPageCount - 1)
+        popTopNPages(childPageCount - 1, provider)
     }
 
     @JvmOverloads fun popTopNPages(n: Int, animated: Boolean = true) {
@@ -193,7 +193,7 @@ class NavigationPage(pageActivity: PageActivity) : SingleActivePage(pageActivity
             return
         }
 
-        val active = PageUtil.isPageActive(this)
+        val active = this.isPageActive()
         if (childPageCount == 1)
             return
         this.rootView.isEnabled = false

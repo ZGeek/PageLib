@@ -6,5 +6,5 @@ import java.lang.annotation.RetentionPolicy
 
 
 @Target(AnnotationTarget.CLASS, AnnotationTarget.FILE)
-@Retention(RetentionPolicy.RUNTIME)
+@kotlin.annotation.Retention(AnnotationRetention.RUNTIME)
 annotation class PageLayout(@LayoutRes val value: Int)

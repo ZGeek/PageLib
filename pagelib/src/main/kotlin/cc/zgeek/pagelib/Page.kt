@@ -10,9 +10,9 @@ import android.view.View
 
 import java.util.LinkedList
 
-import cc.zgeek.pagelib.Utils.ListUtil
 import cc.zgeek.pagelib.Utils.PageLibDebugUtils
 import cc.zgeek.pagelib.Utils.PageUtil
+import cc.zgeek.pagelib.Utils.restorePage
 
 /**
  * Created by ZGeek.
@@ -84,10 +84,10 @@ abstract class Page(pageActivity: PageActivity) : ViewWrapper(pageActivity), IPa
         get() = pageList.size
 
     override fun getSubChildPages(beginIndex: Int, count: Int): List<IPage> {
-        return ListUtil.subList(pageList, beginIndex, count)
+        return pageList.subList(beginIndex, beginIndex+count)
     }
     override fun getChildPages(): List<IPage> {
-        return ListUtil.subList(pageList, 0, pageList.size)
+        return pageList.subList(0, pageList.size)
     }
 
     override fun getChildPageIndex(page: IPage): Int {
@@ -109,7 +109,7 @@ abstract class Page(pageActivity: PageActivity) : ViewWrapper(pageActivity), IPa
     }
 
     override fun onSaveInstanceState(isViewInited: Boolean): Bundle {
-        var outState: Bundle? = null
+        val outState: Bundle?
         if (this.isViewInitialized) {
             outState = Bundle()
             val clsArray = arrayOfNulls<String>(childPageCount)
@@ -145,7 +145,7 @@ abstract class Page(pageActivity: PageActivity) : ViewWrapper(pageActivity), IPa
                 val clsName = clsArray[i]
                 val key = SAVED_PAGE_LIST_DATA + i
                 val bundle = args.getBundle(key)
-                val p = PageUtil.restorePage(context, clsName, bundle)
+                val p = context.restorePage(clsName, bundle)
                 p.args = bundle
                 //            pageList.add(p);
                 p.parentPage = this

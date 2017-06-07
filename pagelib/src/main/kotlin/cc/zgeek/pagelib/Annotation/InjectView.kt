@@ -10,6 +10,6 @@ import java.lang.annotation.RetentionPolicy
  * 2017/1/14 : Create
  */
 
-@Retention(RetentionPolicy.RUNTIME)
+@kotlin.annotation.Retention(AnnotationRetention.RUNTIME)
 @Target(AnnotationTarget.FIELD)
 annotation class InjectView(@IdRes val value: Int)

@@ -6,7 +6,6 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.FrameLayout
 
-import cc.zgeek.pagelib.Utils.PageUtil
 import cc.zgeek.pagelib.anim.PageAnimatorProvider
 import cc.zgeek.pagelib.anim.SimpleAnimListener
 
@@ -36,7 +35,7 @@ abstract class SwitchPage(pageActivity: PageActivity) : SingleActivePage(pageAct
             return
 
         ensureEndAnimationExecution()
-        val active = PageUtil.isPageActive(this)
+        val active = this.isPageActive()
         var tmpOld: IPage? = null
         if (showIndex >= 0) {
             tmpOld = getChildPageAt(showIndex)
@@ -133,7 +132,7 @@ abstract class SwitchPage(pageActivity: PageActivity) : SingleActivePage(pageAct
                 targetPage.onDestroy()
                 return super.removePage(targetPage)
             } else {
-                if (PageUtil.isPageActive(this)) {
+                if (this.isPageActive()) {
                     targetPage.onHide()
                     targetPage.onHidden()
                 }

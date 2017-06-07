@@ -30,9 +30,9 @@ class SwitchTabPage(pageActivity: PageActivity) : SubSwitchPage(pageActivity), T
     @InjectView(R.id.contenter)
     internal lateinit var frameLayout: FrameLayout
 
-    override fun onViewInit(view:View,isRestore: Boolean, ars: Bundle) {
+    override fun onViewInit(view:View, isRestore: Boolean, argvs: Bundle) {
         setTabContainerLayout(frameLayout)
-        super.onViewInit(view,isRestore, ars)
+        super.onViewInit(view,isRestore, argvs)
         toolbar.title = "PageLib · SwitchTabPage"
         ToolbarHelper.setNavigationIconEnabled(toolbar, true, View.OnClickListener{ (context.rootPage as NavigationPage).popPage() })
         if (!isRestore) {

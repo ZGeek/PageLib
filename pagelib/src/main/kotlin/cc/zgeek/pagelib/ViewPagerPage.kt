@@ -83,7 +83,7 @@ class ViewPagerPage(pageActivity: PageActivity) : SingleActivePage(pageActivity)
     }
 
     override fun onPageSelected(position: Int) {
-        if (PageUtil.isPageActive(this) && position != currentShowIndex) {
+        if (this.isPageActive() && position != currentShowIndex) {
 
             val oldPage = getChildPageAt(currentShowIndex)
             val page = getChildPageAt(position)
@@ -130,7 +130,7 @@ class ViewPagerPage(pageActivity: PageActivity) : SingleActivePage(pageActivity)
         }
         val afterCount = childPageCount
         if (preCount == 0 && afterCount > 0) {
-            val active = PageUtil.isPageActive(this)
+            val active = this.isPageActive()
             //此时第一个Page将显示，但并不会调用onPageSelected，所以此时需要对第一个page做处理
             if (active) {
                 getChildPageAt(0).onShow()
@@ -145,7 +145,7 @@ class ViewPagerPage(pageActivity: PageActivity) : SingleActivePage(pageActivity)
     }
 
     fun setPageList(pages: List<IPage>) {
-        val active = PageUtil.isPageActive(this)
+        val active = this.isPageActive()
         val cPage = activiePage
 
         for (i in childPageCount - 1 downTo 0) {
@@ -169,7 +169,7 @@ class ViewPagerPage(pageActivity: PageActivity) : SingleActivePage(pageActivity)
          */
 
         val targetRemovePageIndex = getChildPageIndex(page)
-        val active = PageUtil.isPageActive(this)
+        val active = this.isPageActive()
         if (targetRemovePageIndex < 0)
             return false
         if (targetRemovePageIndex == currentShowIndex) {

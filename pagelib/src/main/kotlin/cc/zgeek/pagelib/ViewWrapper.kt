@@ -3,8 +3,9 @@ package cc.zgeek.pagelib
 import android.content.res.Resources
 import android.view.LayoutInflater
 import android.view.View
+import cc.zgeek.pagelib.Utils.injectLayout
+import cc.zgeek.pagelib.Utils.injectView
 
-import cc.zgeek.pagelib.Utils.AnnotationUtils
 
 /**
  * Created by ZGeek.
@@ -22,8 +23,8 @@ abstract class ViewWrapper(val context: PageActivity) {
     open val rootView: View
     get() {
         if(_rootView == null){
-            _rootView = AnnotationUtils.injectLayout(this@ViewWrapper) ?: throw IllegalStateException("Neither " + javaClass.name + " nor it's supper class Annotation with PageLaout or PageLayoutName")
-            AnnotationUtils.injectView(this@ViewWrapper)
+            _rootView = this@ViewWrapper.injectLayout() ?: throw IllegalStateException("Neither " + javaClass.name + " nor it's supper class Annotation with PageLaout or PageLayoutName")
+            this@ViewWrapper.injectView()
         }
         return checkNotNull(_rootView)
     }
@@ -34,11 +35,11 @@ abstract class ViewWrapper(val context: PageActivity) {
     }
 
 
-    fun findViewById(id: Int): View {
+    fun findViewById(id: Int): View? {
         return rootView.findViewById(id)
     }
 
-    fun findViewByName(name: String): View {
+    fun findViewByName(name: String): View? {
         val id = resources.getIdentifier(name, "id", PACKAGE_NAME)
         return rootView.findViewById(id)
     }

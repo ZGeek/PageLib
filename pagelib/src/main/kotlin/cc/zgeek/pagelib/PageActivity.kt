@@ -15,6 +15,7 @@ import android.view.ViewParent
 import android.view.Window
 
 import cc.zgeek.pagelib.Utils.PageUtil
+import cc.zgeek.pagelib.Utils.restorePage
 
 /**
  * Created by ZGeek.
@@ -40,12 +41,13 @@ abstract class PageActivity : AppCompatActivity() {
         if (savedInstanceState != null) {
             val clsName = savedInstanceState.getString("rootPage")
             val args = savedInstanceState.getBundle("rootData")
-            rootPageCopy = PageUtil.restorePage(this, clsName, args)
+            rootPageCopy = this.restorePage(clsName, args)
         }
         if (rootPageCopy == null){
             rootPageCopy = initRootPage()
         }
         rootPage = rootPageCopy
+        val str = PageUtil.printPageTree(rootPage)
         setContentView(rootPageCopy.rootView)
     }
 
