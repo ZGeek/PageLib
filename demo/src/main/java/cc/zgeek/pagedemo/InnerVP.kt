@@ -3,6 +3,7 @@ package cc.zgeek.pagedemo
 import android.os.Bundle
 import android.support.design.widget.TabLayout
 import android.support.v4.view.ViewPager
+import android.view.View
 import android.view.ViewGroup
 
 import java.util.Arrays
@@ -27,8 +28,8 @@ class InnerVP(pageActivity: PageActivity) : Page(pageActivity) {
     @InjectView(R.id.vp_container)
     internal lateinit var viewGroup: ViewGroup
 
-    override fun onViewInitialized(isRestore: Boolean, args: Bundle) {
-        super.onViewInitialized(isRestore, args)
+    override fun onViewInit(view: View, isRestore: Boolean, args: Bundle) {
+        super.onViewInit(view, isRestore, args)
         if (!isRestore) {
             val innerPager = ViewPagerPage(context)
             innerPager.addPages(Arrays.asList(

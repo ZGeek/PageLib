@@ -11,7 +11,6 @@ import java.util.ArrayList
 import java.util.Arrays
 
 import cc.zgeek.pagelib.Utils.PageUtil
-import cc.zgeek.pagelib.Utils.myLazy
 
 /**
  * Created by ZGeek.
@@ -31,15 +30,20 @@ class ViewPagerPage(pageActivity: PageActivity) : SingleActivePage(pageActivity)
     }
 
 
-    override val rootView: View by myLazy({
-        return@myLazy ViewPager(context)
-    },{
-        onViewInitialized(PageUtil.isBundleFromSaveInstance(args), args)
-    })
 
-    override fun onViewInitialized(isRestore: Boolean, args: Bundle) {
-        super.onViewInitialized(isRestore, args)
-        val viewPager = rootView as ViewPager
+    override val rootView: View
+    get() {
+        if(!isViewInitialized){
+            val _rootView = ViewPager(context)
+            onViewInit(_rootView, PageUtil.isBundleFromSaveInstance(args), args)
+            this._rootView = _rootView
+        }
+        return checkNotNull(this._rootView)
+    }
+
+    override fun onViewInit(view:View, isRestore: Boolean, args: Bundle) {
+        super.onViewInit(view, isRestore, args)
+        val viewPager = view as ViewPager
         viewPager.addOnPageChangeListener(this)
         viewPager.adapter = adapterWrapper
         if (isRestore) {
@@ -150,7 +154,7 @@ class ViewPagerPage(pageActivity: PageActivity) : SingleActivePage(pageActivity)
                 tmpPage.onHide()
                 tmpPage.onHidden()
             }
-            if (tmpPage.isRootViewInitialized)
+            if (tmpPage.isViewInitialized)
                 tmpPage.onDestroy()
             super.removePage(i)
         }
@@ -182,13 +186,13 @@ class ViewPagerPage(pageActivity: PageActivity) : SingleActivePage(pageActivity)
                 page.onHidden()
             }
 
-            if (page.isRootViewInitialized) {
+            if (page.isViewInitialized) {
                 page.onDestroy()
             }
 
         } else if (targetRemovePageIndex < currentShowIndex) {
 
-            if (page.isRootViewInitialized) {
+            if (page.isViewInitialized) {
                 page.onDestroy()
             }
             super.removePage(page)
@@ -196,7 +200,7 @@ class ViewPagerPage(pageActivity: PageActivity) : SingleActivePage(pageActivity)
             currentShowIndex--
         } else {
             //            index > currentShowIndex
-            if (page.isRootViewInitialized) {
+            if (page.isViewInitialized) {
                 page.onDestroy()
             }
             super.removePage(page)

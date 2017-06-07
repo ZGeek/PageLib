@@ -29,10 +29,7 @@ object AnnotationUtils {
     private val filedCache = ArrayMap<String, LongSparseArray<Field>>()
     private val layoutCache = ArrayMap<String, Int>()
 
-    fun injectView(wrapper: ViewWrapper?) {
-        if (wrapper == null) {
-            throw IllegalArgumentException("ViewWrapper can not be NULL")
-        }
+    fun injectView(wrapper: ViewWrapper) {
         var clazz: Class<*> = wrapper.javaClass
 
         while (clazz != ViewWrapper::class.java) {

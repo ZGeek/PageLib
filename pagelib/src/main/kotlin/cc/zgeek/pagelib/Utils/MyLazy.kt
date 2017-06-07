@@ -7,7 +7,7 @@ package cc.zgeek.pagelib.Utils
 import kotlin.reflect.KProperty
 
 
-public fun <T> myLazy(initializer: () -> T, whenInitialized: () -> Unit): Lazy<T> = MySynchronizedLazyImpl(initializer, whenInitialized)
+public fun <T> myLazy(initializer: () -> T, whenInitialized: (obj:T) -> Unit): Lazy<T> = MySynchronizedLazyImpl(initializer, whenInitialized)
 
 
 /**
@@ -46,9 +46,9 @@ public enum class LazyThreadSafetyMode {
 
 private object UNINITIALIZED_VALUE
 
-private class MySynchronizedLazyImpl<out T>(initializer: () -> T, whenInitialized: () -> Unit) : Lazy<T>, java.io.Serializable {
+private class MySynchronizedLazyImpl<out T>(initializer: () -> T, whenInitialized: (obj:T) -> Unit) : Lazy<T>, java.io.Serializable {
     private var initializer: (() -> T)? = initializer
-    private var whenInitialized: (() -> Unit)? = whenInitialized
+    private var whenInitialized: ((obj:T) -> Unit)? = whenInitialized
     @Volatile private var _value: Any? = UNINITIALIZED_VALUE
     private val lock = this
 
@@ -68,7 +68,7 @@ private class MySynchronizedLazyImpl<out T>(initializer: () -> T, whenInitialize
                     val typedValue = checkNotNull(initializer)()
                     _value = typedValue
                     initializer = null
-                    whenInitialized?.invoke()
+                    whenInitialized?.invoke(typedValue)
                     whenInitialized = null
                     typedValue
                 }

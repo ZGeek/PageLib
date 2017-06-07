@@ -49,11 +49,12 @@ abstract class Page(pageActivity: PageActivity) : ViewWrapper(pageActivity), IPa
 
     override val rootView: View
        get() {
-           if(!isRootViewInitialized){
-               super.rootView
-               onViewInitialized(false, this.args)
+           val init = isViewInitialized
+           val _view = super.rootView
+           if(!init){
+               onViewInit(_view, false, this.args)
            }
-           return super.rootView
+           return _view
        }
 
     protected open fun addPage(page: IPage) {
@@ -109,12 +110,12 @@ abstract class Page(pageActivity: PageActivity) : ViewWrapper(pageActivity), IPa
 
     override fun onSaveInstanceState(isViewInited: Boolean): Bundle {
         var outState: Bundle? = null
-        if (this.isRootViewInitialized) {
+        if (this.isViewInitialized) {
             outState = Bundle()
             val clsArray = arrayOfNulls<String>(childPageCount)
             for (i in 0..childPageCount - 1) {
                 val p = getChildPageAt(i)
-                val pBundle = p.onSaveInstanceState(p.isRootViewInitialized)
+                val pBundle = p.onSaveInstanceState(p.isViewInitialized)
 
                 val clsName = p.javaClass.name
                 clsArray[i] = clsName
@@ -133,7 +134,7 @@ abstract class Page(pageActivity: PageActivity) : ViewWrapper(pageActivity), IPa
         return outState
     }
 
-    override fun onViewInitialized(isRestore: Boolean, args: Bundle) {
+    override fun onViewInit(view:View, isRestore: Boolean, args: Bundle) {
         if (isRestore) {
             name = args.getString(PAGE_NAME)
         }
@@ -185,7 +186,7 @@ abstract class Page(pageActivity: PageActivity) : ViewWrapper(pageActivity), IPa
     override fun onDestroy() {
         (childPageCount - 1 downTo 0)
                 .map { getChildPageAt(it) }
-                .filter { it.isRootViewInitialized }
+                .filter { it.isViewInitialized }
                 .forEach { it.onDestroy() }
     }
 

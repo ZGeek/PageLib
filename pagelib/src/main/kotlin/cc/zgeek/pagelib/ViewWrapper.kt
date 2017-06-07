@@ -5,7 +5,6 @@ import android.view.LayoutInflater
 import android.view.View
 
 import cc.zgeek.pagelib.Utils.AnnotationUtils
-import cc.zgeek.pagelib.Utils.myLazy
 
 /**
  * Created by ZGeek.
@@ -15,18 +14,19 @@ import cc.zgeek.pagelib.Utils.myLazy
 
 abstract class ViewWrapper(val context: PageActivity) {
 
-    open val isRootViewInitialized: Boolean
-        get() = lazy_rootView.isInitialized()
+    val isViewInitialized: Boolean
+        get() = _rootView != null
 
-    private val lazy_rootView = myLazy({
-        val tmpView = AnnotationUtils.injectLayout(this@ViewWrapper) ?: throw IllegalStateException("Neither " + javaClass.name + " nor it's supper class Annotation with PageLaout or PageLayoutName")
 
-        return@myLazy tmpView
-    }, {
-        AnnotationUtils.injectView(this@ViewWrapper)
-    })
-
-    open val rootView: View by this@ViewWrapper.lazy_rootView
+    protected var _rootView:View? = null
+    open val rootView: View
+    get() {
+        if(_rootView == null){
+            _rootView = AnnotationUtils.injectLayout(this@ViewWrapper) ?: throw IllegalStateException("Neither " + javaClass.name + " nor it's supper class Annotation with PageLaout or PageLayoutName")
+            AnnotationUtils.injectView(this@ViewWrapper)
+        }
+        return checkNotNull(_rootView)
+    }
 
     init {
         if (PACKAGE_NAME == null)

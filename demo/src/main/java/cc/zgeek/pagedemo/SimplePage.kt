@@ -39,8 +39,8 @@ class SimplePage private constructor(pageActivity: PageActivity) : Page(pageActi
     }
 
 
-    override fun onViewInitialized(isRestore: Boolean, args: Bundle) {
-        super.onViewInitialized(isRestore, args)
+    override fun onViewInit(view:View, isRestore: Boolean, args: Bundle) {
+        super.onViewInit(view, isRestore, args)
         //        if (isRestore) {
         ////            setPageName(args.getString("name"));
         tvBg = args.getInt("tvBg")

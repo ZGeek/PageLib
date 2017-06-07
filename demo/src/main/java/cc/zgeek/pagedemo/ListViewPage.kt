@@ -38,7 +38,7 @@ class ListViewPage(pageActivity: PageActivity) : Page(pageActivity) {
     @InjectView(R.id.rv_main_list)
     private lateinit var mRvMainList: RecyclerView
 
-    override fun onViewInited(isRestore: Boolean, args: Bundle) {
+    override fun onViewInit(view:View,isRestore: Boolean, args: Bundle) {
         mTbHeaderBar.title = "ListPage"
         ToolbarHelper.setNavigationIconEnabled(
                 mTbHeaderBar, true, View.OnClickListener { (context.rootPage as NavigationPage).popPage() })

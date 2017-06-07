@@ -34,8 +34,8 @@ class SwipeableTabPage(pageActivity: PageActivity) : Page(pageActivity) {
     internal lateinit var contenter: ViewGroup
     private lateinit var pagerPage: ViewPagerPage
 
-    override fun onViewInitialized(isRestore: Boolean, args: Bundle) {
-        super.onViewInitialized(isRestore, args)
+    override fun onViewInit(view:View,isRestore: Boolean, args: Bundle) {
+        super.onViewInit(view, isRestore, args)
         setupToolbar()
         if (!isRestore) {
             val pagerPage = ViewPagerPage(context)

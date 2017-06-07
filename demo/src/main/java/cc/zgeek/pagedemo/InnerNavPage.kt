@@ -1,6 +1,7 @@
 package cc.zgeek.pagedemo
 
 import android.os.Bundle
+import android.view.View
 import android.widget.FrameLayout
 
 import cc.zgeek.pagelib.Annotation.InjectView
@@ -21,8 +22,8 @@ class InnerNavPage(pageActivity: PageActivity) : Page(pageActivity) {
     @InjectView(R.id.content)
     internal lateinit var frameLayout: FrameLayout
 
-    override fun onViewInitialized(isRestore: Boolean, args: Bundle) {
-        super.onViewInitialized(isRestore, args)
+    override fun onViewInit(view: View, isRestore: Boolean, args: Bundle) {
+        super.onViewInit(view, isRestore, args)
         if (!isRestore) {
             val nav = NavigationPage(context)
             nav.pushPage(SimplePage.newInstance(context))

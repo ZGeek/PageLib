@@ -2,7 +2,6 @@ package cc.zgeek.pagedemo
 
 import android.animation.Animator
 import android.animation.ValueAnimator
-import android.content.DialogInterface
 import android.os.Bundle
 import android.support.design.widget.NavigationView
 import android.support.v4.widget.DrawerLayout
@@ -53,8 +52,8 @@ class HomePage(pageActivity: PageActivity) : Page(pageActivity), View.OnClickLis
     @InjectView(R.id.btn_sub_nav_page)
     private lateinit var sub_nav: Button
 
-    override fun onViewInited(isRestore: Boolean, args: Bundle) {
-        super.onViewInited(isRestore, args)
+    override fun onViewInit(view:View, isRestore: Boolean, args: Bundle) {
+        super.onViewInit(view, isRestore, args)
         setupToolbar()
         mTvText.setText(R.string.page_demo_about)
         viewPagerBtn.setOnClickListener(this)
@@ -77,11 +76,11 @@ class HomePage(pageActivity: PageActivity) : Page(pageActivity), View.OnClickLis
                     AlertDialog.Builder(context)
                             .setTitle("PageLib")
                             .setMessage(R.string.page_demo_about)
-                            .setPositiveButton("OK") { dialog, which ->
+                            .setPositiveButton("OK") { _, _ ->
                                 Toast.makeText(context, "OK clicked",
                                         Toast.LENGTH_SHORT).show()
                             }
-                            .setNegativeButton("Cancel") { dialog, which -> Toast.makeText(context, "Cancel clicked", Toast.LENGTH_SHORT).show() }
+                            .setNegativeButton("Cancel") { _, _ -> Toast.makeText(context, "Cancel clicked", Toast.LENGTH_SHORT).show() }
                             .show()
                     true
                 })
