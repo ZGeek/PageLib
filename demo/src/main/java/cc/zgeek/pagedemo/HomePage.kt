@@ -2,6 +2,7 @@ package cc.zgeek.pagedemo
 
 import android.animation.Animator
 import android.animation.ValueAnimator
+import android.app.WallpaperManager
 import android.os.Bundle
 import android.support.design.widget.NavigationView
 import android.support.v4.widget.DrawerLayout
@@ -62,6 +63,10 @@ class HomePage(pageActivity: PageActivity) : Page(pageActivity), View.OnClickLis
         cus_btn.setOnClickListener(this)
         sub_nav.setOnClickListener(this)
         mNavigationView.setNavigationItemSelectedListener(this)
+        val wallpager = WallpaperManager.getInstance(context).drawable
+        if (wallpager != null) {
+            rootView.setBackgroundDrawable(wallpager)
+        }
     }
 
     override fun onSaveInstanceState(isViewInited: Boolean): Bundle {
